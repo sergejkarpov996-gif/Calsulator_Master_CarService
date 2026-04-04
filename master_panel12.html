@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Панель мастера — CarService</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='10' fill='%23111'/><text x='32' y='46' font-family='Arial Black,sans-serif' font-size='40' font-weight='900' fill='%23d20124' text-anchor='middle'>М</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=PT+Sans:wght@400;700&display=swap');
+
+:root {
+  --red: #d20124;
+  --dark: #111;
+  --mid: #1e1e1e;
+  --gray: #c2c3c5;
+  --border: #ddd;
+  --text: #333;
+  --green: #1a8a3c;
+  --blue: #1565c0;
+  --orange: #e65100;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--text); min-height: 100vh; }
+
+/* ═══ HEADER ═══════════════════════════════════════════════ */
+.master-header {
+  background: #0a0a0a;
+  border-bottom: 3px solid var(--red);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky; top: 0; z-index: 100;
+}
+.master-header .logo {
+  font-family: 'Oswald', sans-serif;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.master-header .logo span { color: var(--red); }
+.master-badge {
+  background: var(--red);
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.header-nav { display: flex; gap: 4px; }
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+}
+.nav-btn:hover { color: #ccc; }
+.nav-btn.active { color: #fff; border-bottom-color: var(--red); }
+
+/* ═══ LAYOUT ════════════════════════════════════════════════ */
+.master-layout { display: grid; grid-template-columns: 320px 1fr; min-height: calc(100vh - 56px); }
+
+/* ═══ LEFT PANEL — CLIENT LIST ══════════════════════════════ */
+.client-panel {
+  background: #141414;
+  border-right: 1px solid #2a2a2a;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.client-panel-header {
+  padding: 16px;
+  border-bottom: 1px solid #2a2a2a;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.client-panel-title {
+  font-family: 'Oswald', sans-serif;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.search-box {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 2px;
+  padding: 8px 12px;
+  color: #ccc;
+  font-family: 'PT Sans', sans-serif;
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+}
+.search-box:focus { border-color: var(--red); }
+.search-box::placeholder { color: #555; }
+.btn-new-client {
+  background: var(--red);
+  color: #fff;
+  border: none;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 10px;
+  cursor: pointer;
+  width: 100%;
+  transition: background .15s;
+}
+.btn-new-client:hover { background: #b50120; }
+
+.client-list { overflow-y: auto; flex: 1; }
+.client-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #1e1e1e;
+  cursor: pointer;
+  transition: background .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  position: relative;
+}
+.client-item:hover { background: #1e1e1e; }
+.client-item.active { background: #1e1e1e; border-left: 3px solid var(--red); }
+.client-item.active { padding-left: 13px; }
+.client-name {
+  font-family: 'Oswald', sans-serif;
+  color: #ddd;
+  font-size: 14px;
+  font-weight: 500;
+}
+.client-sub {
+  color: #666;
+  font-size: 11px;
+  font-family: 'PT Sans', sans-serif;
+}
+.client-sum {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--red);
+}
+.client-sum.zero { color: #444; }
+
+.client-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #444;
+  font-size: 13px;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ═══ RIGHT PANEL — WORK AREA ═══════════════════════════════ */
+.work-area {
+  background: #1a1a1a;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.work-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  color: #333;
+}
+.work-empty svg { opacity: 0.15; }
+.work-empty p {
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #444;
+}
+
+/* ═══ CLIENT CARD ═══════════════════════════════════════════ */
+.client-card {
+  background: #111;
+  border-bottom: 1px solid #222;
+  padding: 14px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  align-items: center;
+}
+.client-card-info { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; }
+.client-card-name {
+  font-family: 'Oswald', sans-serif;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.client-card-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  align-items: center;
+}
+.client-field {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.client-field label {
+  font-size: 11px;
+  color: #555;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.client-field span {
+  font-size: 14px;
+  color: #ccc;
+  font-family: 'PT Sans', sans-serif;
+  white-space: nowrap;
+}
+.client-card-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.btn-action {
+  border: none;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.btn-pdf { background: var(--red); color: #fff; }
+.btn-pdf:hover { background: #b50120; }
+.btn-edit { background: #2a2a2a; color: #aaa; }
+.btn-edit:hover { background: #333; color: #fff; }
+.btn-delete { background: transparent; color: #555; border: 1px solid #333; }
+.btn-delete:hover { border-color: var(--red); color: var(--red); }
+
+/* ═══ TIER SELECTOR ══════════════════════════════════════════ */
+.tier-row {
+  background: #0d0d0d;
+  display: flex;
+  border-bottom: 1px solid #222;
+}
+.tier-btn {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #555;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all .2s;
+  user-select: none;
+}
+.tier-btn:hover { color: #999; }
+.tier-btn.active { color: #fff; border-bottom-color: var(--red); background: #1a1a1a; }
+
+/* ═══ CAR SELECTOR ══════════════════════════════════════════ */
+.calc-wrapper { padding: 16px 24px; }
+
+.section-title {
+  font-family: 'Oswald', sans-serif;
+  color: #888;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+/* ═══ QUICK SELECT ═══════════════════════════════════════════ */
+.quick-select {
+  display: flex;
+  align-items: stretch;
+  background: #d7d8d9;
+  flex-wrap: wrap;
+}
+.qs-label {
+  background: #d7d8d9;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #333;
+  padding: 10px 14px;
+  border-bottom: 3px solid var(--red);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+.qs-btns { display: flex; flex-wrap: wrap; flex: 1; }
+.qs-btn {
+  background: #d7d8d9;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #333;
+  padding: 10px 14px;
+  border-right: 1px solid #fff;
+  border-bottom: 3px solid var(--red);
+  cursor: pointer;
+  transition: background .15s;
+}
+.qs-btn:hover { background: #c2c3c5; }
+.add-detail-btn {
+  background: var(--red) !important;
+  color: #fff !important;
+  border-bottom-color: #900 !important;
+  border-right: none !important;
+  margin-left: auto;
+  padding: 10px 18px !important;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-bottom: 3px solid #900 !important;
+}
+.add-detail-btn:hover { background: #b50120 !important; }
+
+/* ═══ PARTS TABLE ════════════════════════════════════════════ */
+.tables-section { margin-top: 16px; }
+.part-table {
+  display: none;
+  margin-bottom: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,.4);
+  background: #fff;
+}
+.part-table.visible { display: block; }
+.pt-inner { display: flex; flex-wrap: wrap; }
+.pt-trash {
+  width: 70px; min-width: 70px;
+  border: 1px solid var(--border);
+  padding: 8px; text-align: center; cursor: pointer;
+}
+.pt-trash .col-label {
+  font-size: 11px; color: #888;
+  border-bottom: 1px solid var(--border);
+  padding: 4px 0; margin: -8px -8px 8px;
+}
+.pt-trash svg { fill: #ccc; transition: fill .2s; }
+.pt-trash:hover svg { fill: var(--red); }
+.mobile-part-name { display: none; }
+.pt-name {
+  width: 150px; min-width: 150px;
+  border: 1px solid var(--border);
+  padding: 8px; text-align: center;
+}
+.pt-name .col-label {
+  font-size: 12px; color: #666;
+  border-bottom: 1px solid var(--border);
+  padding: 5px 0; margin: -8px -8px 8px;
+  font-family: 'Oswald', sans-serif; font-weight: 500;
+}
+.pt-name .part-name-val { font-size: 15px; color: #333; margin-top: 6px; font-weight: 600; }
+.pt-services { flex: 1; }
+.pt-services-inner { display: flex; flex-wrap: wrap; }
+.svc-col {
+  flex: 1; min-width: 80px;
+  border: 1px solid var(--border);
+  padding: 8px; text-align: center;
+}
+.svc-col .col-label {
+  font-size: 11px; color: #555;
+  background: #f0f0f0;
+  border-bottom: 1px solid var(--border);
+  padding: 6px 3px; margin: -8px -8px 8px;
+  white-space: nowrap;
+  font-family: 'Oswald', sans-serif; font-weight: 500;
+  letter-spacing: 0.2px;
+}
+.svc-total-col {
+  flex: 1; min-width: 90px;
+  border: 1px solid var(--border);
+  padding: 8px; text-align: center;
+}
+.svc-total-col .col-label {
+  font-size: 12px; color: #555;
+  border-bottom: 1px solid var(--border);
+  padding: 6px 0; margin: -8px -8px 8px;
+  font-family: 'Oswald', sans-serif; font-weight: 500;
+}
+.svc-total-col .total-val {
+  font-size: 17px; color: var(--red);
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600; margin-top: 6px;
+}
+
+/* Toggle */
+.toggle-wrap { display: flex; align-items: center; gap: 4px; justify-content: center; margin-top: 4px; }
+.toggle-cb { position: absolute; opacity: 0; width: 0; height: 0; }
+.toggle-label {
+  position: relative; width: 42px; height: 21px;
+  cursor: pointer; display: inline-block;
+}
+.toggle-label::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 42px; height: 21px; border-radius: 11px;
+  background: #bbb; box-shadow: inset 0 2px 3px rgba(0,0,0,.2);
+  transition: background .2s;
+}
+.toggle-label::after {
+  content: ''; position: absolute; top: -1px; left: -1px;
+  width: 23px; height: 23px; border-radius: 12px;
+  background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,.3);
+  transition: left .2s;
+}
+.toggle-cb:checked + .toggle-label::before { background: var(--red); }
+.toggle-cb:checked + .toggle-label::after { left: 20px; }
+.price-label { font-size: 11px; color: #555; margin-top: 3px; }
+
+/* ═══ SUMMARY BOX ════════════════════════════════════════════ */
+.summary-box {
+  background: #0d0d0d;
+  border-top: 3px solid #222;
+  margin-top: 20px;
+}
+.summary-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid #222;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.summary-header h3 {
+  font-family: 'Oswald', sans-serif;
+  color: #888;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.summary-total-big {
+  font-family: 'Oswald', sans-serif;
+  color: var(--red);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #222;
+}
+.summary-cell {
+  background: #111;
+  padding: 14px 20px;
+}
+.summary-cell .s-label {
+  font-family: 'Oswald', sans-serif;
+  color: #555;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.summary-cell .s-val {
+  font-family: 'Oswald', sans-serif;
+  color: #ddd;
+  font-size: 20px;
+  font-weight: 600;
+}
+.summary-cell .s-val.red { color: var(--red); }
+.summary-cell .s-val.green { color: #4caf50; }
+.summary-cell .s-val.orange { color: #ff9800; }
+.summary-cell .s-note {
+  font-size: 10px;
+  color: #444;
+  font-family: 'PT Sans', sans-serif;
+  margin-top: 3px;
+}
+
+/* ═══ COST BREAKDOWN ═════════════════════════════════════════ */
+.cost-section {
+  background: #0a0a0a;
+  border-top: 1px solid #222;
+  padding: 0;
+}
+.cost-header {
+  padding: 12px 20px;
+  border-bottom: 1px solid #1e1e1e;
+  font-family: 'Oswald', sans-serif;
+  color: #666;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cost-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #222;
+}
+.cost-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: #1a1a1a;
+}
+.cost-cell {
+  background: #0d0d0d;
+  padding: 14px 16px;
+  border-left: 3px solid transparent;
+}
+.cost-cell.repair { border-left-color: #ff9800; }
+.cost-cell.paint { border-left-color: #2196f3; }
+.cost-cell.other { border-left-color: #4caf50; }
+.cost-cell .c-label {
+  font-family: 'Oswald', sans-serif;
+  color: #555;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.cost-cell .c-val {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ddd;
+}
+.cost-cell.repair .c-val { color: #ff9800; }
+.cost-cell.paint .c-val { color: #2196f3; }
+.cost-cell.other .c-val { color: #4caf50; }
+.cost-cell .c-note { font-size: 10px; color: #444; margin-top: 3px; font-family: 'PT Sans', sans-serif; }
+.cost-profit {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #1a1a1a;
+}
+.profit-label { font-family: 'Oswald', sans-serif; color: #666; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.profit-val { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: #4caf50; }
+.profit-val.loss { color: var(--red); }
+
+/* ═══ MODAL ══════════════════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-top: 3px solid var(--red);
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; }
+.form-group { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+.form-group label {
+  font-family: 'Oswald', sans-serif;
+  color: #888;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.form-group input, .form-group select, .form-group textarea {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  color: #ddd;
+  font-family: 'PT Sans', sans-serif;
+  font-size: 14px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--red); }
+.form-group textarea { resize: none; min-height: 70px; }
+
+/* Телефоны — всё в одну колонку */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .modal {
+    max-width: 100%;
+    width: 100%;
+    max-height: 88vh;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    overflow-x: hidden;
+  }
+  .modal-header { padding: 14px 16px; }
+  .modal-title { font-size: 16px; }
+  .modal-body {
+    padding: 12px 16px;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  /* ПРИНУДИТЕЛЬНО одна колонка */
+  .form-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100%;
+  }
+  .form-row .form-group {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 11px 12px;
+    font-size: 15px;
+    box-sizing: border-box !important;
+  }
+  .form-group textarea { min-height: 60px; }
+  .modal-footer {
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+  }
+  .btn-primary, .btn-secondary {
+    flex: 1;
+    justify-content: center;
+    padding: 13px;
+    font-size: 14px;
+  }
+}
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #222;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-title {
+  font-family: 'Oswald', sans-serif;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.modal-close {
+  background: transparent;
+  border: none;
+  color: #555;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+.modal-close:hover { color: #fff; }
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #222;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.btn-primary {
+  background: var(--red);
+  color: #fff;
+  border: none;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-primary:hover { background: #b50120; }
+.btn-secondary {
+  background: #2a2a2a;
+  color: #aaa;
+  border: none;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.btn-secondary:hover { background: #333; color: #fff; }
+
+/* SVG detal */
+.detal {
+  cursor: pointer;
+  fill: #fff; fill-opacity: 0.5;
+  stroke: #000; stroke-width: 0.5;
+  transition: fill .15s, fill-opacity .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) and (pointer: fine) {
+  .detal:hover { fill: #ff4444 !important; fill-opacity: 0.65 !important; }
+}
+.detal.on { fill: var(--red) !important; fill-opacity: 0.75 !important; }
+
+/* Car area */
+.car-area-wrap {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  background: #333;
+  margin-bottom: 0;
+  max-height: 420px;
+  overflow: hidden;
+}
+.car-svg-wrap {
+  width: 100%;
+  background: #333;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.car-svg-wrap svg {
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  display: block;
+}
+.top-view-area {
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  max-height: 420px;
+}
+.top-view-area svg { width: auto; height: 395px; max-height: 395px; }
+
+/* Status badge */
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.status-new { background: #1565c0; color: #fff; }
+.status-calc { background: #e65100; color: #fff; }
+.status-done { background: #1a8a3c; color: #fff; }
+
+/* Info band */
+.info-band {
+  background: #0d0d0d;
+  padding: 10px 24px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #1e1e1e;
+}
+.info-item { display: flex; flex-direction: column; gap: 1px; }
+.info-item .i-label { font-family: 'Oswald', sans-serif; color: #555; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.info-item .i-val { font-family: 'Oswald', sans-serif; color: #ccc; font-size: 13px; font-weight: 500; }
+.info-item .i-val.red { color: var(--red); }
+
+/* PDF print area */
+#pdf-preview { display: none; }
+
+@media (max-width: 900px) {
+  .master-layout { grid-template-columns: 1fr; }
+  .client-panel { max-height: 260px; border-right: none; border-bottom: 1px solid #222; }
+  .car-area-wrap { grid-template-columns: 1fr; min-height: unset; }
+  .top-view-area { display: none; }
+  .cost-grid { grid-template-columns: 1fr 1fr; }
+  .summary-grid { grid-template-columns: 1fr; }
+  .header-nav { display: none; }
+}
+
+@media (max-width: 600px) {
+  .master-header { padding: 0 12px; }
+  .calc-wrapper { padding: 10px 12px; }
+
+  /* Карточка клиента — компактная на мобильном */
+  .client-card { flex-direction: column; padding: 12px; gap: 10px; }
+  .client-card-info { flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; }
+  .client-card-name { font-size: 18px; }
+  .client-card-fields { gap: 4px 12px; }
+  .client-field { flex-direction: column; align-items: flex-start; gap: 1px; }
+  .client-card-actions { flex-direction: row; width: 100%; flex-wrap: wrap; gap: 6px; }
+  .btn-action { flex: 1; min-width: 100px; justify-content: center; padding: 10px 8px; font-size: 11px; }
+
+  /* Уровни сервиса */
+  .tier-row { font-size: 11px; }
+  .tier-btn { padding: 10px 4px; font-size: 11px; }
+
+  /* Машина на мобильном */
+  .car-area-wrap { grid-template-columns: 1fr; max-height: unset; overflow: visible; }
+  .car-svg-wrap { max-height: unset; }
+  .car-svg-wrap svg { width: 100%; height: auto; max-height: unset; }
+  .top-view-area {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    background: #1a1a1a;
+    max-height: unset;
+  }
+  .top-view-area svg { width: 180px; height: auto; }
+
+  /* Быстрый выбор */
+  .quick-select { flex-wrap: wrap; }
+  .qs-label { width: 100%; padding: 8px 12px; border-bottom: none; font-size: 10px; }
+  .qs-btns { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
+  .qs-btn { padding: 10px 4px; font-size: 10px; text-align: center; border-right: 1px solid #fff; }
+  .add-detail-btn { width: 100% !important; text-align: center; margin-left: 0 !important; }
+
+  /* Таблицы деталей */
+  .cost-grid { grid-template-columns: 1fr; }
+  .pt-inner { flex-direction: column; }
+  .pt-trash { width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 2px solid var(--red); background: #f8f8f8; }
+  .pt-trash .col-label { display: none; }
+  .pt-trash svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .mobile-part-name { display: block; font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 600; color: #333; text-transform: uppercase; flex: 1; }
+  .pt-name { display: none; }
+  .pt-services { width: 100%; }
+  .pt-services-inner { display: grid; grid-template-columns: 1fr 1fr; }
+  .svc-col { min-width: unset; padding: 6px 4px; }
+  .svc-col .col-label { font-size: 9px; white-space: normal; line-height: 1.2; }
+  .svc-total-col { grid-column: 1/-1; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; border-top: 2px solid var(--border); background: #f8f8f8; }
+  .svc-total-col .col-label { margin: 0; border: none; padding: 0; }
+  .svc-total-col .total-val { margin: 0; }
+
+  /* Итог и затраты */
+  .summary-header { flex-direction: column; gap: 8px; align-items: flex-start; }
+  .summary-total-big { font-size: 22px; }
+  .cost-profit { flex-direction: column; gap: 4px; align-items: flex-start; }
+}
+
+@media print {
+  @page {
+    margin: 15mm 15mm 15mm 15mm;
+    size: A4;
+  }
+  /* Скрываем всё кроме превью */
+  body * { visibility: hidden !important; }
+  #pdf-preview { display: block !important; }
+  #pdf-preview, #pdf-preview * { visibility: visible !important; }
+  #pdf-preview {
+    position: fixed;
+    left: 0; top: 0;
+    width: 100%;
+    background: #fff;
+    padding: 0;
+    margin: 0;
+  }
+  /* Запрет пустых страниц */
+  #pdf-preview > div {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    orphans: 4;
+    widows: 4;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="master-header">
+  <div class="logo">Car<span>Service</span> <span style="color:#555;font-size:13px;margin-left:8px;">MGN</span></div>
+  <nav class="header-nav">
+    <button class="nav-btn active">Расчёты</button>
+    <button class="nav-btn" onclick="alert('Раздел в разработке')">Архив</button>
+    <button class="nav-btn" onclick="alert('Раздел в разработке')">Настройки</button>
+  </nav>
+  <div class="master-badge">Панель мастера</div>
+</header>
+
+<div class="master-layout">
+
+  <!-- LEFT: CLIENT LIST -->
+  <aside class="client-panel">
+    <div class="client-panel-header">
+      <div class="client-panel-title">Клиенты</div>
+      <input class="search-box" id="client-search" placeholder="Поиск по имени, VIN, телефону..." oninput="filterClients()">
+      <button class="btn-new-client" onclick="openNewClientModal()">+ Новый клиент</button>
+    </div>
+    <div class="client-list" id="client-list">
+      <div class="client-empty" id="client-empty-msg">Нет клиентов.<br>Добавьте первого.</div>
+    </div>
+  </aside>
+
+  <!-- RIGHT: WORK AREA -->
+  <main class="work-area" id="work-area">
+    <div class="work-empty" id="work-empty">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="#fff"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5z"/><circle cx="7.5" cy="14.5" r="1.5"/><circle cx="16.5" cy="14.5" r="1.5"/></svg>
+      <p>Выберите клиента или создайте нового</p>
+    </div>
+    <div id="client-workspace" style="display:none; flex-direction:column; flex:1;"></div>
+  </main>
+</div>
+
+<!-- MODAL: NEW/EDIT CLIENT -->
+<div class="modal-overlay" id="client-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Новый клиент</span>
+      <button class="modal-close" onclick="closeModal('client-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Имя клиента *</label>
+          <input type="text" id="f-name" placeholder="Иван Иванов">
+        </div>
+        <div class="form-group">
+          <label>Телефон *</label>
+          <input type="tel" id="f-phone" placeholder="+7 (999) 000-00-00">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>VIN номер</label>
+          <input type="text" id="f-vin" placeholder="XXXXXXXXXXXXXXXXX" style="text-transform:uppercase;" maxlength="17">
+        </div>
+        <div class="form-group">
+          <label>Гос. номер</label>
+          <input type="text" id="f-plate" placeholder="А000АА 174" style="text-transform:uppercase;">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Марка авто</label>
+          <input type="text" id="f-car" placeholder="Toyota Camry 2019">
+        </div>
+        <div class="form-group">
+          <label>Цвет кузова</label>
+          <input type="text" id="f-color" placeholder="Белый перламутр">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Примечание</label>
+        <textarea id="f-note" placeholder="Дополнительная информация..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('client-modal')">Отмена</button>
+      <button class="btn-primary" onclick="saveClient()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- PDF PREVIEW (hidden, print only) -->
+<div id="pdf-preview"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+const BASE_PRICES = {
+  ppk: {s:2000,  rc:2000,  z:4000,  p1:5000, p2:0,    r2:10000, r1:5000 },
+  lpk: {s:2000,  rc:2000,  z:4000,  p1:5000, p2:0,    r2:10000, r1:5000 },
+  ppd: {s:3000,  rc:2000,  z:5000,  p1:5000, p2:7000, r2:15000, r1:10000},
+  lpd: {s:3000,  rc:2000,  z:5000,  p1:5000, p2:7000, r2:15000, r1:10000},
+  pzd: {s:3000,  rc:2000,  z:5000,  p1:5000, p2:7000, r2:15000, r1:10000},
+  lzd: {s:3000,  rc:2000,  z:5000,  p1:5000, p2:7000, r2:15000, r1:10000},
+  pzk: {s:20000, rc:4000,  z:20000, p1:6000, p2:0,    r2:15000, r1:10000},
+  lzk: {s:20000, rc:4000,  z:20000, p1:6000, p2:0,    r2:15000, r1:10000},
+  pb:  {s:2000,  rc:2000,  z:4000,  p1:5000, p2:0,    r2:10000, r1:5000 },
+  zb:  {s:2000,  rc:2000,  z:4000,  p1:5000, p2:0,    r2:10000, r1:5000 },
+  kry: {s:0,     rc:10000, z:40000, p1:8000, p2:0,    r2:30000, r1:15000},
+  kap: {s:2000,  rc:2000,  z:4000,  p1:7000, p2:9000, r2:20000, r1:10000},
+  bag: {s:3000,  rc:3000,  z:6000,  p1:7000, p2:9000, r2:20000, r1:10000},
+  pp:  {s:3000,  rc:2000,  z:15000, p1:5000, p2:0,    r2:12000, r1:6000 },
+  lp:  {s:3000,  rc:2000,  z:15000, p1:5000, p2:0,    r2:12000, r1:6000 },
+};
+const DETAIL_BASE = {s:4000, rc:5000, z:4000, p1:5000, p2:0, r2:15000, r1:7000};
+
+const TIER_ADD   = { light: 0, standard: 1000, premium: 3000 };
+const TIER_LABELS = { light: 'Лайт', standard: 'Стандарт', premium: 'Премиум' };
+
+const PARTS = [
+  { id:'ppk', name:'Правое переднее крыло', groups:['right','lobby','all'] },
+  { id:'lpk', name:'Левое переднее крыло',  groups:['left','lobby','all']  },
+  { id:'ppd', name:'Правая передняя дверь', groups:['right','lobby','all'] },
+  { id:'lpd', name:'Левая передняя дверь',  groups:['left','lobby','all']  },
+  { id:'pzd', name:'Правая задняя дверь',   groups:['right','rear','all']  },
+  { id:'lzd', name:'Левая задняя дверь',    groups:['left','rear','all']   },
+  { id:'pzk', name:'Правое заднее крыло',   groups:['right','rear','all']  },
+  { id:'lzk', name:'Левое заднее крыло',    groups:['left','rear','all']   },
+  { id:'pb',  name:'Передний бампер',       groups:['lobby','bumpers','all']},
+  { id:'zb',  name:'Задний бампер',         groups:['rear','bumpers','all'] },
+  { id:'kry', name:'Крыша',                 groups:['lobby','all']          },
+  { id:'kap', name:'Капот',                 groups:['lobby','all']          },
+  { id:'bag', name:'Крышка бага / Дверь бага', groups:['rear','all']       },
+  { id:'pp',  name:'Правый порог',          groups:['right','all']          },
+  { id:'lp',  name:'Левый порог',           groups:['left','all']           },
+];
+
+const SVC_KEYS   = ['s','rc','z','p1','p2','r2','r1'];
+const SVC_LABELS = ['Снять/Установить','Разобр./Собрать','Замена','Окрас 1 ст.','Окрас 2 ст.','Рем >50%','Рем <50%'];
+
+// Затраты мастера на ремонт одной детали
+const REPAIR_COST_PER_PART = 4000;   // рем<50% или рем>50%
+const PAINT_COST_1 = 3000;           // покраска 1 слой
+const PAINT_COST_2 = 6000;           // покраска 2 слоя (Окрас 2 ст. = +3000)
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let clients = JSON.parse(localStorage.getItem('cs_clients') || '[]');
+let activeClientId = null;
+let editingClientId = null;
+
+// Per-client calc state
+function defaultCalcState() {
+  const svcState = {};
+  PARTS.forEach(p => { svcState[p.id] = {}; SVC_KEYS.forEach(k => svcState[p.id][k] = false); });
+  return { tier: 'light', selected: [], svcState, details: [], detailUid: 0 };
+}
+
+function getClientState(id) {
+  const c = clients.find(c => c.id === id);
+  if (!c.calcState) c.calcState = defaultCalcState();
+  return c.calcState;
+}
+
+function saveClients() {
+  localStorage.setItem('cs_clients', JSON.stringify(clients));
+}
+
+function getPrices(partId, tier, calcState) {
+  // Для detail_ деталей берём из _detailPrices или DETAIL_BASE
+  let bp;
+  if (partId.startsWith('detail_')) {
+    bp = (calcState && calcState._detailPrices && calcState._detailPrices[partId])
+      ? calcState._detailPrices[partId]
+      : DETAIL_BASE;
+  } else {
+    bp = BASE_PRICES[partId];
+  }
+  if (!bp) return {s:0,rc:0,z:0,p1:0,p2:0,r2:0,r1:0};
+  const add = TIER_ADD[tier] || 0;
+  return {
+    s:  bp.s,
+    rc: bp.rc > 0 ? bp.rc + add : 0,
+    z:  bp.z  > 0 ? bp.z  + add : 0,
+    p1: bp.p1,
+    p2: bp.p2,
+    r2: bp.r2,
+    r1: bp.r1,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+// CLIENT LIST UI
+// ═══════════════════════════════════════════════════════════
+function renderClientList(filter = '') {
+  const list = document.getElementById('client-list');
+  const emptyMsg = document.getElementById('client-empty-msg');
+  const filtered = clients.filter(c => {
+    const q = filter.toLowerCase();
+    return !q || c.name.toLowerCase().includes(q) || (c.phone||'').includes(q) || (c.vin||'').toLowerCase().includes(q);
+  });
+
+  if (filtered.length === 0) {
+    emptyMsg.style.display = '';
+  } else {
+    emptyMsg.style.display = 'none';
+  }
+
+  // Remove old items
+  list.querySelectorAll('.client-item').forEach(el => el.remove());
+
+  filtered.forEach(c => {
+    const total = calcClientTotal(c);
+    const div = document.createElement('div');
+    div.className = 'client-item' + (c.id === activeClientId ? ' active' : '');
+    div.dataset.id = c.id;
+    div.innerHTML = `
+      <div class="client-name">${escHtml(c.name)} <span class="status-badge status-${c.status||'new'}">${statusLabel(c.status)}</span></div>
+      <div class="client-sub">${escHtml(c.phone||'')}${c.vin?' · '+c.vin:''}</div>
+      <div class="client-sub">${escHtml(c.car||'')}</div>
+      <div class="client-sum ${total===0?'zero':''}">${total > 0 ? total.toLocaleString('ru')+' ₽' : '—'}</div>
+    `;
+    div.addEventListener('click', () => openClient(c.id));
+    list.appendChild(div);
+  });
+}
+
+function filterClients() {
+  renderClientList(document.getElementById('client-search').value);
+}
+
+function statusLabel(s) {
+  if (s === 'calc') return 'Расчёт';
+  if (s === 'done') return 'Готово';
+  return 'Новый';
+}
+
+function calcClientTotal(c) {
+  if (!c.calcState) return 0;
+  const cs = c.calcState;
+  let total = 0;
+  cs.selected.forEach(id => {
+    const pr = getPrices(id, cs.tier, cs);
+    SVC_KEYS.forEach(k => { if (cs.svcState[id] && cs.svcState[id][k]) total += pr[k]; });
+  });
+  (cs.details||[]).forEach(d => {
+    const pr = getPrices(d.id, cs.tier, cs);
+    SVC_KEYS.forEach(k => { if (cs.svcState[d.id] && cs.svcState[d.id][k]) total += pr[k]; });
+  });
+  return total;
+}
+
+// ═══════════════════════════════════════════════════════════
+// OPEN CLIENT
+// ═══════════════════════════════════════════════════════════
+function openClient(id) {
+  activeClientId = id;
+  const c = clients.find(c => c.id === id);
+  if (!c) return;
+  if (!c.calcState) c.calcState = defaultCalcState();
+  if (!c.calcState._detailPrices) c.calcState._detailPrices = {};
+  renderClientList(document.getElementById('client-search').value);
+
+  document.getElementById('work-empty').style.display = 'none';
+  const ws = document.getElementById('client-workspace');
+  ws.style.display = 'flex';
+  ws.innerHTML = '';
+
+  // Build workspace
+  ws.innerHTML = buildWorkspace(c);
+
+  // Restore SVG selections
+  const cs = c.calcState;
+  cs.selected.forEach(id => {
+    document.querySelectorAll(`.detal[data-name="${id}"]`).forEach(el => el.classList.add('on'));
+  });
+
+  // Restore table visibility
+  PARTS.forEach(p => {
+    const t = document.getElementById('table_' + p.id);
+    if (t && cs.selected.includes(p.id)) { t.classList.add('visible'); }
+  });
+  (cs.details||[]).forEach(d => {
+    const t = document.getElementById('table_' + d.id);
+    if (t) t.classList.add('visible');
+  });
+
+  attachAllEvents(c);
+  updateSummary(c);
+}
+
+function buildWorkspace(c) {
+  const cs = c.calcState;
+  return `
+    <!-- Client card -->
+    <div class="client-card">
+      <div class="client-card-info">
+        <div class="client-card-name">${escHtml(c.name)}</div>
+        <div class="client-card-fields">
+          ${c.phone?`<div class="client-field"><label>Телефон</label><span>${escHtml(c.phone)}</span></div>`:''}
+          ${c.vin?`<div class="client-field"><label>VIN</label><span style="font-family:monospace;letter-spacing:1px;">${escHtml(c.vin)}</span></div>`:''}
+          ${c.plate?`<div class="client-field"><label>Гос. номер</label><span>${escHtml(c.plate)}</span></div>`:''}
+          ${c.car?`<div class="client-field"><label>Автомобиль</label><span>${escHtml(c.car)}</span></div>`:''}
+          ${c.color?`<div class="client-field"><label>Цвет</label><span>${escHtml(c.color)}</span></div>`:''}
+          ${c.note?`<div class="client-field"><label>Примечание</label><span>${escHtml(c.note)}</span></div>`:''}
+        </div>
+      </div>
+      <div class="client-card-actions">
+        <button class="btn-action btn-pdf" onclick="printPDF()">🖨️ PDF / Печать</button>
+        <button class="btn-action btn-edit" onclick="openEditClientModal('${c.id}')">✏️ Редактировать</button>
+        <button class="btn-action btn-delete" onclick="deleteClient('${c.id}')">🗑️ Удалить</button>
+      </div>
+    </div>
+
+    <!-- Tier selector -->
+    <div class="tier-row" id="tier-row">
+      <div class="tier-btn ${cs.tier==='light'?'active':''}" data-tier="light">Лайт <small style="color:#666;font-size:10px;">+0</small></div>
+      <div class="tier-btn ${cs.tier==='standard'?'active':''}" data-tier="standard">Стандарт <small style="color:#666;font-size:10px;">+1000</small></div>
+      <div class="tier-btn ${cs.tier==='premium'?'active':''}" data-tier="premium">Премиум <small style="color:#666;font-size:10px;">+3000</small></div>
+    </div>
+
+    <!-- Car SVG — вне обёртки, на всю ширину -->
+    <div class="car-area-wrap">
+      <div class="car-svg-wrap">
+        ${CAR_SVG_SEDAN}
+      </div>
+      <div class="top-view-area">
+        ${TOP_VIEW_SVG}
+      </div>
+    </div>
+
+    <!-- Calc -->
+    <div class="calc-wrapper">
+      <div class="section-title">Выбор деталей</div>
+
+      <!-- Quick select -->
+      <div class="quick-select" style="margin-top:8px;">
+        <div class="qs-label">Быстрый выбор:</div>
+        <div class="qs-btns">
+          <div class="qs-btn" data-group="right">Справа</div>
+          <div class="qs-btn" data-group="left">Слева</div>
+          <div class="qs-btn" data-group="lobby">Перед</div>
+          <div class="qs-btn" data-group="rear">Зад</div>
+          <div class="qs-btn" data-group="bumpers">Бамперы</div>
+          <div class="qs-btn" data-group="all">Все</div>
+        </div>
+        <div class="add-detail-btn" id="add-detail-btn">+ Добавить деталь</div>
+      </div>
+
+      <!-- Tables -->
+      <div class="tables-section" id="tables-section">
+        ${PARTS.map(p => `<div class="part-table" id="table_${p.id}">${buildPartTableHTML(p.id, p.name, cs)}</div>`).join('')}
+        ${(cs.details||[]).map(d => `<div class="part-table visible" id="table_${d.id}">${buildDetailTableHTML(d.id, d.name, cs)}</div>`).join('')}
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary-box" id="summary-box">
+      <div class="summary-header">
+        <h3>Итог расчёта</h3>
+        <div class="summary-total-big" id="sum-total">0 ₽</div>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-cell">
+          <div class="s-label">Выбрано элементов</div>
+          <div class="s-val" id="sum-count">0</div>
+        </div>
+        <div class="summary-cell">
+          <div class="s-label">Уровень</div>
+          <div class="s-val">${TIER_LABELS[cs.tier]}</div>
+        </div>
+        <div class="summary-cell">
+          <div class="s-label">Снять / Установить</div>
+          <div class="s-val orange" id="sum-su">0 ₽</div>
+        </div>
+        <div class="summary-cell">
+          <div class="s-label">Замена деталей</div>
+          <div class="s-val red" id="sum-z">0 ₽</div>
+        </div>
+        <div class="summary-cell">
+          <div class="s-label">Ремонт</div>
+          <div class="s-val" id="sum-rem">0 ₽</div>
+        </div>
+        <div class="summary-cell">
+          <div class="s-label">Покраска</div>
+          <div class="s-val" id="sum-paint">0 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COST BREAKDOWN (затраты мастера) -->
+    <div class="cost-section">
+      <div class="cost-header">Расчёт затрат мастера</div>
+      <div class="cost-grid">
+        <div class="cost-cell repair">
+          <div class="c-label">Затраты на ремонт</div>
+          <div class="c-val" id="cost-repair">0 ₽</div>
+          <div class="c-note">~4 000 ₽ за деталь (рем. &lt;50% и &gt;50%)</div>
+        </div>
+        <div class="cost-cell paint">
+          <div class="c-label">Затраты на покраску</div>
+          <div class="c-val" id="cost-paint">0 ₽</div>
+          <div class="c-note">3 000 ₽ (1 сл.) / 6 000 ₽ (2 сл. — Окрас 2 ст.)</div>
+        </div>
+        <div class="cost-cell other">
+          <div class="c-label">Прочие затраты</div>
+          <div class="c-val" id="cost-other">0 ₽</div>
+          <div class="c-note">С/У + Разборка + Замена</div>
+        </div>
+      </div>
+      <div class="cost-profit">
+        <span class="profit-label">Прибыль мастера</span>
+        <span class="profit-val" id="cost-profit">0 ₽</span>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABLE HTML BUILDERS
+// ═══════════════════════════════════════════════════════════
+function buildPartTableHTML(partId, name, cs) {
+  const pr = getPrices(partId, cs.tier, cs);
+  return buildRowHTML(partId, name, pr, cs.svcState[partId] || {});
+}
+function buildDetailTableHTML(detailId, name, cs) {
+  const pr = getPrices(detailId, cs.tier, cs);
+  return buildRowHTML(detailId, name, pr, cs.svcState[detailId] || {});
+}
+
+function buildRowHTML(id, name, pr, state) {
+  const cols = SVC_KEYS.map((k, i) => {
+    const val = pr[k];
+    const disp = val > 0 ? val.toLocaleString('ru') + ' ₽' : '—';
+    const disabled = val === 0 ? 'disabled' : '';
+    return `<div class="svc-col">
+      <div class="col-label">${SVC_LABELS[i]}</div>
+      <div class="toggle-wrap">
+        <input type="checkbox" class="toggle-cb" id="cb_${id}_${k}" ${state[k]?'checked':''} ${disabled}>
+        <label class="toggle-label" for="cb_${id}_${k}" style="${val===0?'opacity:.3;pointer-events:none':''}"></label>
+      </div>
+      <div class="price-label">${disp}</div>
+    </div>`;
+  }).join('');
+  return `<div class="pt-inner">
+    <div class="pt-trash" id="trash_${id}">
+      <div class="col-label">-</div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28">
+        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/>
+        <path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+      </svg>
+      <span class="mobile-part-name">${name}</span>
+    </div>
+    <div class="pt-name">
+      <div class="col-label">элемент</div>
+      <div class="part-name-val">${name}</div>
+    </div>
+    <div class="pt-services">
+      <div class="pt-services-inner">
+        ${cols}
+        <div class="svc-total-col">
+          <div class="col-label">сумма</div>
+          <div class="total-val" id="total_${id}">0 ₽</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════════════════
+function attachAllEvents(c) {
+  const cs = c.calcState;
+
+  // Tier buttons
+  document.querySelectorAll('.tier-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      cs.tier = btn.dataset.tier;
+      document.querySelectorAll('.tier-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      rebuildAllTables(c);
+      updateSummary(c);
+      saveClients();
+    });
+  });
+
+  // SVG clicks
+  document.querySelectorAll('.detal').forEach(el => {
+    el.addEventListener('click', () => {
+      const name = el.dataset.name;
+      if (!name) return;
+      const part = PARTS.find(p => p.id === name);
+      if (!part) return;
+      togglePart(c, part.id, part.name);
+    });
+  });
+
+  // Quick select
+  document.querySelectorAll('.qs-btn[data-group]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.dataset.group;
+      if (group === 'all') {
+        const allIds = PARTS.map(p => p.id);
+        const allSel = allIds.every(id => cs.selected.includes(id));
+        if (allSel) allIds.forEach(id => deselectPart(c, id));
+        else allIds.forEach(id => { if (!cs.selected.includes(id)) selectPart(c, id, PARTS.find(p=>p.id===id).name); });
+      } else {
+        const grp = PARTS.filter(p => p.groups.includes(group));
+        const allSel = grp.every(p => cs.selected.includes(p.id));
+        if (allSel) grp.forEach(p => deselectPart(c, p.id));
+        else grp.forEach(p => { if (!cs.selected.includes(p.id)) selectPart(c, p.id, p.name); });
+      }
+    });
+  });
+
+  // Part checkboxes
+  PARTS.forEach(p => {
+    if (!cs.svcState[p.id]) cs.svcState[p.id] = {};
+    SVC_KEYS.forEach(k => {
+      const cb = document.getElementById('cb_' + p.id + '_' + k);
+      if (cb) cb.addEventListener('change', () => {
+        cs.svcState[p.id][k] = cb.checked;
+        updateRowTotal(p.id, cs);
+        updateSummary(c);
+        saveClients();
+      });
+    });
+    const trash = document.getElementById('trash_' + p.id);
+    if (trash) trash.addEventListener('click', () => deselectPart(c, p.id));
+  });
+
+  // Detail checkboxes
+  (cs.details||[]).forEach(d => {
+    attachDetailEvents(c, d.id);
+  });
+
+  // Add detail button
+  const addBtn = document.getElementById('add-detail-btn');
+  if (addBtn) addBtn.addEventListener('click', () => addDetail(c));
+}
+
+function attachDetailEvents(c, detailId) {
+  const cs = c.calcState;
+  if (!cs.svcState[detailId]) { cs.svcState[detailId] = {}; SVC_KEYS.forEach(k => cs.svcState[detailId][k] = false); }
+  SVC_KEYS.forEach(k => {
+    const cb = document.getElementById('cb_' + detailId + '_' + k);
+    if (cb) cb.addEventListener('change', () => {
+      cs.svcState[detailId][k] = cb.checked;
+      updateRowTotal(detailId, cs);
+      updateSummary(c);
+      saveClients();
+    });
+  });
+  const trash = document.getElementById('trash_' + detailId);
+  if (trash) trash.addEventListener('click', () => removeDetail(c, detailId));
+}
+
+function togglePart(c, id, name) {
+  const cs = c.calcState;
+  if (cs.selected.includes(id)) deselectPart(c, id);
+  else selectPart(c, id, name);
+}
+
+function selectPart(c, id, name) {
+  const cs = c.calcState;
+  if (cs.selected.includes(id)) return;
+  cs.selected.push(id);
+  if (!cs.svcState[id]) { cs.svcState[id] = {}; SVC_KEYS.forEach(k => cs.svcState[id][k] = false); }
+  document.querySelectorAll(`.detal[data-name="${id}"]`).forEach(el => el.classList.add('on'));
+  const t = document.getElementById('table_' + id);
+  if (t) {
+    t.classList.add('visible');
+    t.innerHTML = buildPartTableHTML(id, name, cs);
+    if (!cs.svcState[id]) cs.svcState[id] = {};
+    SVC_KEYS.forEach(k => {
+      const cb = document.getElementById('cb_' + id + '_' + k);
+      if (cb) cb.addEventListener('change', () => {
+        cs.svcState[id][k] = cb.checked;
+        updateRowTotal(id, cs);
+        updateSummary(c);
+        saveClients();
+      });
+    });
+    const trash = document.getElementById('trash_' + id);
+    if (trash) trash.addEventListener('click', () => deselectPart(c, id));
+    updateRowTotal(id, cs);
+  }
+  updateSummary(c);
+  saveClients();
+}
+
+function deselectPart(c, id) {
+  const cs = c.calcState;
+  cs.selected = cs.selected.filter(x => x !== id);
+  document.querySelectorAll(`.detal[data-name="${id}"]`).forEach(el => {
+    el.classList.remove('on');
+    el.style.setProperty('fill','#fff','important');
+    el.style.setProperty('fill-opacity','0.5','important');
+    setTimeout(() => { el.style.removeProperty('fill'); el.style.removeProperty('fill-opacity'); }, 50);
+  });
+  const t = document.getElementById('table_' + id);
+  if (t) t.classList.remove('visible');
+  if (cs.svcState[id]) SVC_KEYS.forEach(k => cs.svcState[id][k] = false);
+  updateSummary(c);
+  saveClients();
+}
+
+function addDetail(c) {
+  const cs = c.calcState;
+  if (!cs.details) cs.details = [];
+  if (!cs._detailPrices) cs._detailPrices = {};
+  cs.detailUid = (cs.detailUid || 0) + 1;
+  const uid = cs.detailUid;
+  const id = 'detail_' + uid;
+  const num = cs.details.length + 1;
+  const name = 'Деталь' + (num > 1 ? ' ' + num : '');
+  cs.details.push({ id, name });
+  cs._detailPrices[id] = { ...DETAIL_BASE };
+  cs.svcState[id] = {}; SVC_KEYS.forEach(k => cs.svcState[id][k] = false);
+
+  const sec = document.getElementById('tables-section');
+  const div = document.createElement('div');
+  div.className = 'part-table visible';
+  div.id = 'table_' + id;
+  const pr = getPrices(id, cs.tier, cs);
+  div.innerHTML = buildRowHTML(id, name, pr, cs.svcState[id]);
+  sec.appendChild(div);
+  attachDetailEvents(c, id);
+  updateSummary(c);
+  saveClients();
+}
+
+function removeDetail(c, id) {
+  const cs = c.calcState;
+  cs.details = (cs.details||[]).filter(d => d.id !== id);
+  delete cs.svcState[id];
+  if (cs._detailPrices) delete cs._detailPrices[id];
+  const div = document.getElementById('table_' + id);
+  if (div) div.remove();
+  // Renumber
+  (cs.details||[]).forEach((d, idx) => {
+    const newName = 'Деталь' + (cs.details.length > 1 ? ' ' + (idx+1) : '');
+    d.name = newName;
+    const nameEl = document.querySelector('#table_' + d.id + ' .part-name-val');
+    const mobileEl = document.querySelector('#table_' + d.id + ' .mobile-part-name');
+    if (nameEl) nameEl.textContent = newName;
+    if (mobileEl) mobileEl.textContent = newName;
+  });
+  updateSummary(c);
+  saveClients();
+}
+
+function rebuildAllTables(c) {
+  const cs = c.calcState;
+  PARTS.forEach(p => {
+    const t = document.getElementById('table_' + p.id);
+    if (t && cs.selected.includes(p.id)) {
+      t.innerHTML = buildPartTableHTML(p.id, p.name, cs);
+      SVC_KEYS.forEach(k => {
+        const cb = document.getElementById('cb_' + p.id + '_' + k);
+        if (cb) cb.addEventListener('change', () => {
+          cs.svcState[p.id][k] = cb.checked;
+          updateRowTotal(p.id, cs);
+          updateSummary(c);
+          saveClients();
+        });
+      });
+      const trash = document.getElementById('trash_' + p.id);
+      if (trash) trash.addEventListener('click', () => deselectPart(c, p.id));
+      updateRowTotal(p.id, cs);
+    }
+  });
+  (cs.details||[]).forEach(d => {
+    const t = document.getElementById('table_' + d.id);
+    if (t) {
+      const pr = getPrices(d.id, cs.tier, cs);
+      t.innerHTML = buildRowHTML(d.id, d.name, pr, cs.svcState[d.id]||{});
+      attachDetailEvents(c, d.id);
+      updateRowTotal(d.id, cs);
+    }
+  });
+}
+
+function updateRowTotal(partId, cs) {
+  const pr = getPrices(partId, cs.tier, cs);
+  let sum = 0;
+  SVC_KEYS.forEach(k => { if (cs.svcState[partId] && cs.svcState[partId][k]) sum += pr[k]; });
+  const el = document.getElementById('total_' + partId);
+  if (el) el.textContent = sum.toLocaleString('ru') + ' ₽';
+}
+
+// ═══════════════════════════════════════════════════════════
+// SUMMARY & COST CALCULATION
+// ═══════════════════════════════════════════════════════════
+function updateSummary(c) {
+  const cs = c.calcState;
+  let total = 0, su = 0, z = 0, rem = 0, paint = 0;
+  let repairParts = 0, paintCost = 0, otherCost = 0;
+  let detailCount = 0;
+
+  const allIds = [...cs.selected, ...(cs.details||[]).map(d => d.id)];
+  allIds.forEach(id => {
+    const pr = getPrices(id, cs.tier, cs);
+    const st = cs.svcState[id] || {};
+    SVC_KEYS.forEach(k => {
+      if (st[k]) {
+        const v = pr[k];
+        total += v;
+        if (k === 's')  { su += v; otherCost += v; }
+        if (k === 'rc') { otherCost += v; }
+        if (k === 'z')  { z += v; otherCost += v; }
+        if (k === 'p1') paint += v;
+        if (k === 'p2') paint += v;
+        if (k === 'r1' || k === 'r2') rem += v;
+      }
+    });
+    // Count repair ops for cost
+    if (st.r1 || st.r2) repairParts++;
+    // Count paint ops for cost
+    if (st.p2) paintCost += PAINT_COST_2;
+    else if (st.p1) paintCost += PAINT_COST_1;
+    detailCount++;
+  });
+
+  const totalRepairCost = repairParts * REPAIR_COST_PER_PART;
+  const totalCost = totalRepairCost + paintCost + otherCost * 0.15; // ~15% накладные на снятие/замену
+  const profit = total - totalRepairCost - paintCost;
+
+  // Update DOM
+  const sel = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+  sel('sum-total', total.toLocaleString('ru') + ' ₽');
+  sel('sum-count', allIds.length);
+  sel('sum-su', su.toLocaleString('ru') + ' ₽');
+  sel('sum-z', z.toLocaleString('ru') + ' ₽');
+  sel('sum-rem', rem.toLocaleString('ru') + ' ₽');
+  sel('sum-paint', paint.toLocaleString('ru') + ' ₽');
+  sel('cost-repair', totalRepairCost.toLocaleString('ru') + ' ₽');
+  sel('cost-paint', paintCost.toLocaleString('ru') + ' ₽');
+  sel('cost-other', Math.round(otherCost * 0.15).toLocaleString('ru') + ' ₽');
+
+  const profitEl = document.getElementById('cost-profit');
+  if (profitEl) {
+    profitEl.textContent = profit.toLocaleString('ru') + ' ₽';
+    profitEl.className = 'profit-val' + (profit < 0 ? ' loss' : '');
+  }
+
+  // Update client status
+  if (allIds.length > 0) c.status = 'calc';
+  renderClientList(document.getElementById('client-search').value);
+  saveClients();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODAL: NEW / EDIT CLIENT
+// ═══════════════════════════════════════════════════════════
+function openNewClientModal() {
+  editingClientId = null;
+  document.getElementById('modal-title').textContent = 'Новый клиент';
+  ['name','phone','vin','plate','car','color','note'].forEach(f => {
+    const el = document.getElementById('f-' + f);
+    if (el) el.value = '';
+  });
+  document.getElementById('client-modal').classList.add('open');
+}
+
+function openEditClientModal(id) {
+  const c = clients.find(c => c.id === id);
+  if (!c) return;
+  editingClientId = id;
+  document.getElementById('modal-title').textContent = 'Редактировать клиента';
+  document.getElementById('f-name').value = c.name || '';
+  document.getElementById('f-phone').value = c.phone || '';
+  document.getElementById('f-vin').value = c.vin || '';
+  document.getElementById('f-plate').value = c.plate || '';
+  document.getElementById('f-car').value = c.car || '';
+  document.getElementById('f-color').value = c.color || '';
+  document.getElementById('f-note').value = c.note || '';
+  document.getElementById('client-modal').classList.add('open');
+}
+
+function saveClient() {
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  if (!name) { alert('Введите имя клиента'); return; }
+
+  if (editingClientId) {
+    const c = clients.find(c => c.id === editingClientId);
+    if (c) {
+      c.name = name; c.phone = phone;
+      c.vin = document.getElementById('f-vin').value.trim().toUpperCase();
+      c.plate = document.getElementById('f-plate').value.trim().toUpperCase();
+      c.car = document.getElementById('f-car').value.trim();
+      c.color = document.getElementById('f-color').value.trim();
+      c.note = document.getElementById('f-note').value.trim();
+    }
+  } else {
+    const newClient = {
+      id: 'c_' + Date.now(),
+      name, phone,
+      vin: document.getElementById('f-vin').value.trim().toUpperCase(),
+      plate: document.getElementById('f-plate').value.trim().toUpperCase(),
+      car: document.getElementById('f-car').value.trim(),
+      color: document.getElementById('f-color').value.trim(),
+      note: document.getElementById('f-note').value.trim(),
+      status: 'new',
+      createdAt: new Date().toISOString(),
+      calcState: defaultCalcState(),
+    };
+    clients.unshift(newClient);
+    activeClientId = newClient.id;
+  }
+
+  saveClients();
+  closeModal('client-modal');
+  renderClientList();
+
+  if (editingClientId) {
+    openClient(editingClientId);
+  } else {
+    openClient(activeClientId);
+  }
+}
+
+function deleteClient(id) {
+  if (!confirm('Удалить клиента? Все расчёты будут потеряны.')) return;
+  clients = clients.filter(c => c.id !== id);
+  saveClients();
+  if (activeClientId === id) {
+    activeClientId = null;
+    document.getElementById('work-empty').style.display = 'flex';
+    document.getElementById('client-workspace').style.display = 'none';
+    document.getElementById('client-workspace').innerHTML = '';
+  }
+  renderClientList();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// Close modal on overlay click
+document.getElementById('client-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal('client-modal');
+});
+
+// ═══════════════════════════════════════════════════════════
+// PDF / PRINT
+// ═══════════════════════════════════════════════════════════
+function printPDF() {
+  const c = clients.find(c => c.id === activeClientId);
+  if (!c) return;
+  const cs = c.calcState;
+  const allIds = [...(cs.selected||[]), ...(cs.details||[]).map(d => d.id)];
+  const date = new Date().toLocaleDateString('ru-RU');
+  const shortLabels = ['С/У','Разборка','Замена','Окрас 1','Окрас 2','Рем >50%','Рем <50%'];
+
+  let rows = '';
+  let hasRows = false;
+
+  allIds.forEach(id => {
+    // Определяем название
+    const part = PARTS.find(p => p.id === id);
+    const detail = (cs.details||[]).find(d => d.id === id);
+    const name = part ? part.name : (detail ? detail.name : 'Деталь');
+
+    // Получаем цены напрямую — не через getPrices чтобы избежать ошибок
+    let bp;
+    if (id.startsWith('detail_')) {
+      bp = (cs._detailPrices && cs._detailPrices[id]) ? cs._detailPrices[id] : {...DETAIL_BASE};
+    } else {
+      bp = BASE_PRICES[id];
+    }
+    if (!bp) return;
+    const add = TIER_ADD[cs.tier] || 0;
+    const pr = {
+      s: bp.s, rc: bp.rc > 0 ? bp.rc + add : 0,
+      z: bp.z > 0 ? bp.z + add : 0,
+      p1: bp.p1, p2: bp.p2, r2: bp.r2, r1: bp.r1
+    };
+
+    const st = cs.svcState[id] || {};
+    const anyChecked = SVC_KEYS.some(k => st[k]);
+    if (!anyChecked) return;
+
+    let rowTotal = 0;
+    SVC_KEYS.forEach(k => { if (st[k] && pr[k] > 0) rowTotal += pr[k]; });
+    hasRows = true;
+
+    const cells = SVC_KEYS.map((k,i) => {
+      const v = pr[k];
+      const active = st[k] && v > 0;
+      return `<td style="text-align:center;padding:6px 3px;border:1px solid #e0e0e0;font-size:11px;${active?'color:#111;font-weight:700;':'color:#ccc;'}">${active ? v.toLocaleString('ru')+'\u202f₽' : '—'}</td>`;
+    }).join('');
+
+    rows += `<tr><td style="padding:7px 10px;border:1px solid #e0e0e0;font-weight:600;font-size:13px;">${escHtml(name)}</td>${cells}<td style="text-align:right;padding:7px 10px;border:1px solid #e0e0e0;font-weight:700;font-size:13px;color:#d20124;white-space:nowrap;">${rowTotal.toLocaleString('ru')}\u202f₽</td></tr>`;
+  });
+
+  // Считаем итог напрямую
+  let grandTotal = 0;
+  allIds.forEach(id => {
+    let bp = id.startsWith('detail_')
+      ? ((cs._detailPrices && cs._detailPrices[id]) ? cs._detailPrices[id] : {...DETAIL_BASE})
+      : BASE_PRICES[id];
+    if (!bp) return;
+    const add = TIER_ADD[cs.tier] || 0;
+    const pr = { s:bp.s, rc:bp.rc>0?bp.rc+add:0, z:bp.z>0?bp.z+add:0, p1:bp.p1, p2:bp.p2, r2:bp.r2, r1:bp.r1 };
+    const st = cs.svcState[id] || {};
+    SVC_KEYS.forEach(k => { if (st[k] && pr[k] > 0) grandTotal += pr[k]; });
+  });
+
+  const clientInfoRows = [
+    `<tr><td style="color:#888;padding:3px 0;width:110px;font-size:13px;">Клиент:</td><td style="font-weight:700;padding:3px 16px 3px 0;font-size:13px;">${escHtml(c.name)}</td><td style="color:#888;padding:3px 0;width:110px;font-size:13px;">Телефон:</td><td style="font-size:13px;">${escHtml(c.phone||'—')}</td></tr>`,
+    `<tr><td style="color:#888;padding:3px 0;font-size:13px;">Автомобиль:</td><td style="padding:3px 16px 3px 0;font-size:13px;">${escHtml(c.car||'—')}</td><td style="color:#888;padding:3px 0;font-size:13px;">Гос. номер:</td><td style="font-weight:700;font-size:13px;">${escHtml(c.plate||'—')}</td></tr>`,
+    c.vin ? `<tr><td style="color:#888;padding:3px 0;font-size:13px;">VIN:</td><td colspan="3" style="font-family:monospace;letter-spacing:1px;font-size:12px;padding:3px 0;">${escHtml(c.vin)}</td></tr>` : '',
+    c.color ? `<tr><td style="color:#888;padding:3px 0;font-size:13px;">Цвет:</td><td colspan="3" style="font-size:13px;padding:3px 0;">${escHtml(c.color)}</td></tr>` : '',
+  ].filter(Boolean).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Расчёт — ${escHtml(c.name)}</title>
+<style>
+  @page { size:A4; margin:14mm 14mm 12mm 14mm; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;border-bottom:3px solid #d20124;margin-bottom:14px;}
+  .logo{font-size:26px;font-weight:900;text-transform:uppercase;letter-spacing:3px;line-height:1;}
+  .logo-sub{color:#888;font-size:11px;margin-top:4px;}
+  .hdr-r{text-align:right;font-size:12px;color:#666;line-height:1.8;}
+  .hdr-r b{color:#111;}
+  .cbox{background:#f7f7f7;padding:10px 14px;border-left:4px solid #d20124;margin-bottom:14px;}
+  table.main{width:100%;border-collapse:collapse;margin-bottom:14px;}
+  table.main thead tr{background:#1a1a1a;color:#fff;}
+  table.main th{padding:7px 4px;font-size:10px;font-weight:600;text-align:center;}
+  table.main th:first-child{text-align:left;padding-left:10px;min-width:110px;}
+  table.main th:last-child{text-align:right;padding-right:10px;}
+  table.main tbody tr{border-bottom:1px solid #eee;}
+  .total-row{text-align:right;padding:10px 0;border-top:2px solid #eee;margin-bottom:12px;}
+  .footer{color:#bbb;font-size:10px;border-top:1px solid #eee;padding-top:8px;line-height:1.5;}
+  .note{background:#fffbf0;border:1px solid #ffe082;padding:8px 12px;font-size:12px;color:#555;margin-bottom:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div><div class="logo">CarService</div><div class="logo-sub">Магнитогорск · carservicemgn.ru</div></div>
+    <div class="hdr-r">Расчёт от <b>${date}</b><br>Уровень: <b>${TIER_LABELS[cs.tier]}</b></div>
+  </div>
+  <div class="cbox"><table style="width:100%;border-collapse:collapse;">${clientInfoRows}</table></div>
+  <table class="main">
+    <thead><tr>
+      <th style="text-align:left;padding-left:10px;">Деталь</th>
+      ${shortLabels.map(l=>`<th>${l}</th>`).join('')}
+      <th style="text-align:right;padding-right:10px;">Сумма</th>
+    </tr></thead>
+    <tbody>${hasRows ? rows : '<tr><td colspan="9" style="padding:16px;text-align:center;color:#aaa;">Нет отмеченных услуг</td></tr>'}</tbody>
+  </table>
+  <div class="total-row"><span style="font-size:13px;color:#888;">Итого к оплате:&nbsp;</span><span style="font-size:26px;font-weight:900;color:#d20124;">${grandTotal.toLocaleString('ru')}&nbsp;₽</span></div>
+  ${c.note?`<div class="note"><b>Примечание:</b> ${escHtml(c.note)}</div>`:''}
+  <div class="footer">Расчёт является предварительным и может быть скорректирован после осмотра автомобиля. Данный документ не является договором.</div>
+</div>
+<script>window.onload=function(){window.print();};<\/script>
+</body></html>`;
+
+  const win = window.open('', '_blank', 'width=900,height=700');
+  if (!win) { alert('Разрешите всплывающие окна для этого сайта'); return; }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════
+// SVG STRINGS
+// ═══════════════════════════════════════════════════════════
+const CAR_SVG_SEDAN = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 870 400">
+  <rect width="870" height="400" fill="#333"/>
+  <path class="detal" data-name="pb" d="m64.99974,237.49905c0,0 -7.49997,0 -7.49997,0c0,0 -1,-6.49997 -1,-6.49997c0,0 -6.99997,1.49999 -8.99996,17.49993c-7.49997,15.49993 -6.99997,15.99993 -6.99997,15.99993c0,0 -3.49999,13.49995 0.5,23.49991c3.99998,9.99996 -1.5,29.99988 -1.5,29.99988c0,0 1.99999,9.99996 32.49987,11.49995c30.49988,1.5 44.49982,3.49999 44.49982,3.49999c0,0 -11.99995,-67.49973 38.99985,-91.99963c-3.49999,-6.49998 -7.49998,-7.49998 -31.49988,-8.99997c-6.99997,7.99997 -23.9999,22.49991 -23.9999,22.49991c0,0 -40.49984,5.49998 -40.49984,-5.49998c8.99997,-11.49995 5.49998,-11.49995 5.49998,-11.49995z"/>
+  <path class="detal" data-name="lpk" d="m57.49977,230.99908c0,0 101.99959,-44.49983 255.49898,-48.99981c-4.99998,12.99995 -4.99998,12.99995 -4.99998,12.99995c0,0 18.99992,-1.99999 18.99992,-1.99999c0,0 -20.99991,10.99995 -20.99991,29.99988c0,18.99992 -0.5,75.99969 4.49998,82.49967c-48.99981,2.49999 -48.99981,2.49999 -48.99981,2.49999c0,0 1,-59.99976 -52.49979,-71.99971c-26.49989,-4.49999 -30.49987,-4.99998 -53.49978,4.49998c-1.99999,-7.99997 -10.49996,-8.99996 -31.99987,-9.99996c-15.49995,0 -30.49989,-6.49998 -59.49977,6.49997c-8.49996,0 -8.49996,0 -8.49996,0c0,0 1.99999,-5.99997 1.99999,-5.99997z"/>
+  <path class="detal" data-name="kap" d="m55.99978,229.99908c0,0 13.49994,-21.49991 80.99967,-31.49987c18.49993,-10.99996 24.9999,-14.99994 138.49945,-20.99992c34.49986,4.49998 35.99985,3.99998 34.49986,4.49998c-68.49973,8.99997 -95.49962,-3.49998 -253.99898,47.99981z"/>
+  <path class="detal" data-name="lpd" d="m310.99876,306.99877c0,0 -8.99997,-29.49988 -3.99999,-91.99963c4.99998,-5.49998 3.99999,-8.99996 17.99993,-20.49992c66.99973,-55.49978 84.99966,-66.49973 129.99948,-79.99968c8.99996,-1.99999 23.49991,-3.99998 67.99973,-4.49998c-10.99996,71.99971 -10.99996,71.99971 -10.99996,71.99971c0,0 -11.49995,63.99975 -5.99997,117.99953c-196.49922,6.49997 -194.99922,6.99997 -194.99922,6.99997z"/>
+  <path class="detal" data-name="lp" d="m261.498954,308.498766c0,0 -1.499994,23.999904 -1.499994,23.999904c0,0 371.998512,-5.499978 371.998512,-5.499978c0,0 -2.49999,-15.999936 2.999988,-34.99986c-130.999476,8.499966 -132.49947,7.999968 -132.49947,7.999968c0,0 -240.999036,8.499966 -240.999036,8.499966z"/>
+  <path class="detal" data-name="lzd" d="m523.9979,109.49956c0,0 -11.49995,74.4997 -11.49995,74.4997c0,0 -12.49995,71.49972 -5.99998,115.49954c114.99954,-6.99997 114.99954,-6.99997 114.99954,-6.99997c0,0 2,-24.9999 32.99987,-62.99975c10.49996,-7.49997 24.9999,-35.99985 30.99988,-50.99979c15.99994,-25.9999 1.99999,-32.99987 1.99999,-32.99987c-45.49982,-35.99986 -163.49935,-35.99986 -163.49935,-35.99986z"/>
+  <path class="detal" data-name="zb" d="m735.99706,244.99902c0,0 49.9998,-10.99996 61.99975,-9.99996c14.99994,-6.49997 4.49998,-1.49999 16.49993,-12.49995c13.99995,0 7.49998,0.5 13.99995,0c-2.49999,4.99998 -2.49999,7.49997 10.49995,21.99991c2.99999,29.49988 1.5,30.49988 -12.49995,60.49976c-68.99972,13.49995 -68.99972,13.49995 -68.99972,13.49995c0,0 20.49992,-37.49985 -21.49991,-73.49971z"/>
+  <path class="detal" data-name="lzk" d="m312.99875,181.49927c0,0 -4.49998,13.49995 -4.49998,13.49995c0,0 18.49992,-1.99999 18.49992,-1.99999c0,0 69.49972,-69.99972 135.99946,-80.49968c114.49954,-8.49997 139.99944,3.49998 196.49921,16.99993c24.9999,17.49993 41.49983,11.49995 29.99988,44.49982c-32.49987,51.99979 -20.49991,34.99987 -32.49987,52.49979c-6.49997,10.49996 -27.99989,29.49989 -34.99986,65.99974c13.99995,-0.5 13.99995,-0.5 13.99995,-0.5c0,0 -0.50001,-31.49987 44.49982,-53.49978c23.4999,-4.49998 26.49989,-6.99998 55.99977,6.99997c65.49974,-10.49996 46.49982,-10.49996 64.99974,-10.99996c6.49998,-3.99998 6.49998,-3.49998 6.49998,-3.49998c0,0 5.49998,-7.99997 5.49998,-7.99997c0,0 -6.99998,-18.99993 -6.99998,-18.99993c-3.49999,-2.99999 9.99996,-18.49992 9.99996,-18.49992c0,0 5.49998,-0.5 6.49998,0.5c-1.5,-6.99998 -2.99999,-6.99998 -2.99999,-6.99998c0,0 1.49999,-11.99995 -4.49998,-11.49995c-5.99998,0.5 -57.49977,1.49999 -57.49977,-1.49999c-17.49993,-12.49995 -113.99955,-54.49979 -129.99948,-59.49977c-9.99996,-3.49999 -19.49992,1 -19.49992,1c0,0 -121.49952,-16.99993 -215.49914,8.99996c14.49994,-2.99998 24.4999,2.99999 24.4999,2.99999c-24.9999,12.49995 -100.4996,61.49976 -100.4996,61.49976c-1.99999,0.99999 -3.99998,0.49999 -3.99998,0.49999z"/>
+</svg>`;
+
+const TOP_VIEW_SVG = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 739">
+  <rect width="480" height="739" fill="#1a1a1a"/>
+  <g stroke="#888888" fill="#ffffff" style="opacity:0.8">
+    <path class="detal" data-name="lp" fill="#fff" d="M49.1,208.5c-3.8-0.1-7.6-0.7-11.1-1.7h-0.4v210.1c3.7-1.1,7.5-1.7,11.5-1.8V208.5z"/>
+    <path class="detal" data-name="lpd" fill="#ffffff" d="M163.1,304.9c-5.2-23-36.7-75.3-36.7-75.3c-5.8-5-14.7-6.1-22.8-6H52.8v116.1h73.5L169,353C168.5,337.5,166.8,321.1,163.1,304.9z M126.2,327.4l-4.9-76.7c-0.2-2.8,3.4-4,5-1.8c8.7,12.4,25.2,38.7,30.2,66.1c1.5,8.1,2.4,16.3,3,24.4L126.2,327.4z"/>
+    <path class="detal" data-name="lzd" fill="#ffffff" d="M134.5,441.9c16.6-18.8,27.9-31.7,31.7-36.1c1.8-13.9,3.1-30.8,2.8-49.1l-42.8-13.5H52.7v38.3l58.9,61.3c2.9,2.8,6.7,4.4,10.7,4.4h0.3C127.2,447.3,131.5,445.3,134.5,441.9z M126.2,354.7l34,8c-0.1,16.3-0.9,27.2-2.3,38.6l-22.4,23.3c-2.2,2.3-6,0.8-6.2-2.3L126.2,354.7z"/>
+    <path class="detal" data-name="lzk" fill="#ffffff" d="M98.5,530.4c0.3-3.3,2.6-6.3,6-7.1c4.3-1.1,8.6,1.5,9.7,5.8l4.4,17.4l7.6-2.1l5.8-39.1l22.8-52.3c3.7-8.5,6.5-17.4,8.2-26.6c0.8-4,1.6-8.7,2.3-14c-4.5,5.1-12.7,14.5-28.2,32c-3.7,4.2-9,6.5-14.5,6.5h-0.3c-5,0-9.7-1.9-13.3-5.5l-56.4-58.7v28.5c0.8,0,1.5,0.1,2.3,0.2c22.5,2.2,40,21.1,40.7,43.7c0.4,14.1-5.7,26.8-15.4,35.3l7.2,27.4C88.8,526.8,93.4,530.2,98.5,530.4z"/>
+    <path class="detal" data-name="lpk" fill="#fff" d="M94.6,111.8c-1.5,1.7-3.7,2.8-6.1,2.7c-4.4,0-8-3.7-7.9-8.1v-4.3c-2.6,0.7-4.5,3.1-4.5,6v18.1c11.5,8,19.1,21.1,19.5,35.9c0.7,24.8-18.6,45.3-43,46.4V220h50.8c2.1,0,4.2,0,6.3,0.1C113.8,151.6,98.9,119.5,94.6,111.8z"/>
+    <path class="detal" data-name="pp" fill="#fff" d="M430.9,208.5c3.8-0.1,7.6-0.7,11.1-1.7h0.4v210.1c-3.7-1.1-7.5-1.7-11.5-1.8V208.5z"/>
+    <circle fill="#333" cx="50.4" cy="163.3" r="35.9"/><circle fill="#555" cx="50.4" cy="163.3" r="23.8"/><circle fill="#333" cx="50.4" cy="163.3" r="17.9"/>
+    <circle fill="#333" cx="50.4" cy="460.2" r="35.9"/><circle fill="#555" cx="50.4" cy="460.2" r="23.8"/><circle fill="#333" cx="50.4" cy="460.2" r="17.9"/>
+    <circle fill="#333" cx="429.5" cy="163.3" r="35.9"/><circle fill="#555" cx="429.5" cy="163.3" r="23.8"/><circle fill="#333" cx="429.5" cy="163.3" r="17.9"/>
+    <circle fill="#333" cx="429.5" cy="460.2" r="35.9"/><circle fill="#555" cx="429.5" cy="460.2" r="23.8"/><circle fill="#333" cx="429.5" cy="460.2" r="17.9"/>
+    <path class="detal" data-name="ppd" fill="#fff" d="M311.1,353l42.7-13.3h73.5V223.6h-50.8c-8.1,0-17,1-22.8,6c0,0-31.5,52.3-36.7,75.3C313.2,321.1,311.5,337.5,311.1,353z M320.6,339.5c0.6-8.1,1.6-16.3,3-24.4c4.9-27.3,21.4-53.6,30.2-66.1c1.6-2.3,5.1-1,5,1.8l-4.9,76.7L320.6,339.5z"/>
+    <path class="detal" data-name="pzd" fill="#fff" transform="translate(480,0) scale(-1,1)" d="M134.5,441.9c16.6-18.8,27.9-31.7,31.7-36.1c1.8-13.9,3.1-30.8,2.8-49.1l-42.8-13.5H52.7v38.3l58.9,61.3c2.9,2.8,6.7,4.4,10.7,4.4h0.3C127.2,447.3,131.5,445.3,134.5,441.9z M126.2,354.7l34,8c-0.1,16.3-0.9,27.2-2.3,38.6l-22.4,23.3c-2.2,2.3-6,0.8-6.2-2.3L126.2,354.7z"/>
+    <path class="detal" data-name="pzk" fill="#fff" d="M381.5,530.4c-0.3-3.3-2.6-6.3-6-7.1c-4.3-1.1-8.6,1.5-9.7,5.8l-4.4,17.4l-7.6-2.1l-5.8-39.1L325.2,453c-3.7-8.5-6.5-17.4-8.2-26.6c-0.8-4-1.6-8.7-2.3-14c4.5,5.1,12.7,14.5,28.2,32c3.7,4.2,9,6.5,14.5,6.5h0.3c5,0,9.7-1.9,13.3-5.5l56.4-58.7v28.5c-0.8,0-1.5,0.1-2.3,0.2c-22.5,2.2-40,21.1-40.7,43.7c-0.4,14.1,5.7,26.8,15.4,35.3l-7.2,27.4C391.2,526.8,386.6,530.2,381.5,530.4z"/>
+    <path class="detal" data-name="ppk" fill="#fff" d="M385.4,111.8c1.5,1.7,3.7,2.8,6.1,2.7c4.4,0,8-3.7,7.9-8.1v-4.3c2.6,0.7,4.5,3.1,4.5,6v18.1c-11.5,8-19.1,21.1-19.5,35.9c-0.7,24.8,18.6,45.3,43,46.4V220h-50.8c-2.1,0-4.2,0-6.3,0.1C366.2,151.6,381.1,119.5,385.4,111.8z"/>
+    <path class="detal" data-name="kap" fill="#ffffff" d="M126,205.3C124.7,127.5,103,90.1,96.9,81l-0.2,25.6c0,0.5-0.1,0.9-0.1,1.3c1.6,2.3,21.6,33,16.9,112.3c4.6,0.5,9.1,1.7,13,4.6L126,205.3z"/>
+    <path class="detal" data-name="kap" fill="#ffffff" d="M354,205.3c1.3-77.8,23-115.2,29.1-124.3l0.2,25.6c0,0.5,0.1,0.9,0.1,1.3c-1.6,2.3-21.6,33-16.9,112.3c-4.6,0.5-9.1,1.7-13,4.6L354,205.3z"/>
+    <path class="detal" data-name="kap" fill="#ffffff" d="M170.7,222.2c16.7-14.8,53.4-16.4,65.7-16.4c1.1,0,6,0,7.1,0c12.4,0,49,1.6,65.7,16.4h5.8l-5.5-97.8l-31.3-23h-76.4l-31.3,23l-5.5,97.8H170.7z"/>
+    <path class="detal" data-name="kry" fill="#ffffff" d="M310.1,282.5l-3.4-6c-7.5-2.9-38.3-10.5-66.7-10.5s-59.1,7.6-66.7,10.5l-3.4,6c10.1,33.8,14.1,83.2,7.5,121.9l2.6,5.8h120l2.6-5.8C296,365.6,300,316.2,310.1,282.5z"/>
+    <path class="detal" data-name="zb" fill="#ffffff" d="M99,533.9c-6.8,0.1-13.1-4.5-14.9-11.4l-6.8-25.8c-7.5,5.5-16.7,8.8-26.7,8.8c-4.5,0-8.9-0.7-13-1.9l0,0c0.7,4.4,15,45.4,15,45.4l15.7,2.4l5.2,7.6l29.8-8.3L99,533.9z"/>
+    <path class="detal" data-name="zb" fill="#ffffff" d="M381,533.9c6.8,0.1,13.1-4.5,14.9-11.4l6.8-25.8c7.5,5.5,16.7,8.8,26.7,8.8c4.5,0,8.9-0.7,13-1.9l0,0c-0.7,4.4-15,45.4-15,45.4l-15.7,2.4l-5.2,7.6l-29.8-8.3L381,533.9z"/>
+    <path class="detal" data-name="zb" fill="#ffffff" d="M306.5,566.4c0,0-2.6-9.3-2.7-11.2h-12.9l0,0H284l-6.5,11.9h-75.2l-6.5-11.9H189l0,0h-12.9c-0.1,1.9-2.7,11.2-2.7,11.2s-6.5,0.1-7.9,0.5c0,2,2.7,31.4,2.7,31.4h11.6l5-10H295l5,10h11.6c0,0,2.7-29.4,2.7-31.4C313,566.5,306.5,566.4,306.5,566.4z"/>
+    <path class="detal" data-name="pb" fill="#fff" d="M305.7,41.6h-17.4l-5.1,13.8h-86.5l-5.1-13.8h-17.4l-9.1,13.8v12.2h4.9c5.2,0,9.3,4.2,9.3,9.3v4.2h11.6c3.9,0,7.5,2.2,9.4,5.6l2.7,5h73.8l2.7-5c1.9-3.5,5.5-5.6,9.4-5.6h11.6V77c0-5.2,4.2-9.3,9.3-9.3h4.9V55.5L305.7,41.6z"/>
+    <path class="detal" data-name="pb" fill="#fff" d="M72.6,123.9v-15.8c0-4.8,3.5-8.8,8.1-9.6l0.2-16.7l-22.3,0.1L55.1,91l-9.8,3l-7.6,26c5.4-1.6,11.3-2.2,17.4-1.6C61.4,119,67.3,121,72.6,123.9z"/>
+    <path class="detal" data-name="pb" fill="#fff" d="M407.4,123.9v-15.8c0-4.8-3.5-8.8-8.1-9.6l-0.2-16.7l22.3,0.1l3.5,9.1l9.8,3.1l7.6,26.1c-5.4-1.6-11.3-2.2-17.4-1.6C418.6,119,412.7,121,407.4,123.9z"/>
+    <path class="detal" data-name="bag" fill="#ffffff" d="M274.3,535.7h16.6c0-7.4,0-20.7,0-29.6h-7.5c-9,4.2-25.1,7-43.4,7c-18.4,0-34.5-2.8-43.4-7H189c0,8.9,0,22.2,0,29.6h16.6c5.4,0,9.7,4.4,9.7,9.7l0,0c0,5.4-4.4,9.7-9.7,9.7H201l4,7.5h69.9l4-7.5h-4.6c-5.4,0-9.7-4.4-9.7-9.7l0,0C264.6,540.1,269,535.7,274.3,535.7z"/>
+  </g>
+</svg>`;
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+renderClientList();
+</script>
+</body>
+</html>
