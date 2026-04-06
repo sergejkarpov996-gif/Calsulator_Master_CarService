@@ -656,6 +656,21 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   font-family: 'PT Sans', sans-serif;
   line-height: 1.4;
 }
+.cost-adj-btn {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  color: #777;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 7px;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+  border-radius: 2px;
+  letter-spacing: 0.3px;
+}
+.cost-adj-btn:hover { background: #252525; color: #bbb; border-color: #444; }
 .cost-profit {
   padding: 16px 20px;
   display: flex;
@@ -1678,7 +1693,7 @@ let editingClientId = null;
 function defaultCalcState() {
   const svcState = {};
   PARTS.forEach(p => { svcState[p.id] = {}; SVC_KEYS.forEach(k => svcState[p.id][k] = false); });
-  return { tier: 'light', selected: [], svcState, details: [], detailUid: 0 };
+  return { tier: 'light', selected: [], svcState, details: [], detailUid: 0, extraRepair: 0, extraPaint: 0 };
 }
 
 function getClientState(id) {
@@ -1945,11 +1960,25 @@ function buildWorkspace(c) {
           <div class="c-label">Расходные материалы</div>
           <div class="c-val" id="cost-repair">0 ₽</div>
           <div class="c-note">~4 000 ₽ за деталь (рем. &lt;50% и &gt;50%)</div>
+          <div class="cost-adj" style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+            <button class="cost-adj-btn" data-type="repair" data-delta="-4000">−4 000</button>
+            <button class="cost-adj-btn" data-type="repair" data-delta="-1000">−1 000</button>
+            <span class="cost-extra" id="extra-repair" style="font-family:'Oswald',sans-serif;font-size:11px;color:#777;min-width:50px;text-align:center;">0 ₽</span>
+            <button class="cost-adj-btn" data-type="repair" data-delta="1000">+1 000</button>
+            <button class="cost-adj-btn" data-type="repair" data-delta="4000">+4 000</button>
+          </div>
         </div>
         <div class="cost-cell paint">
           <div class="c-label">Краска</div>
           <div class="c-val" id="cost-paint">0 ₽</div>
           <div class="c-note">3 000 ₽ (1 сл.) / 6 000 ₽ (2 сл. — Окрас 2 ст.)</div>
+          <div class="cost-adj" style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+            <button class="cost-adj-btn" data-type="paint" data-delta="-3000">−3 000</button>
+            <button class="cost-adj-btn" data-type="paint" data-delta="-1000">−1 000</button>
+            <span class="cost-extra" id="extra-paint" style="font-family:'Oswald',sans-serif;font-size:11px;color:#777;min-width:50px;text-align:center;">0 ₽</span>
+            <button class="cost-adj-btn" data-type="paint" data-delta="1000">+1 000</button>
+            <button class="cost-adj-btn" data-type="paint" data-delta="3000">+3 000</button>
+          </div>
         </div>
         <div class="cost-cell other">
           <div class="c-label">Прочие затраты</div>
@@ -2300,9 +2329,12 @@ function updateSummary(c) {
     detailCount++;
   });
 
-  const totalRepairCost = repairParts * REPAIR_COST_PER_PART;
-  const totalCost = totalRepairCost + paintCost + otherCost * 0.15; // ~15% накладные на снятие/замену
-  const profit = total - totalRepairCost - paintCost;
+  const extraRepair = cs.extraRepair || 0;
+  const extraPaint  = cs.extraPaint  || 0;
+  const totalRepairCost = repairParts * REPAIR_COST_PER_PART + extraRepair;
+  const totalPaintCost  = paintCost + extraPaint;
+  const totalCost = totalRepairCost + totalPaintCost + otherCost * 0.15;
+  const profit = total - totalRepairCost - totalPaintCost;
 
   // Update DOM
   const sel = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
@@ -2313,8 +2345,20 @@ function updateSummary(c) {
   sel('sum-rem', rem.toLocaleString('ru') + ' ₽');
   sel('sum-paint', paint.toLocaleString('ru') + ' ₽');
   sel('cost-repair', totalRepairCost.toLocaleString('ru') + ' ₽');
-  sel('cost-paint', paintCost.toLocaleString('ru') + ' ₽');
+  sel('cost-paint', totalPaintCost.toLocaleString('ru') + ' ₽');
   sel('cost-other', Math.round(otherCost * 0.15).toLocaleString('ru') + ' ₽');
+
+  // Показываем корректировки
+  const extraRepairEl = document.getElementById('extra-repair');
+  if (extraRepairEl) {
+    extraRepairEl.textContent = (extraRepair >= 0 ? '+' : '') + extraRepair.toLocaleString('ru') + ' ₽';
+    extraRepairEl.style.color = extraRepair > 0 ? '#ff9800' : extraRepair < 0 ? '#4caf50' : '#555';
+  }
+  const extraPaintEl = document.getElementById('extra-paint');
+  if (extraPaintEl) {
+    extraPaintEl.textContent = (extraPaint >= 0 ? '+' : '') + extraPaint.toLocaleString('ru') + ' ₽';
+    extraPaintEl.style.color = extraPaint > 0 ? '#2196f3' : extraPaint < 0 ? '#4caf50' : '#555';
+  }
 
   const profitEl = document.getElementById('cost-profit');
   if (profitEl) {
@@ -3281,6 +3325,20 @@ document.addEventListener('click', function(e) {
     rebuildAllTables(c);
     updateSummary(c);
     saveClients();
+  }
+
+  // Кнопки корректировки затрат +/-
+  const adjBtn = e.target.closest('.cost-adj-btn[data-type][data-delta]');
+  if (adjBtn) {
+    if (!activeClientId) return;
+    const c = clients.find(c => c.id === activeClientId);
+    if (!c) return;
+    const cs = c.calcState;
+    const type  = adjBtn.dataset.type;
+    const delta = parseInt(adjBtn.dataset.delta, 10);
+    if (type === 'repair') cs.extraRepair = (cs.extraRepair || 0) + delta;
+    if (type === 'paint')  cs.extraPaint  = (cs.extraPaint  || 0) + delta;
+    updateSummary(c);
   }
 });
 </script>
