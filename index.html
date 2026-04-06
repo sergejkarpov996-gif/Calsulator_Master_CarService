@@ -83,58 +83,76 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   overflow: hidden;
 }
 .client-panel-header {
-  padding: 16px;
+  padding: 14px 12px;
   border-bottom: 1px solid #2a2a2a;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 .client-panel-title {
   font-family: 'Oswald', sans-serif;
   color: #fff;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--red);
+  display: inline-block;
+  margin-bottom: 2px;
+}
+.search-wrap {
+  position: relative;
+}
+.search-wrap .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  pointer-events: none;
 }
 .search-box {
-  background: #222;
-  border: 1px solid #333;
-  border-radius: 2px;
-  padding: 8px 12px;
-  color: #ccc;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 8px 10px 8px 32px;
+  color: #ddd;
   font-family: 'PT Sans', sans-serif;
   font-size: 13px;
   width: 100%;
   outline: none;
+  transition: border-color .15s;
 }
-.search-box:focus { border-color: var(--red); }
-.search-box::placeholder { color: #555; }
+.search-box:focus { border-color: var(--red); background: #1e1e1e; }
+.search-box::placeholder { color: #444; }
 .btn-new-client {
   background: var(--red);
   color: #fff;
   border: none;
   font-family: 'Oswald', sans-serif;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding: 10px;
+  padding: 11px;
   cursor: pointer;
   width: 100%;
   transition: background .15s;
+  border-radius: 2px;
+  margin-top: 2px;
 }
 .btn-new-client:hover { background: #b50120; }
 
 .client-list { overflow-y: auto; flex: 1; }
 .client-item {
-  padding: 12px 16px;
+  padding: 14px 16px;
   border-bottom: 1px solid #1e1e1e;
   cursor: pointer;
   transition: background .15s;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   position: relative;
 }
 .client-item:hover { background: #1e1e1e; }
@@ -142,13 +160,13 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 .client-item.active { padding-left: 13px; }
 .client-name {
   font-family: 'Oswald', sans-serif;
-  color: #ddd;
-  font-size: 14px;
-  font-weight: 500;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
 }
 .client-sub {
-  color: #666;
-  font-size: 11px;
+  color: #888;
+  font-size: 12px;
   font-family: 'PT Sans', sans-serif;
 }
 .client-sum {
@@ -157,8 +175,8 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   top: 50%;
   transform: translateY(-50%);
   font-family: 'Oswald', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--red);
 }
 .client-sum.zero { color: #444; }
@@ -274,25 +292,38 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 .tier-row {
   background: #0d0d0d;
   display: flex;
-  border-bottom: 1px solid #222;
+  border-bottom: 1px solid #1a1a1a;
 }
 .tier-btn {
   flex: 1;
-  padding: 12px 8px;
+  padding: 10px 8px 8px;
   text-align: center;
   font-family: 'Oswald', sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #555;
+  letter-spacing: 0.5px;
+  color: #444;
   cursor: pointer;
   border-bottom: 3px solid transparent;
+  border-right: 1px solid #1a1a1a;
   transition: all .2s;
   user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
-.tier-btn:hover { color: #999; }
-.tier-btn.active { color: #fff; border-bottom-color: var(--red); background: #1a1a1a; }
+.tier-btn:last-child { border-right: none; }
+.tier-btn .tier-sub { font-size: 10px; font-family: 'PT Sans', sans-serif; color: #333; font-weight: 400; text-transform: none; letter-spacing: 0; }
+.tier-btn:hover { color: #888; background: #111; }
+.tier-btn:hover .tier-sub { color: #555; }
+.tier-btn.active.tier-light { color: #66bb6a; border-bottom-color: #66bb6a; background: #0d1a0d; }
+.tier-btn.active.tier-light .tier-sub { color: #388e3c; }
+.tier-btn.active.tier-standard { color: #ffa726; border-bottom-color: #ffa726; background: #1a1200; }
+.tier-btn.active.tier-standard .tier-sub { color: #f57c00; }
+.tier-btn.active.tier-premium { color: var(--red); border-bottom-color: var(--red); background: #1a0000; }
+.tier-btn.active.tier-premium .tier-sub { color: #c62828; }
 
 /* ═══ CAR SELECTOR ══════════════════════════════════════════ */
 .calc-wrapper { padding: 16px 24px; }
@@ -367,9 +398,8 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 .tables-section { margin-top: 16px; }
 .part-table {
   display: none;
-  margin-bottom: 8px;
-  box-shadow: 0 0 6px rgba(0,0,0,.4);
-  background: #fff;
+  margin-bottom: 0;
+  background: transparent;
 }
 .part-table.visible { display: block; }
 .pt-inner { display: flex; flex-wrap: wrap; }
@@ -397,7 +427,7 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   padding: 5px 0; margin: -8px -8px 8px;
   font-family: 'Oswald', sans-serif; font-weight: 500;
 }
-.pt-name .part-name-val { font-size: 15px; color: #333; margin-top: 6px; font-weight: 600; }
+.pt-name .part-name-val { font-size: 16px; color: #333; margin-top: 6px; font-weight: 600; }
 .pt-services { flex: 1; }
 .pt-services-inner { display: flex; flex-wrap: wrap; }
 .svc-col {
@@ -406,7 +436,7 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   padding: 8px; text-align: center;
 }
 .svc-col .col-label {
-  font-size: 11px; color: #555;
+  font-size: 13px; color: #555;
   background: #f0f0f0;
   border-bottom: 1px solid var(--border);
   padding: 6px 3px; margin: -8px -8px 8px;
@@ -426,7 +456,7 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   font-family: 'Oswald', sans-serif; font-weight: 500;
 }
 .svc-total-col .total-val {
-  font-size: 17px; color: var(--red);
+  font-size: 19px; color: var(--red);
   font-family: 'Oswald', sans-serif;
   font-weight: 600; margin-top: 6px;
 }
@@ -452,7 +482,54 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 }
 .toggle-cb:checked + .toggle-label::before { background: var(--red); }
 .toggle-cb:checked + .toggle-label::after { left: 20px; }
-.price-label { font-size: 11px; color: #555; margin-top: 3px; }
+.price-label { font-size: 13px; color: #555; margin-top: 3px; }
+
+/* ═══ PER-PART TIER ROW ══════════════════════════════════════ */
+.pt-outer { background: #fff; margin-bottom: 10px; box-shadow: 0 0 9px #ccc; }
+.pt-tier-row {
+  display: flex;
+  border-top: 1px solid #eee;
+}
+.pt-tier-btn {
+  flex: 1;
+  padding: 7px 6px;
+  font-family: 'Oswald', sans-serif;
+  cursor: pointer;
+  text-align: center;
+  background: #f5f5f5;
+  border-right: 1px solid #e8e8e8;
+  transition: all .15s;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.pt-tier-btn:last-child { border-right: none; }
+.tier-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #bbb;
+}
+.tier-sub {
+  font-size: 10px;
+  font-family: 'PT Sans', sans-serif;
+  color: #ccc;
+}
+.pt-tier-btn:hover { background: #ebebeb; }
+.pt-tier-btn:hover .tier-label { color: #777; }
+.pt-tier-btn:hover .tier-sub { color: #999; }
+.pt-tier-btn.active.tier-light { background: #f1f8e9; border-top: 2px solid #66bb6a; }
+.pt-tier-btn.active.tier-light .tier-label { color: #2e7d32; }
+.pt-tier-btn.active.tier-light .tier-sub { color: #388e3c; }
+.pt-tier-btn.active.tier-standard { background: #fff8e1; border-top: 2px solid #ffa726; }
+.pt-tier-btn.active.tier-standard .tier-label { color: #e65100; }
+.pt-tier-btn.active.tier-standard .tier-sub { color: #f57c00; }
+.pt-tier-btn.active.tier-premium { background: #fff0f0; border-top: 2px solid var(--red); }
+.pt-tier-btn.active.tier-premium .tier-label { color: var(--red); }
+.pt-tier-btn.active.tier-premium .tier-sub { color: #c62828; }
 
 /* ═══ SUMMARY BOX ════════════════════════════════════════════ */
 .summary-box {
@@ -494,11 +571,11 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 }
 .summary-cell .s-label {
   font-family: 'Oswald', sans-serif;
-  color: #555;
-  font-size: 10px;
+  color: #666;
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 4px;
+  letter-spacing: 0.8px;
+  margin-bottom: 5px;
 }
 .summary-cell .s-val {
   font-family: 'Oswald', sans-serif;
@@ -510,10 +587,11 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 .summary-cell .s-val.green { color: #4caf50; }
 .summary-cell .s-val.orange { color: #ff9800; }
 .summary-cell .s-note {
-  font-size: 10px;
-  color: #444;
+  font-size: 12px;
+  color: #555;
   font-family: 'PT Sans', sans-serif;
-  margin-top: 3px;
+  margin-top: 4px;
+  line-height: 1.4;
 }
 
 /* ═══ COST BREAKDOWN ═════════════════════════════════════════ */
@@ -556,10 +634,10 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 .cost-cell.other { border-left-color: #4caf50; }
 .cost-cell .c-label {
   font-family: 'Oswald', sans-serif;
-  color: #555;
-  font-size: 9px;
+  color: #666;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   margin-bottom: 6px;
 }
 .cost-cell .c-val {
@@ -571,7 +649,13 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 .cost-cell.repair .c-val { color: #ff9800; }
 .cost-cell.paint .c-val { color: #2196f3; }
 .cost-cell.other .c-val { color: #4caf50; }
-.cost-cell .c-note { font-size: 10px; color: #444; margin-top: 3px; font-family: 'PT Sans', sans-serif; }
+.cost-cell .c-note {
+  font-size: 12px;
+  color: #555;
+  margin-top: 5px;
+  font-family: 'PT Sans', sans-serif;
+  line-height: 1.4;
+}
 .cost-profit {
   padding: 16px 20px;
   display: flex;
@@ -746,6 +830,292 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 }
 .btn-secondary:hover { background: #333; color: #fff; }
 
+/* ═══ VISIT HISTORY ══════════════════════════════════════════ */
+.visit-history {
+  background: #0a0a0a;
+  border-top: 1px solid #1e1e1e;
+  padding: 0;
+}
+.visit-history-header {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #1a1a1a;
+}
+.visit-history-title {
+  font-family: 'Oswald', sans-serif;
+  color: #666;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.visit-list { padding: 0; }
+.visit-item {
+  padding: 12px 20px;
+  border-bottom: 1px solid #1a1a1a;
+  cursor: pointer;
+  transition: background .15s;
+}
+.visit-item:hover { background: #111; }
+.visit-item-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+.visit-num {
+  font-family: 'Oswald', sans-serif;
+  color: #666;
+  font-size: 13px;
+  font-weight: 700;
+  background: #1a1a1a;
+  padding: 2px 7px;
+  flex-shrink: 0;
+  border: 1px solid #2a2a2a;
+}
+.visit-date {
+  font-family: 'Oswald', sans-serif;
+  color: #ddd;
+  font-size: 15px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.visit-tier-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  color: #555;
+  flex-shrink: 0;
+}
+.visit-sum {
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ddd;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.visit-sum.done { color: #4caf50; }
+.visit-badge {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+.vb-done { background: #1a3a1a; color: #4caf50; }
+.vb-archive { background: #1a1a2a; color: #5c6bc0; }
+.vb-active { background: #2a1a1a; color: #e57373; }
+.visit-desc {
+  font-size: 12px;
+  color: #555;
+  font-family: 'PT Sans', sans-serif;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ═══ ACTION BUTTONS ROW ════════════════════════════════════ */
+.action-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #0d0d0d;
+  border-top: 1px solid #1e1e1e;
+  flex-wrap: wrap;
+}
+.btn-archive {
+  background: #1a1a2e;
+  color: #7986cb;
+  border: 1px solid #2a2a5a;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 7px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.btn-archive:hover { background: #2a2a4e; color: #9fa8da; }
+.btn-done {
+  background: #1a2e1a;
+  color: #66bb6a;
+  border: 1px solid #2a5a2a;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 7px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.btn-done:hover { background: #2a4e2a; color: #a5d6a7; }
+.btn-new-visit {
+  background: transparent;
+  color: #555;
+  border: 1px solid #333;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 7px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s;
+  white-space: nowrap;
+  margin-left: auto;
+}
+.btn-new-visit:hover { border-color: var(--red); color: var(--red); }
+
+/* ═══ ARCHIVE PAGE ══════════════════════════════════════════ */
+.archive-filters {
+  padding: 12px 20px;
+  background: #0d0d0d;
+  border-bottom: 2px solid #d20124;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.archive-filter-input {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  color: #ddd;
+  font-family: 'PT Sans', sans-serif;
+  font-size: 14px;
+  padding: 9px 12px;
+  outline: none;
+  width: 180px;
+  transition: border-color .15s;
+}
+.archive-filter-input:focus { border-color: var(--red); }
+.archive-filter-input::placeholder { color: #444; }
+.archive-filter-select {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  color: #ccc;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  padding: 9px 12px;
+  outline: none;
+  cursor: pointer;
+}
+.archive-table { flex: 1; overflow-y: auto; padding: 16px 20px; }
+.archive-cards { display: flex; flex-direction: column; gap: 8px; }
+
+/* Карточка архива */
+.archive-card {
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-left: 3px solid #333;
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all .15s;
+  border-radius: 2px;
+}
+.archive-card:hover { background: #161616; border-color: #333; border-left-color: var(--red); }
+.archive-card.done { border-left-color: #2e7d32; }
+.archive-card.archive-status { border-left-color: #283593; }
+.archive-card-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  min-width: 36px;
+}
+.archive-card-info { min-width: 0; }
+.archive-card-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: #ddd;
+  margin-bottom: 4px;
+}
+.archive-card-meta {
+  font-size: 13px;
+  color: #666;
+  font-family: 'PT Sans', sans-serif;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.archive-card-meta span { white-space: nowrap; }
+.archive-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.archive-card-sum {
+  font-family: 'Oswald', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #d20124;
+  white-space: nowrap;
+}
+.archive-card-sum.zero { color: #444; }
+.archive-card-sum.done { color: #4caf50; }
+.archive-card-badge {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.acb-done { background: #1a3a1a; color: #4caf50; }
+.acb-archive { background: #1a1a3a; color: #5c6bc0; }
+.archive-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #333;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+@media (max-width: 600px) {
+  .archive-card { grid-template-columns: 28px 1fr auto; gap: 8px; padding: 10px 12px; }
+}
+.archive-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #444;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Mobile action row */
+@media (max-width: 600px) {
+  .action-row { padding: 8px 12px; gap: 6px; }
+  .btn-archive, .btn-done, .btn-new-visit { font-size: 10px; padding: 8px 10px; }
+  .btn-new-visit { margin-left: 0; }
+  .archive-row { grid-template-columns: 30px 1fr 80px 70px; }
+  .ar-cell.plate, .ar-cell.tier { display: none; }
+}
+
 /* SVG detal */
 .detal {
   cursor: pointer;
@@ -823,19 +1193,132 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 /* PDF print area */
 #pdf-preview { display: none; }
 
+/* Archive page full screen */
+.archive-page {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  top: 56px; left: 0; right: 0; bottom: 0;
+  z-index: 50;
+  overflow-y: auto;
+  background: #141414;
+}
+.archive-page.active { display: flex; }
+@media (max-width: 600px) {
+  .archive-row { grid-template-columns: 28px 1fr 70px 70px; }
+  .ar-cell.plate, .ar-cell.tier { display: none; }
+}
+
 @media (max-width: 900px) {
   .master-layout { grid-template-columns: 1fr; }
-  .client-panel { max-height: 260px; border-right: none; border-bottom: 1px solid #222; }
+  .client-panel { max-height: none; height: auto; border-right: none; border-bottom: 1px solid #222; }
   .car-area-wrap { grid-template-columns: 1fr; min-height: unset; }
   .top-view-area { display: none; }
   .cost-grid { grid-template-columns: 1fr 1fr; }
   .summary-grid { grid-template-columns: 1fr; }
+  .header-nav { display: flex; }
+}
+
+/* ═══ MOBILE BOTTOM NAV ══════════════════════════════════════ */
+.mobile-bottom-nav { display: none; }
+.client-panel-toggle { display: none; }
+
+@media (max-width: 600px) {
   .header-nav { display: none; }
+  body { padding-bottom: 56px; }
+  .archive-page { bottom: 56px !important; }
+
+  /* Нижняя навигация */
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 56px;
+    background: #0a0a0a;
+    border-top: 2px solid #1e1e1e;
+    z-index: 110;
+    box-shadow: 0 -4px 16px rgba(0,0,0,.6);
+  }
+  .mob-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 4px;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mob-nav-btn:active { background: #1a1a1a; }
+  .mob-nav-icon { font-size: 20px; line-height: 1; }
+  .mob-nav-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #444;
+    transition: color .15s;
+  }
+  .mob-nav-btn.active .mob-nav-label { color: var(--red); }
+  .mob-nav-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 25%; right: 25%;
+    height: 2px;
+    background: var(--red);
+  }
+
+  /* Список клиентов с кнопкой сворачивания */
+  .client-panel {
+    max-height: 52vh;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .client-panel-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    height: 40px;
+    background: #0a0a0a;
+    border-top: 1px solid #1e1e1e;
+    cursor: pointer;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #444;
+    user-select: none;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .client-panel-toggle:active { background: #111; }
+  .toggle-arrow { font-size: 10px; transition: transform .25s; }
+  .client-panel.collapsed .client-panel-header { display: none; }
+  .client-panel.collapsed .client-list { display: none; }
+  .client-panel.collapsed .toggle-arrow { transform: rotate(180deg); }
+  .client-panel.collapsed { max-height: 40px; min-height: 40px; overflow: hidden; }
 }
 
 @media (max-width: 600px) {
   .master-header { padding: 0 12px; }
   .calc-wrapper { padding: 10px 12px; }
+
+  /* Карточки клиентов — лучше видны на мобильном */
+  .client-item {
+    padding: 12px 14px;
+    padding-right: 80px; /* место под сумму */
+  }
+  .client-name { font-size: 15px; }
+  .client-sub { font-size: 12px; color: #666; }
+  .client-sum { font-size: 13px; right: 10px; }
 
   /* Карточка клиента — компактная на мобильном */
   .client-card { flex-direction: column; padding: 12px; gap: 10px; }
@@ -890,7 +1373,74 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   /* Итог и затраты */
   .summary-header { flex-direction: column; gap: 8px; align-items: flex-start; }
   .summary-total-big { font-size: 22px; }
-  .cost-profit { flex-direction: column; gap: 4px; align-items: flex-start; }
+  .summary-grid { grid-template-columns: 1fr 1fr; }
+  .summary-cell { padding: 11px 13px; }
+  .summary-cell .s-label { font-size: 11px; }
+  .summary-cell .s-val { font-size: 17px; }
+  .cost-grid { grid-template-columns: 1fr; }
+  .cost-cell { padding: 12px 16px; }
+  .cost-cell .c-label { font-size: 10px; }
+  .cost-cell .c-val { font-size: 20px; }
+  .cost-cell .c-note { font-size: 11px; }
+  .cost-profit { flex-direction: row; align-items: center; padding: 14px 16px; }
+  .profit-label { font-size: 12px; }
+  .profit-val { font-size: 22px; }
+}
+
+/* Archive filters row */
+.arch-filters-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  width: auto;
+  flex-wrap: nowrap;
+}
+.arch-inp {
+  width: 160px;
+  min-width: 0;
+}
+.arch-sel {
+  flex-shrink: 0;
+  width: 160px;
+}
+
+/* Archive mobile */
+@media (max-width: 600px) {
+  .archive-filters {
+    padding: 10px 12px;
+    align-items: stretch;
+  }
+  .arch-filters-row {
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .arch-filters-row > div {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
+  }
+  .arch-filters-row > div:last-of-type {
+    /* Авто / Номер занимает всю ширину */
+    flex: 1 1 100%;
+  }
+  .arch-inp { width: 100% !important; box-sizing: border-box; }
+  .arch-sel { width: 100%; flex: 1 1 100%; }
+  /* Строки архива — стек на мобильном */
+  .arch-visit-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 12px 14px !important;
+    gap: 6px !important;
+  }
+  .arch-visit-row > span { min-width: unset !important; }
+  .arch-visit-row .arch-restore-btn,
+  .arch-visit-row .arch-pdf-btn {
+    padding: 8px 14px !important;
+    font-size: 11px !important;
+  }
+  .arch-client-header {
+    padding: 12px 14px !important;
+    gap: 8px !important;
+  }
 }
 
 @media print {
@@ -926,24 +1476,39 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 <header class="master-header">
   <div class="logo">Car<span>Service</span> <span style="color:#555;font-size:13px;margin-left:8px;">MGN</span></div>
   <nav class="header-nav">
-    <button class="nav-btn active">Расчёты</button>
-    <button class="nav-btn" onclick="alert('Раздел в разработке')">Архив</button>
-    <button class="nav-btn" onclick="alert('Раздел в разработке')">Настройки</button>
+    <button class="nav-btn active" id="nav-calc" onclick="showPage('calc')">Расчёты</button>
+    <button class="nav-btn" id="nav-archive" onclick="showPage('archive')">Архив</button>
   </nav>
   <div class="master-badge">Панель мастера</div>
 </header>
 
-<div class="master-layout">
+<div class="master-layout" id="main-layout">
 
   <!-- LEFT: CLIENT LIST -->
   <aside class="client-panel">
     <div class="client-panel-header">
       <div class="client-panel-title">Клиенты</div>
-      <input class="search-box" id="client-search" placeholder="Поиск по имени, VIN, телефону..." oninput="filterClients()">
+      <div class="search-wrap">
+        <span class="search-icon">👤</span>
+        <input class="search-box" id="client-search-name" placeholder="Имя клиента..." oninput="filterClients()">
+      </div>
+      <div class="search-wrap">
+        <span class="search-icon">📞</span>
+        <input class="search-box" id="client-search-phone" placeholder="Телефон..." oninput="filterClients()">
+      </div>
+      <div class="search-wrap">
+        <span class="search-icon">🚗</span>
+        <input class="search-box" id="client-search-car" placeholder="Авто / Гос. номер / VIN..." oninput="filterClients()">
+      </div>
       <button class="btn-new-client" onclick="openNewClientModal()">+ Новый клиент</button>
     </div>
     <div class="client-list" id="client-list">
       <div class="client-empty" id="client-empty-msg">Нет клиентов.<br>Добавьте первого.</div>
+    </div>
+    <!-- Кнопка сворачивания (только мобильный) -->
+    <div class="client-panel-toggle" id="client-panel-toggle" onclick="toggleClientPanel()">
+      <span>Список клиентов</span>
+      <span class="toggle-arrow">▲</span>
     </div>
   </aside>
 
@@ -955,6 +1520,46 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
     </div>
     <div id="client-workspace" style="display:none; flex-direction:column; flex:1;"></div>
   </main>
+</div>
+
+<!-- MOBILE BOTTOM NAVIGATION -->
+<nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+  <button class="mob-nav-btn active" id="mob-nav-calc" onclick="showPage('calc');setMobNav('calc')">
+    <span class="mob-nav-icon">🔧</span>
+    <span class="mob-nav-label">Расчёты</span>
+  </button>
+  <button class="mob-nav-btn" id="mob-nav-archive" onclick="showPage('archive');setMobNav('archive')">
+    <span class="mob-nav-icon">📁</span>
+    <span class="mob-nav-label">Архив</span>
+  </button>
+</nav>
+
+<!-- ARCHIVE PAGE (full screen) -->
+<div class="archive-page" id="archive-page">
+  <div class="archive-filters">
+    <div class="arch-filters-row">
+      <div style="position:relative;flex:1;min-width:0;">
+        <span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);color:#555;pointer-events:none;font-size:12px;">👤</span>
+        <input class="archive-filter-input arch-inp" id="arch-search-name" placeholder="Имя..." oninput="renderArchive()" style="padding-left:26px;">
+      </div>
+      <div style="position:relative;flex:1;min-width:0;">
+        <span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);color:#555;pointer-events:none;font-size:12px;">📞</span>
+        <input class="archive-filter-input arch-inp" id="arch-search-phone" placeholder="Телефон..." oninput="renderArchive()" style="padding-left:26px;">
+      </div>
+      <div style="position:relative;flex:1;min-width:0;">
+        <span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);color:#555;pointer-events:none;font-size:12px;">🚗</span>
+        <input class="archive-filter-input arch-inp" id="arch-search-car" placeholder="Авто / Номер..." oninput="renderArchive()" style="padding-left:26px;">
+      </div>
+      <select class="archive-filter-select arch-sel" id="arch-status" onchange="renderArchive()">
+        <option value="">Все статусы</option>
+        <option value="done">✅ Отработан</option>
+        <option value="archive">📁 В архиве</option>
+      </select>
+    </div>
+  </div>
+  <div class="archive-table">
+    <div class="archive-cards" id="archive-rows"><div class="archive-empty">Архив пуст</div></div>
+  </div>
 </div>
 
 <!-- MODAL: NEW/EDIT CLIENT -->
@@ -1112,12 +1717,21 @@ function getPrices(partId, tier, calcState) {
 // ═══════════════════════════════════════════════════════════
 // CLIENT LIST UI
 // ═══════════════════════════════════════════════════════════
-function renderClientList(filter = '') {
+function renderClientList(filter = '', qName = '', qPhone = '', qCar = '') {
   const list = document.getElementById('client-list');
   const emptyMsg = document.getElementById('client-empty-msg');
   const filtered = clients.filter(c => {
-    const q = filter.toLowerCase();
-    return !q || c.name.toLowerCase().includes(q) || (c.phone||'').includes(q) || (c.vin||'').toLowerCase().includes(q);
+    // Скрываем клиентов отправленных в архив или отработанных
+    if (c.status === 'archive' || c.status === 'done') return false;
+    // Общий поиск (для совместимости) или раздельный
+    if (filter) {
+      const q = filter.toLowerCase();
+      return c.name.toLowerCase().includes(q) || (c.phone||'').includes(q) || (c.vin||'').toLowerCase().includes(q);
+    }
+    if (qName  && !c.name.toLowerCase().includes(qName))  return false;
+    if (qPhone && !(c.phone||'').toLowerCase().includes(qPhone)) return false;
+    if (qCar   && ![(c.car||''),(c.plate||''),(c.vin||'')].join(' ').toLowerCase().includes(qCar)) return false;
+    return true;
   });
 
   if (filtered.length === 0) {
@@ -1146,7 +1760,10 @@ function renderClientList(filter = '') {
 }
 
 function filterClients() {
-  renderClientList(document.getElementById('client-search').value);
+  const qName  = (document.getElementById('client-search-name')?.value  || '').toLowerCase();
+  const qPhone = (document.getElementById('client-search-phone')?.value || '').toLowerCase();
+  const qCar   = (document.getElementById('client-search-car')?.value   || '').toLowerCase();
+  renderClientList('', qName, qPhone, qCar);
 }
 
 function statusLabel(s) {
@@ -1160,11 +1777,13 @@ function calcClientTotal(c) {
   const cs = c.calcState;
   let total = 0;
   cs.selected.forEach(id => {
-    const pr = getPrices(id, cs.tier, cs);
+    const tier = (cs._partTiers && cs._partTiers[id]) || cs.tier;
+    const pr = getPrices(id, tier, cs);
     SVC_KEYS.forEach(k => { if (cs.svcState[id] && cs.svcState[id][k]) total += pr[k]; });
   });
   (cs.details||[]).forEach(d => {
-    const pr = getPrices(d.id, cs.tier, cs);
+    const tier = (cs._partTiers && cs._partTiers[d.id]) || cs.tier;
+    const pr = getPrices(d.id, tier, cs);
     SVC_KEYS.forEach(k => { if (cs.svcState[d.id] && cs.svcState[d.id][k]) total += pr[k]; });
   });
   return total;
@@ -1179,7 +1798,7 @@ function openClient(id) {
   if (!c) return;
   if (!c.calcState) c.calcState = defaultCalcState();
   if (!c.calcState._detailPrices) c.calcState._detailPrices = {};
-  renderClientList(document.getElementById('client-search').value);
+  renderClientList();
 
   document.getElementById('work-empty').style.display = 'none';
   const ws = document.getElementById('client-workspace');
@@ -1226,17 +1845,27 @@ function buildWorkspace(c) {
         </div>
       </div>
       <div class="client-card-actions">
-        <button class="btn-action btn-pdf" onclick="printPDF()">🖨️ PDF / Печать</button>
-        <button class="btn-action btn-edit" onclick="openEditClientModal('${c.id}')">✏️ Редактировать</button>
-        <button class="btn-action btn-delete" onclick="deleteClient('${c.id}')">🗑️ Удалить</button>
+        <button class="btn-action btn-pdf" onclick="printPDF()">🖨️ PDF</button>
+        <button class="btn-action btn-edit" onclick="openEditClientModal('${c.id}')">✏️ Изменить</button>
+        <button class="btn-action btn-delete" onclick="deleteClient('${c.id}')">🗑️</button>
       </div>
     </div>
 
+    <!-- Action row: archive / done / new visit -->
+    <div class="action-row">
+      <button class="btn-archive" onclick="archiveVisit('${c.id}', false)">📁 В архив</button>
+      <button class="btn-done" onclick="archiveVisit('${c.id}', true)">✅ Отработан</button>
+      <button class="btn-new-visit" onclick="newVisit('${c.id}')">+ Новый визит</button>
+    </div>
+
+    <!-- Visit history -->
+    ${buildVisitHistory(c)}
+
     <!-- Tier selector -->
     <div class="tier-row" id="tier-row">
-      <div class="tier-btn ${cs.tier==='light'?'active':''}" data-tier="light">Лайт <small style="color:#666;font-size:10px;">+0</small></div>
-      <div class="tier-btn ${cs.tier==='standard'?'active':''}" data-tier="standard">Стандарт <small style="color:#666;font-size:10px;">+1000</small></div>
-      <div class="tier-btn ${cs.tier==='premium'?'active':''}" data-tier="premium">Премиум <small style="color:#666;font-size:10px;">+3000</small></div>
+      <div class="tier-btn tier-light ${cs.tier==='light'?'active':''}" data-tier="light">Лайт<span class="tier-sub">базовые цены</span></div>
+      <div class="tier-btn tier-standard ${cs.tier==='standard'?'active':''}" data-tier="standard">Стандарт<span class="tier-sub">+1 000 ₽ к Р/С и Замене</span></div>
+      <div class="tier-btn tier-premium ${cs.tier==='premium'?'active':''}" data-tier="premium">Премиум<span class="tier-sub">+3 000 ₽ к Р/С и Замене</span></div>
     </div>
 
     <!-- Car SVG — вне обёртки, на всю ширину -->
@@ -1340,15 +1969,20 @@ function buildWorkspace(c) {
 // TABLE HTML BUILDERS
 // ═══════════════════════════════════════════════════════════
 function buildPartTableHTML(partId, name, cs) {
-  const pr = getPrices(partId, cs.tier, cs);
-  return buildRowHTML(partId, name, pr, cs.svcState[partId] || {});
+  // Берём per-part тир если есть, иначе глобальный
+  const partTier = (cs._partTiers && cs._partTiers[partId]) || cs.tier;
+  const pr = getPrices(partId, partTier, cs);
+  return buildRowHTML(partId, name, pr, cs.svcState[partId] || {}, partTier);
 }
 function buildDetailTableHTML(detailId, name, cs) {
-  const pr = getPrices(detailId, cs.tier, cs);
-  return buildRowHTML(detailId, name, pr, cs.svcState[detailId] || {});
+  // Берём per-part тир если есть, иначе глобальный
+  const partTier = (cs._partTiers && cs._partTiers[detailId]) || cs.tier;
+  const pr = getPrices(detailId, partTier, cs);
+  return buildRowHTML(detailId, name, pr, cs.svcState[detailId] || {}, partTier);
 }
 
-function buildRowHTML(id, name, pr, state) {
+function buildRowHTML(id, name, pr, state, currentTier) {
+  const tier = currentTier || 'light';
   const cols = SVC_KEYS.map((k, i) => {
     const val = pr[k];
     const disp = val > 0 ? val.toLocaleString('ru') + ' ₽' : '—';
@@ -1362,28 +1996,44 @@ function buildRowHTML(id, name, pr, state) {
       <div class="price-label">${disp}</div>
     </div>`;
   }).join('');
-  return `<div class="pt-inner">
-    <div class="pt-trash" id="trash_${id}">
-      <div class="col-label">-</div>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28">
-        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/>
-        <path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-      </svg>
-      <span class="mobile-part-name">${name}</span>
-    </div>
-    <div class="pt-name">
-      <div class="col-label">элемент</div>
-      <div class="part-name-val">${name}</div>
-    </div>
-    <div class="pt-services">
-      <div class="pt-services-inner">
-        ${cols}
-        <div class="svc-total-col">
-          <div class="col-label">сумма</div>
-          <div class="total-val" id="total_${id}">0 ₽</div>
+
+  const tierConfig = {
+    light:    { label: 'Лайт',     sub: 'базовые цены' },
+    standard: { label: 'Стандарт', sub: '+1\u00a0000\u00a0₽ к Р/С и Замене' },
+    premium:  { label: 'Премиум',  sub: '+3\u00a0000\u00a0₽ к Р/С и Замене' },
+  };
+  const tierBtns = ['light','standard','premium'].map(t =>
+    `<div class="pt-tier-btn tier-${t} ${tier===t?'active':''}" data-id="${id}" data-tier="${t}">
+      <span class="tier-label">${tierConfig[t].label}</span>
+      <span class="tier-sub">${tierConfig[t].sub}</span>
+    </div>`
+  ).join('');
+
+  return `<div class="pt-outer">
+    <div class="pt-inner">
+      <div class="pt-trash" id="trash_${id}">
+        <div class="col-label">-</div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/>
+          <path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+        </svg>
+        <span class="mobile-part-name">${name}</span>
+      </div>
+      <div class="pt-name">
+        <div class="col-label">элемент</div>
+        <div class="part-name-val">${name}</div>
+      </div>
+      <div class="pt-services">
+        <div class="pt-services-inner">
+          ${cols}
+          <div class="svc-total-col">
+            <div class="col-label">сумма</div>
+            <div class="total-val" id="total_${id}">0 ₽</div>
+          </div>
         </div>
       </div>
     </div>
+    <div class="pt-tier-row" id="tier-row-${id}">${tierBtns}</div>
   </div>`;
 }
 
@@ -1393,17 +2043,8 @@ function buildRowHTML(id, name, pr, state) {
 function attachAllEvents(c) {
   const cs = c.calcState;
 
-  // Tier buttons
-  document.querySelectorAll('.tier-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      cs.tier = btn.dataset.tier;
-      document.querySelectorAll('.tier-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      rebuildAllTables(c);
-      updateSummary(c);
-      saveClients();
-    });
-  });
+  // Per-part tier buttons — через делегирование (не теряются при перестройке DOM)
+  // Глобальные tier-btn — тоже через делегирование ниже
 
   // SVG clicks
   document.querySelectorAll('.detal').forEach(el => {
@@ -1434,25 +2075,15 @@ function attachAllEvents(c) {
     });
   });
 
-  // Part checkboxes
+  // Part checkboxes + tier buttons
   PARTS.forEach(p => {
     if (!cs.svcState[p.id]) cs.svcState[p.id] = {};
-    SVC_KEYS.forEach(k => {
-      const cb = document.getElementById('cb_' + p.id + '_' + k);
-      if (cb) cb.addEventListener('change', () => {
-        cs.svcState[p.id][k] = cb.checked;
-        updateRowTotal(p.id, cs);
-        updateSummary(c);
-        saveClients();
-      });
-    });
-    const trash = document.getElementById('trash_' + p.id);
-    if (trash) trash.addEventListener('click', () => deselectPart(c, p.id));
+    attachPartRowEvents(c, p.id);
   });
 
-  // Detail checkboxes
+  // Detail checkboxes + tier buttons
   (cs.details||[]).forEach(d => {
-    attachDetailEvents(c, d.id);
+    attachPartRowEvents(c, d.id);
   });
 
   // Add detail button
@@ -1571,39 +2202,64 @@ function removeDetail(c, id) {
   saveClients();
 }
 
+function attachPartRowEvents(c, partId) {
+  const cs = c.calcState;
+  SVC_KEYS.forEach(k => {
+    const cb = document.getElementById('cb_' + partId + '_' + k);
+    if (cb) cb.addEventListener('change', () => {
+      if (!cs.svcState[partId]) cs.svcState[partId] = {};
+      cs.svcState[partId][k] = cb.checked;
+      const tier = (cs._partTiers && cs._partTiers[partId]) || cs.tier;
+      updateRowTotal(partId, cs, tier);
+      updateSummary(c);
+      saveClients();
+    });
+  });
+  const trash = document.getElementById('trash_' + partId);
+  if (trash) {
+    const part = PARTS.find(p => p.id === partId);
+    if (part) trash.addEventListener('click', () => deselectPart(c, partId));
+    else trash.addEventListener('click', () => removeDetailById(c, partId));
+  }
+  // Per-part tier buttons навешиваются глобальным делегированным обработчиком
+}
+
+function removeDetailById(c, detailId) {
+  const cs = c.calcState;
+  cs.details = (cs.details||[]).filter(d => d.id !== detailId);
+  if (cs._detailPrices) delete cs._detailPrices[detailId];
+  if (cs.svcState) delete cs.svcState[detailId];
+  const t = document.getElementById('table_' + detailId);
+  if (t) t.remove();
+  updateSummary(c);
+  saveClients();
+}
+
 function rebuildAllTables(c) {
   const cs = c.calcState;
   PARTS.forEach(p => {
     const t = document.getElementById('table_' + p.id);
     if (t && cs.selected.includes(p.id)) {
       t.innerHTML = buildPartTableHTML(p.id, p.name, cs);
-      SVC_KEYS.forEach(k => {
-        const cb = document.getElementById('cb_' + p.id + '_' + k);
-        if (cb) cb.addEventListener('change', () => {
-          cs.svcState[p.id][k] = cb.checked;
-          updateRowTotal(p.id, cs);
-          updateSummary(c);
-          saveClients();
-        });
-      });
-      const trash = document.getElementById('trash_' + p.id);
-      if (trash) trash.addEventListener('click', () => deselectPart(c, p.id));
-      updateRowTotal(p.id, cs);
+      attachPartRowEvents(c, p.id);
+      const tier = (cs._partTiers && cs._partTiers[p.id]) || cs.tier;
+      updateRowTotal(p.id, cs, tier);
     }
   });
   (cs.details||[]).forEach(d => {
     const t = document.getElementById('table_' + d.id);
     if (t) {
-      const pr = getPrices(d.id, cs.tier, cs);
-      t.innerHTML = buildRowHTML(d.id, d.name, pr, cs.svcState[d.id]||{});
-      attachDetailEvents(c, d.id);
-      updateRowTotal(d.id, cs);
+      t.innerHTML = buildDetailTableHTML(d.id, d.name, cs);
+      attachPartRowEvents(c, d.id);
+      const tier = (cs._partTiers && cs._partTiers[d.id]) || cs.tier;
+      updateRowTotal(d.id, cs, tier);
     }
   });
 }
 
-function updateRowTotal(partId, cs) {
-  const pr = getPrices(partId, cs.tier, cs);
+function updateRowTotal(partId, cs, overrideTier) {
+  const tier = overrideTier || (cs._partTiers && cs._partTiers[partId]) || cs.tier;
+  const pr = getPrices(partId, tier, cs);
   let sum = 0;
   SVC_KEYS.forEach(k => { if (cs.svcState[partId] && cs.svcState[partId][k]) sum += pr[k]; });
   const el = document.getElementById('total_' + partId);
@@ -1621,7 +2277,8 @@ function updateSummary(c) {
 
   const allIds = [...cs.selected, ...(cs.details||[]).map(d => d.id)];
   allIds.forEach(id => {
-    const pr = getPrices(id, cs.tier, cs);
+    const partTier = (cs._partTiers && cs._partTiers[id]) || cs.tier;
+    const pr = getPrices(id, partTier, cs);
     const st = cs.svcState[id] || {};
     SVC_KEYS.forEach(k => {
       if (st[k]) {
@@ -1667,7 +2324,7 @@ function updateSummary(c) {
 
   // Update client status
   if (allIds.length > 0) c.status = 'calc';
-  renderClientList(document.getElementById('client-search').value);
+  renderClientList();
   saveClients();
 }
 
@@ -1948,7 +2605,684 @@ const TOP_VIEW_SVG = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" view
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
+
+// ── Навигация страниц ───────────────────────────────────────
+function showPage(page) {
+  const layout = document.getElementById('main-layout');
+  const archivePage = document.getElementById('archive-page');
+  const navCalc = document.getElementById('nav-calc');
+  const navArch = document.getElementById('nav-archive');
+
+  if (page === 'archive') {
+    layout.style.display = 'none';
+    archivePage.classList.add('active');
+    navCalc.classList.remove('active');
+    navArch.classList.add('active');
+    renderArchive();
+  } else {
+    layout.style.display = 'grid';
+    archivePage.classList.remove('active');
+    navCalc.classList.add('active');
+    navArch.classList.remove('active');
+  }
+}
+
+// ── История визитов ─────────────────────────────────────────
+function buildVisitHistory(c) {
+  const visits = c.visits || [];
+  if (visits.length === 0) return '';
+
+  const rows = [...visits].reverse().map((v, i) => {
+    const realIdx = visits.length - 1 - i;
+    const num = visits.length - i;
+    const badge = v.status === 'done'
+      ? `<span class="visit-badge vb-done">✅ Отработан</span>`
+      : `<span class="visit-badge vb-archive">📁 Архив</span>`;
+    const parts = getVisitPartNames(v);
+    const sumStr = v.total > 0 ? v.total.toLocaleString('ru') + ' ₽' : '—';
+    return `
+      <div class="visit-item" data-visit-idx="${realIdx}">
+        <div class="visit-item-top">
+          <span class="visit-num">#${num}</span>
+          <span class="visit-date">${v.date}</span>
+          <span class="visit-tier-label">${TIER_LABELS[v.tier] || 'Лайт'}</span>
+          <span class="visit-sum ${v.status==='done'?'done':''}">${sumStr}</span>
+          ${badge}
+        </div>
+        <div class="visit-desc">${escHtml(parts)}</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="visit-history">
+      <div class="visit-history-header">
+        <span class="visit-history-title">История визитов (${visits.length})</span>
+      </div>
+      <div class="visit-list">${rows}</div>
+    </div>`;
+}
+
+function getVisitPartNames(visit) {
+  if (!visit.calcState) return '—';
+  const cs = visit.calcState;
+  const names = [];
+  cs.selected.forEach(id => {
+    const p = PARTS.find(p => p.id === id);
+    if (p) names.push(p.name);
+  });
+  (cs.details||[]).forEach(d => names.push(d.name));
+  return names.length > 0 ? names.slice(0,3).join(', ') + (names.length > 3 ? ` +${names.length-3}` : '') : 'Нет деталей';
+}
+
+// ── Архивировать текущий визит ───────────────────────────────
+function archiveVisit(clientId, isDone) {
+  const c = clients.find(c => c.id === clientId);
+  if (!c) return;
+
+  const cs = c.calcState;
+  const total = calcClientTotal(c);
+  const allIds = [...(cs.selected||[]), ...(cs.details||[]).map(d => d.id)];
+
+  if (allIds.length === 0 && !confirm('Нет выбранных деталей. Всё равно архивировать?')) return;
+  if (!confirm(`Сохранить как "${isDone ? 'Отработан' : 'В архиве'}"?\nПосле этого расчёт очистится и можно начать новый.`)) return;
+
+  // Сохраняем снапшот
+  if (!c.visits) c.visits = [];
+  c.visits.push({
+    date: new Date().toLocaleDateString('ru-RU'),
+    ts: Date.now(),
+    status: isDone ? 'done' : 'archive',
+    tier: cs.tier,
+    total,
+    calcState: JSON.parse(JSON.stringify(cs)),
+  });
+
+  // Сбрасываем текущий расчёт
+  c.calcState = defaultCalcState();
+  c.status = isDone ? 'done' : 'archive';
+  saveClients();
+  renderClientList();
+
+  // После архивирования — закрываем рабочую область и показываем пустой экран
+  activeClientId = null;
+  document.getElementById('work-empty').style.display = 'flex';
+  const ws = document.getElementById('client-workspace');
+  ws.style.display = 'none';
+  ws.innerHTML = '';
+}
+
+// ── Новый визит ──────────────────────────────────────────────
+function newVisit(clientId) {
+  const c = clients.find(c => c.id === clientId);
+  if (!c) return;
+
+  const cs = c.calcState;
+  const allIds = [...(cs.selected||[]), ...(cs.details||[]).map(d => d.id)];
+
+  if (allIds.length > 0) {
+    if (!confirm('Текущий расчёт будет сохранён в архив и начнётся новый визит. Продолжить?')) return;
+    // Автоархивируем текущий
+    if (!c.visits) c.visits = [];
+    c.visits.push({
+      date: new Date().toLocaleDateString('ru-RU'),
+      ts: Date.now(),
+      status: 'archive',
+      tier: cs.tier,
+      total: calcClientTotal(c),
+      calcState: JSON.parse(JSON.stringify(cs)),
+    });
+  }
+
+  // Сбрасываем расчёт
+  c.calcState = defaultCalcState();
+  c.status = 'new';
+  saveClients();
+  renderClientList();
+  openClient(clientId);
+}
+
+// ── Просмотр визита из истории ───────────────────────────────
+function openVisitDetail(clientId, visitIdx) {
+  const c = clients.find(c => c.id === clientId);
+  if (!c || !c.visits || !c.visits[visitIdx]) return;
+  const v = c.visits[visitIdx];
+  // Защита от старых записей без calcState
+  if (!v.calcState) v.calcState = defaultCalcState();
+  const cs = v.calcState;
+  const isDone = v.status === 'done';
+  const statusColor = isDone ? '#4caf50' : '#7986cb';
+  const statusLabel = isDone ? '✅ Отработан' : '📁 В архиве';
+  // Считаем реальный микс уровней по деталям
+  const _allPartIds = [...(cs.selected||[]), ...(cs.details||[]).map(d => d.id)];
+  const _tierOrder = ['light','standard','premium'];
+  let tierLabel;
+  if (_allPartIds.length === 0) {
+    tierLabel = TIER_LABELS[cs.tier] || 'Лайт';
+  } else {
+    const _usedTiers = [...new Set(_allPartIds.map(id => (cs._partTiers&&cs._partTiers[id])||cs.tier||'light'))];
+    if (_usedTiers.length === 1) {
+      // Все детали одного уровня
+      tierLabel = TIER_LABELS[_usedTiers[0]] || 'Лайт';
+    } else {
+      // Разные уровни — показываем все уникальные
+      const _tierColorMap = {light:'#4caf50',standard:'#ffa726',premium:'#d20124'};
+      tierLabel = _usedTiers
+        .sort((a,b) => _tierOrder.indexOf(a) - _tierOrder.indexOf(b))
+        .map(t => `<span style="font-family:Oswald,sans-serif;font-size:11px;font-weight:700;padding:2px 7px;background:${_tierColorMap[t]}22;color:${_tierColorMap[t]};">${TIER_LABELS[t]||t}</span>`)
+        .join(' ');
+    }
+  }
+
+  // Цвета уровней
+  const tierColors = { light: '#4caf50', standard: '#ffa726', premium: '#d20124' };
+  const tierNames  = { light: 'Лайт',   standard: 'Стандарт', premium: 'Премиум' };
+
+  // Таблица деталей
+  const allIds = [...(cs.selected||[]), ...(cs.details||[]).map(d => d.id)];
+  let tableRows = '';
+  allIds.forEach(id => {
+    const part = PARTS.find(p => p.id === id);
+    const detail = (cs.details||[]).find(d => d.id === id);
+    const name = part ? part.name : (detail ? detail.name : id);
+    let bp = id.startsWith('detail_')
+      ? ((cs._detailPrices && cs._detailPrices[id]) ? cs._detailPrices[id] : {...DETAIL_BASE})
+      : BASE_PRICES[id];
+    if (!bp) return;
+    const add = TIER_ADD[cs.tier] || 0;
+    const pr = { s:bp.s, rc:bp.rc>0?bp.rc+add:0, z:bp.z>0?bp.z+add:0, p1:bp.p1, p2:bp.p2, r2:bp.r2, r1:bp.r1 };
+    const st = cs.svcState[id] || {};
+    if (!SVC_KEYS.some(k => st[k])) return;
+    let rowTotal = 0;
+    SVC_KEYS.forEach(k => { if (st[k] && pr[k]>0) rowTotal += pr[k]; });
+    const partTierKey = (cs._partTiers && cs._partTiers[id]) || cs.tier || 'light';
+    const tierColor = tierColors[partTierKey] || '#888';
+    const tierName  = tierNames[partTierKey]  || 'Лайт';
+    const cells = SVC_KEYS.map(k => {
+      const active = st[k] && pr[k]>0;
+      return `<td style="padding:8px 6px;border:1px solid #1e1e1e;text-align:center;font-size:13px;color:${active?'#ddd':'#2a2a2a'};">${active?pr[k].toLocaleString('ru')+' ₽':'—'}</td>`;
+    }).join('');
+    tableRows += `<tr>
+      <td style="padding:10px 14px;border:1px solid #1e1e1e;font-family:Oswald,sans-serif;font-size:14px;color:#ccc;font-weight:600;white-space:nowrap;">${escHtml(name)}</td>
+      <td style="padding:10px 8px;border:1px solid #1e1e1e;text-align:center;"><span style="font-family:Oswald,sans-serif;font-size:11px;font-weight:700;padding:3px 8px;background:${tierColor}22;color:${tierColor};white-space:nowrap;">${tierName}</span></td>
+      ${cells}
+      <td style="padding:10px 14px;border:1px solid #1e1e1e;text-align:right;font-family:Oswald,sans-serif;font-size:15px;font-weight:700;color:#d20124;white-space:nowrap;">${rowTotal.toLocaleString('ru')} ₽</td>
+    </tr>`;
+  });
+  const shortLabels = ['С/У','Р/С','Замена','Окрас 1','Окрас 2','Рем>50%','Рем<50%'];
+
+  // Создаём полноэкранный слой
+  const overlay = document.createElement('div');
+  overlay.id = 'visit-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:#141414;z-index:300;display:flex;flex-direction:column;overflow:hidden;';
+
+  overlay.innerHTML = `
+    <!-- Шапка -->
+    <div style="background:#0d0d0d;border-bottom:2px solid #d20124;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:10px;">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <span style="font-family:Oswald,sans-serif;color:#fff;font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Визит #${visitIdx+1}</span>
+        <span style="font-family:Oswald,sans-serif;color:#666;font-size:15px;">📅 ${v.date}</span>
+        <span style="font-family:Oswald,sans-serif;font-size:13px;font-weight:700;padding:4px 12px;background:${statusColor}22;color:${statusColor};">${statusLabel}</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-family:Oswald,sans-serif;color:#555;font-size:13px;">⚙️</span><span>${tierLabel}</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        ${!isDone?`<button id="ov-done-btn" style="background:#1a2e1a;color:#66bb6a;border:1px solid #2a5a2a;font-family:Oswald,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;padding:8px 14px;cursor:pointer;letter-spacing:0.5px;">✅ Отработан</button>`:''}
+        <button id="ov-restore-btn" style="background:#1a1a2e;color:#7986cb;border:1px solid #2a2a5a;font-family:Oswald,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;padding:8px 14px;cursor:pointer;letter-spacing:0.5px;">↩ Восстановить</button>
+        <button id="ov-pdf-btn" style="background:#d20124;color:#fff;border:none;font-family:Oswald,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;padding:8px 14px;cursor:pointer;letter-spacing:0.5px;">🖨️ PDF</button>
+        <button id="ov-del-btn" style="background:transparent;color:#555;border:1px solid #222;font-family:Oswald,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;padding:8px 14px;cursor:pointer;">🗑️</button>
+        <button id="visit-close-btn" style="background:transparent;border:1px solid #333;color:#888;font-size:18px;cursor:pointer;padding:6px 12px;line-height:1;font-family:sans-serif;">✕</button>
+      </div>
+    </div>
+
+    <!-- Прокручиваемое содержимое -->
+    <div style="flex:1;overflow-y:auto;">
+
+      <!-- Клиент -->
+      <div style="background:#111;padding:16px 24px;border-bottom:1px solid #1a1a1a;display:flex;gap:28px;flex-wrap:wrap;align-items:center;">
+        <div>
+          <div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Клиент</div>
+          <div style="font-family:Oswald,sans-serif;color:#fff;font-size:24px;font-weight:700;">${escHtml(c.name)}</div>
+        </div>
+        ${c.phone?`<div><div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Телефон</div><div style="color:#ccc;font-size:16px;font-family:PT Sans,sans-serif;">${escHtml(c.phone)}</div></div>`:''}
+        ${c.car?`<div><div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Авто</div><div style="color:#ccc;font-size:16px;font-family:PT Sans,sans-serif;">${escHtml(c.car)}</div></div>`:''}
+        ${c.plate?`<div><div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Гос. номер</div><div style="color:#fff;font-size:18px;font-weight:700;font-family:Oswald,sans-serif;">${escHtml(c.plate)}</div></div>`:''}
+        <div style="margin-left:auto;">
+          <div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;text-align:right;">Итого</div>
+          <div style="font-family:Oswald,sans-serif;color:#d20124;font-size:32px;font-weight:900;">${v.total>0?v.total.toLocaleString('ru'):'0'} ₽</div>
+        </div>
+      </div>
+
+      <!-- Машина -->
+      <div style="display:grid;grid-template-columns:62% 38%;background:#2a2a2a;height:320px;">
+        <div id="vd-car-side" style="overflow:hidden;background:#333;display:flex;align-items:center;justify-content:center;"></div>
+        <div class="vd-top" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;padding:12px;overflow:hidden;"></div>
+      </div>
+
+      <!-- Детали -->
+      <div style="padding:20px;">
+        <div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #1e1e1e;">Детали и услуги</div>
+        ${tableRows ? `<div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;min-width:600px;">
+            <thead><tr style="background:#0a0a0a;">
+              <th style="padding:10px 14px;text-align:left;border:1px solid #1e1e1e;font-family:Oswald,sans-serif;color:#666;font-size:11px;text-transform:uppercase;min-width:140px;">Деталь</th>
+              <th style="padding:10px 8px;text-align:center;border:1px solid #1e1e1e;font-family:Oswald,sans-serif;color:#666;font-size:11px;text-transform:uppercase;white-space:nowrap;">Уровень</th>
+              ${shortLabels.map(l=>`<th style="padding:10px 6px;text-align:center;border:1px solid #1e1e1e;font-family:Oswald,sans-serif;color:#666;font-size:10px;text-transform:uppercase;white-space:nowrap;">${l}</th>`).join('')}
+              <th style="padding:10px 14px;text-align:right;border:1px solid #1e1e1e;font-family:Oswald,sans-serif;color:#666;font-size:11px;text-transform:uppercase;">Сумма</th>
+            </tr></thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>` : '<div style="color:#333;font-family:Oswald,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Нет услуг</div>'}
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+
+  // Вставляем SVG через JS чтобы браузер правильно применил размеры
+  const carDiv = overlay.querySelector('#vd-car-side');
+  if (carDiv) {
+    carDiv.innerHTML = CAR_SVG_SEDAN;
+    const svg = carDiv.querySelector('svg');
+    if (svg) {
+      svg.style.cssText = 'width:100%;height:auto;display:block;max-height:320px;';
+    }
+  }
+  const topDiv = overlay.querySelector('.vd-top');
+  if (topDiv) {
+    topDiv.innerHTML = TOP_VIEW_SVG;
+    const svg = topDiv.querySelector('svg');
+    if (svg) {
+      svg.style.cssText = 'height:296px;width:auto;display:block;';
+    }
+  }
+
+  // Подсвечиваем детали на SVG
+  setTimeout(() => {
+    (cs.selected||[]).forEach(id => {
+      overlay.querySelectorAll(`.detal[data-name="${id}"]`).forEach(el => el.classList.add('on'));
+    });
+  }, 30);
+
+  // Кнопки оверлея — через addEventListener (избегаем проблем с кавычками в onclick)
+  document.getElementById('visit-close-btn').addEventListener('click', () => overlay.remove());
+
+  const ovDone = document.getElementById('ov-done-btn');
+  if (ovDone) ovDone.addEventListener('click', () => {
+    markVisitDone(c.id, visitIdx);
+    overlay.remove();
+    openClient(c.id);
+  });
+
+  const ovRestore = document.getElementById('ov-restore-btn');
+  if (ovRestore) ovRestore.addEventListener('click', () => {
+    overlay.remove();
+    restoreVisit(c.id, visitIdx);
+  });
+
+  const ovPdf = document.getElementById('ov-pdf-btn');
+  if (ovPdf) ovPdf.addEventListener('click', () => printVisitPDF(c.id, visitIdx));
+
+  const ovDel = document.getElementById('ov-del-btn');
+  if (ovDel) ovDel.addEventListener('click', () => {
+    if (confirm('Удалить этот визит?')) {
+      overlay.remove();
+      deleteVisit(c.id, visitIdx);
+    }
+  });
+}
+
+function markVisitDone(clientId, visitIdx) {
+  const c = clients.find(c => c.id === clientId);
+  if (!c || !c.visits || !c.visits[visitIdx]) return;
+  c.visits[visitIdx].status = 'done';
+  saveClients();
+  openClient(clientId);
+}
+
+// ── Восстановить визит из архива в активный расчёт ───────────
+function restoreVisit(clientId, visitIdx) {
+  const c = clients.find(c => c.id === clientId);
+  if (!c || !c.visits || !c.visits[visitIdx]) return;
+  const v = c.visits[visitIdx];
+
+  // Проверяем что текущий расчёт пуст — иначе спрашиваем
+  const cs = c.calcState;
+  const currentIds = [...(cs.selected||[]), ...(cs.details||[]).map(d => d.id)];
+  if (currentIds.length > 0) {
+    if (!confirm('Текущий незавершённый расчёт будет заменён данными из архивного визита. Продолжить?')) return;
+  }
+
+  // Восстанавливаем calcState из архивного визита
+  const restoredState = JSON.parse(JSON.stringify(v.calcState || defaultCalcState()));
+
+  // Синхронизируем глобальный тир с per-part тирами
+  const _rPartTiers = Object.values(restoredState._partTiers || {});
+  if (_rPartTiers.length > 0) {
+    const _rAllSame = _rPartTiers.every(t => t === _rPartTiers[0]);
+    if (_rAllSame) {
+      // Все детали одного тира — глобальный тир совпадает
+      restoredState.tier = _rPartTiers[0];
+    }
+    // Если разные — глобальный тир = минимальный среди использованных
+    // (для корректного отображения глобальной кнопки)
+    // _partTiers СОХРАНЯЕМ как есть — buildPartTableHTML использует их напрямую
+  } else {
+    // _partTiers пуст — используем сохранённый tier как fallback
+    restoredState.tier = v.tier || restoredState.tier || 'light';
+  }
+
+  // Дополняем svcState для деталей которых нет в архивном state
+  PARTS.forEach(p => {
+    if (!restoredState.svcState[p.id]) {
+      restoredState.svcState[p.id] = {};
+      SVC_KEYS.forEach(k => restoredState.svcState[p.id][k] = false);
+    }
+  });
+
+  c.calcState = restoredState;
+  c.status = 'new';
+
+  // Удаляем визит из архива
+  c.visits.splice(visitIdx, 1);
+
+  saveClients();
+
+  // Переходим на вкладку «Расчёты» и открываем клиента
+  showPage('calc');
+  openClient(clientId);
+
+  // Глобальная кнопка тира: подсвечиваем только если все детали одного уровня
+  const _finalPartTiers = Object.values(restoredState._partTiers || {});
+  document.querySelectorAll('.tier-btn:not(.pt-tier-btn)').forEach(b => b.classList.remove('active'));
+  if (_finalPartTiers.length === 0 || _finalPartTiers.every(t => t === _finalPartTiers[0])) {
+    const _activeTier = _finalPartTiers[0] || restoredState.tier;
+    document.querySelector(`.tier-btn[data-tier="${_activeTier}"]:not(.pt-tier-btn)`)?.classList.add('active');
+  }
+  // Если разные тиры — ни одна глобальная кнопка не активна (это правильно)
+}
+
+function deleteVisit(clientId, visitIdx) {
+  const c = clients.find(c => c.id === clientId);
+  if (!c || !c.visits) return;
+  c.visits.splice(visitIdx, 1);
+  saveClients();
+  // Обновляем архив если он открыт
+  const archivePage = document.getElementById('archive-page');
+  if (archivePage && archivePage.classList.contains('active')) {
+    renderArchive();
+  } else {
+    openClient(clientId);
+  }
+}
+
+// ── PDF для архивного визита ──────────────────────────────────
+function printVisitPDF(clientId, visitIdx) {
+  const c = clients.find(c => c.id === clientId);
+  if (!c || !c.visits || !c.visits[visitIdx]) return;
+  const savedActive = activeClientId;
+  const savedState = c.calcState;
+  c.calcState = c.visits[visitIdx].calcState;
+  activeClientId = clientId;
+  printPDF();
+  c.calcState = savedState;
+  activeClientId = savedActive;
+}
+
+// ── Архив страница ───────────────────────────────────────────
+function renderArchive() {
+  const searchName   = (document.getElementById('arch-search-name')?.value  || '').toLowerCase();
+  const searchPhone  = (document.getElementById('arch-search-phone')?.value || '').toLowerCase();
+  const searchCar    = (document.getElementById('arch-search-car')?.value   || '').toLowerCase();
+  const statusFilter = document.getElementById('arch-status')?.value || '';
+
+  const container = document.getElementById('archive-rows');
+  if (!container) return;
+
+  // Группируем по клиентам
+  const clientsWithVisits = clients
+    .map(c => {
+      const visits = (c.visits||[])
+        .map((v, idx) => ({ v, idx }))
+        .filter(({ v }) => {
+          if (statusFilter && v.status !== statusFilter) return false;
+          return true;
+        });
+      return { c, visits };
+    })
+    .filter(({ c, visits }) => {
+      if (visits.length === 0) return false;
+      if (searchName  && !c.name.toLowerCase().includes(searchName))  return false;
+      if (searchPhone && !(c.phone||'').toLowerCase().includes(searchPhone)) return false;
+      if (searchCar   && ![(c.car||''),(c.plate||''),(c.vin||'')].join(' ').toLowerCase().includes(searchCar)) return false;
+      return true;
+    });
+
+  // Сортируем клиентов по дате последнего визита (новые сверху)
+  clientsWithVisits.sort((a, b) => {
+    const aTs = Math.max(...a.visits.map(x => x.v.ts || 0));
+    const bTs = Math.max(...b.visits.map(x => x.v.ts || 0));
+    return bTs - aTs;
+  });
+
+  if (clientsWithVisits.length === 0) {
+    container.innerHTML = '<div class="archive-empty">Архив пуст</div>';
+    return;
+  }
+
+  container.innerHTML = clientsWithVisits.map(({ c, visits }, ci) => {
+    const totalSum = visits.reduce((s, { v }) => s + (v.total || 0), 0);
+    const lastVisit = visits.slice().sort((a, b) => (b.v.ts||0) - (a.v.ts||0))[0];
+    const lastDate = lastVisit ? lastVisit.v.date : '—';
+    const allDone = visits.every(({ v }) => v.status === 'done');
+
+    // Строки визитов
+    const visitRows = visits
+      .slice()
+      .sort((a, b) => (b.v.ts||0) - (a.v.ts||0))
+      .map(({ v, idx }) => {
+        const isDone = v.status === 'done';
+        const badge = isDone
+          ? `<span style="font-family:Oswald,sans-serif;font-size:12px;font-weight:700;padding:4px 10px;background:#1a3a1a;color:#4caf50;text-transform:uppercase;">✅ Отработан</span>`
+          : `<span style="font-family:Oswald,sans-serif;font-size:12px;font-weight:700;padding:4px 10px;background:#1a1a3a;color:#7986cb;text-transform:uppercase;">📁 В архиве</span>`;
+        const sum = v.total > 0 ? v.total.toLocaleString('ru') + ' ₽' : '—';
+        const parts = getVisitPartNames(v);
+        // Реальный микс уровней по деталям визита
+        const _vcs = v.calcState || {};
+        const _vPartIds = [...(_vcs.selected||[]), ...(_vcs.details||[]).map(d => d.id)];
+        const _vTierColorMap = {light:'#4caf50',standard:'#ffa726',premium:'#d20124'};
+        const _vTierOrder = ['light','standard','premium'];
+        let tierLabel;
+        if (_vPartIds.length === 0) {
+          tierLabel = TIER_LABELS[v.tier] || 'Лайт';
+        } else {
+          const _vUsedTiers = [...new Set(_vPartIds.map(id => (_vcs._partTiers&&_vcs._partTiers[id])||_vcs.tier||'light'))];
+          if (_vUsedTiers.length === 1) {
+            const _tc = _vTierColorMap[_vUsedTiers[0]]||'#888';
+            tierLabel = `<span style="font-family:Oswald,sans-serif;font-size:12px;font-weight:700;padding:3px 8px;background:${_tc}22;color:${_tc};">${TIER_LABELS[_vUsedTiers[0]]||_vUsedTiers[0]}</span>`;
+          } else {
+            tierLabel = _vUsedTiers
+              .sort((a,b)=>_vTierOrder.indexOf(a)-_vTierOrder.indexOf(b))
+              .map(t=>{const tc=_vTierColorMap[t]||'#888';return `<span style="font-family:Oswald,sans-serif;font-size:11px;font-weight:700;padding:2px 6px;background:${tc}22;color:${tc};">${TIER_LABELS[t]||t}</span>`;})
+              .join(' ');
+          }
+        }
+        return `
+          <div class="arch-visit-row" data-client-id="${ci}" data-visit-idx="${idx}" style="display:flex;align-items:center;gap:12px;padding:14px 20px 14px 56px;border-bottom:1px solid #1a1a1a;cursor:pointer;transition:background .15s;" onmouseenter="this.style.background='#111'" onmouseleave="this.style.background=''">
+            <span style="font-family:Oswald,sans-serif;color:#555;font-size:15px;min-width:80px;">${v.date}</span>
+            <span style="font-family:Oswald,sans-serif;color:#888;font-size:14px;min-width:80px;">${tierLabel}</span>
+            <span style="color:#666;font-size:14px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">⚙️ ${escHtml(parts)}</span>
+            ${badge}
+            <span style="font-family:Oswald,sans-serif;font-size:20px;font-weight:700;color:${isDone?'#4caf50':'#d20124'};min-width:100px;text-align:right;">${sum}</span>
+            <button class="arch-restore-btn" data-client-id="${ci}" data-visit-idx="${idx}" style="background:#1a1a2e;color:#7986cb;border:1px solid #2a2a5a;font-family:Oswald,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;padding:7px 12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">↩ В работу</button>
+            <button class="arch-pdf-btn" data-client-id="${ci}" data-visit-idx="${idx}" style="background:#d20124;color:#fff;border:none;font-family:Oswald,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;padding:7px 12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">🖨️ PDF</button>
+          </div>`;
+      }).join('');
+
+    return `
+      <div class="arch-client-block" style="border:1px solid #1e1e1e;border-left:3px solid ${allDone?'#2e7d32':'#283593'};margin-bottom:6px;border-radius:2px;overflow:hidden;">
+        <!-- Шапка клиента — кликабельна -->
+        <div class="arch-client-header" data-ci="${ci}" style="display:flex;align-items:center;gap:14px;padding:16px 20px;background:#111;cursor:pointer;transition:background .15s;user-select:none;">
+          <div style="font-family:Oswald,sans-serif;font-size:22px;font-weight:700;color:#333;min-width:32px;text-align:center;">${ci+1}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-family:Oswald,sans-serif;font-size:22px;font-weight:700;color:#ddd;">${escHtml(c.name)}</div>
+            <div style="font-size:14px;color:#666;font-family:PT Sans,sans-serif;display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
+              ${c.phone?`<span>📞 ${escHtml(c.phone)}</span>`:''}
+              ${c.car?`<span>🚗 ${escHtml(c.car)}</span>`:''}
+              ${c.plate?`<span>🔢 ${escHtml(c.plate)}</span>`:''}
+              <span>📅 последний: ${lastDate}</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-family:Oswald,sans-serif;font-size:13px;color:#666;text-transform:uppercase;letter-spacing:1px;">Визитов: ${visits.length}</div>
+            <div style="font-family:Oswald,sans-serif;font-size:24px;font-weight:700;color:${allDone?'#4caf50':'#d20124'};">${totalSum > 0 ? totalSum.toLocaleString('ru') + ' ₽' : '—'}</div>
+          </div>
+          <div class="arch-chevron" style="color:#444;font-size:18px;flex-shrink:0;transition:transform .2s;">▼</div>
+        </div>
+        <!-- Список визитов — скрыт по умолчанию -->
+        <div class="arch-visits-body" style="display:none;">
+          <div style="display:flex;align-items:center;gap:12px;padding:8px 20px 8px 56px;background:#0a0a0a;border-bottom:1px solid #1a1a1a;">
+            <span style="font-family:Oswald,sans-serif;color:#555;font-size:12px;text-transform:uppercase;min-width:80px;">Дата</span>
+            <span style="font-family:Oswald,sans-serif;color:#555;font-size:12px;text-transform:uppercase;min-width:80px;">Уровень</span>
+            <span style="font-family:Oswald,sans-serif;color:#555;font-size:12px;text-transform:uppercase;flex:1;">Детали</span>
+            <span style="font-family:Oswald,sans-serif;color:#555;font-size:12px;text-transform:uppercase;min-width:100px;text-align:right;">Сумма</span>
+            <span style="width:60px;"></span>
+          </div>
+          ${visitRows}
+        </div>
+      </div>`;
+  }).join('');
+
+  // Сохраняем snapshot для обработчиков
+  const snapshot = clientsWithVisits;
+
+  // Аккордеон — шапка клиента
+  container.querySelectorAll('.arch-client-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const block = header.closest('.arch-client-block');
+      const body = block.querySelector('.arch-visits-body');
+      const chevron = header.querySelector('.arch-chevron');
+      const isOpen = body.style.display !== 'none';
+      body.style.display = isOpen ? 'none' : 'block';
+      chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+      header.style.background = isOpen ? '' : '#161616';
+    });
+  });
+
+  // Клик на строку визита — открывает оверлей
+  container.querySelectorAll('.arch-visit-row').forEach(row => {
+    row.addEventListener('click', e => {
+      if (e.target.closest('.arch-pdf-btn')) return; // PDF кнопка — отдельно
+      const ci = parseInt(row.dataset.clientId, 10);
+      const idx = parseInt(row.dataset.visitIdx, 10);
+      const { c } = snapshot[ci];
+      openVisitDetail(c.id, idx);
+    });
+  });
+
+  // PDF кнопки
+  container.querySelectorAll('.arch-pdf-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const ci = parseInt(btn.dataset.clientId, 10);
+      const idx = parseInt(btn.dataset.visitIdx, 10);
+      const { c } = snapshot[ci];
+      printVisitPDF(c.id, idx);
+    });
+  });
+
+  // Кнопки «В работу» (восстановить из архива)
+  container.querySelectorAll('.arch-restore-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const ci = parseInt(btn.dataset.clientId, 10);
+      const idx = parseInt(btn.dataset.visitIdx, 10);
+      const { c } = snapshot[ci];
+      restoreVisit(c.id, idx);
+    });
+  });
+}
+
+// ── Мобильная нижняя навигация ───────────────────────────────
+function setMobNav(page) {
+  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('mob-nav-' + page);
+  if (btn) btn.classList.add('active');
+}
+
+// Патчим showPage чтобы обновлялась нижняя навигация
+const _origShowPage = typeof showPage === 'function' ? showPage : null;
+if (_origShowPage) {
+  window.showPage = function(page) {
+    _origShowPage(page);
+    setMobNav(page);
+  };
+}
+
 renderClientList();
+
+// ── Глобальный обработчик кликов по записям визитов ──────────
+document.addEventListener('click', function(e) {
+  const overlay = document.getElementById('visit-overlay');
+  if (overlay && overlay.contains(e.target)) return;
+  const visitItem = e.target.closest('.visit-item[data-visit-idx]');
+  if (visitItem && activeClientId) {
+    const idx = parseInt(visitItem.dataset.visitIdx, 10);
+    if (!isNaN(idx)) openVisitDetail(activeClientId, idx);
+  }
+});
+
+// ── Глобальный делегированный обработчик для кнопок уровня сервиса ──
+document.addEventListener('click', function(e) {
+  // Кнопка уровня для конкретной детали (.pt-tier-btn)
+  const ptBtn = e.target.closest('.pt-tier-btn[data-id][data-tier]');
+  if (ptBtn) {
+    const clientId = activeClientId;
+    if (!clientId) return;
+    const c = clients.find(c => c.id === clientId);
+    if (!c) return;
+    const cs = c.calcState;
+    const partId = ptBtn.dataset.id;
+    const tier = ptBtn.dataset.tier;
+    cs._partTiers = cs._partTiers || {};
+    cs._partTiers[partId] = tier;
+    const part = PARTS.find(p => p.id === partId);
+    const detail = (cs.details||[]).find(d => d.id === partId);
+    const name = part ? part.name : (detail ? detail.name : 'Деталь');
+    const tableDiv = document.getElementById('table_' + partId);
+    if (!tableDiv) return;
+    const savedTier = cs.tier;
+    cs.tier = tier;
+    tableDiv.innerHTML = part ? buildPartTableHTML(partId, name, cs) : buildDetailTableHTML(partId, name, cs);
+    cs.tier = savedTier;
+    attachPartRowEvents(c, partId);
+    updateRowTotal(partId, cs, tier);
+    updateSummary(c);
+    // Обновляем глобальные кнопки
+    const allIds = [...(cs.selected||[]), ...(cs.details||[]).map(d => d.id)];
+    const tiers = allIds.map(id => (cs._partTiers && cs._partTiers[id]) || cs.tier);
+    const allSame = tiers.every(t => t === tiers[0]);
+    document.querySelectorAll('.tier-btn:not(.pt-tier-btn)').forEach(b => b.classList.remove('active'));
+    if (allSame) document.querySelector(`.tier-btn[data-tier="${tiers[0]}"]:not(.pt-tier-btn)`)?.classList.add('active');
+    saveClients();
+    return;
+  }
+
+  // Глобальная кнопка уровня (.tier-btn но не .pt-tier-btn)
+  const tierBtn = e.target.closest('.tier-btn:not(.pt-tier-btn)[data-tier]');
+  if (tierBtn) {
+    const clientId = activeClientId;
+    if (!clientId) return;
+    const c = clients.find(c => c.id === clientId);
+    if (!c) return;
+    const cs = c.calcState;
+    const newTier = tierBtn.dataset.tier;
+    cs.tier = newTier;
+    cs._partTiers = {};
+    document.querySelectorAll('.tier-btn:not(.pt-tier-btn)').forEach(b => b.classList.remove('active'));
+    tierBtn.classList.add('active');
+    rebuildAllTables(c);
+    updateSummary(c);
+    saveClients();
+  }
+});
 </script>
 </body>
 </html>
