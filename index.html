@@ -671,6 +671,11 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   letter-spacing: 0.3px;
 }
 .cost-adj-btn:hover { background: #252525; color: #bbb; border-color: #444; }
+
+/* Запчасти — поля ввода */
+.sp-field { caret-color: #fff; }
+.sp-field::placeholder { color: #3a3a3a; font-size: 13px; }
+.sp-field:focus { background: rgba(255,255,255,0.03) !important; }
 .cost-profit {
   padding: 16px 20px;
   display: flex;
@@ -683,6 +688,10 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 .profit-val.loss { color: var(--red); }
 
 /* Строка "Общая сумма затрат" */
+/* Плейсхолдеры в таблице запчастей */
+#sp-tbody input::placeholder { color: #555; }
+#sp-tbody input { color: #ddd !important; }
+
 .cost-total-row {
   padding: 12px 20px;
   display: flex;
@@ -1420,7 +1429,11 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   .cost-cell .c-label { font-size: 10px; }
   .cost-cell .c-val { font-size: 20px; }
   .cost-cell .c-note { font-size: 11px; }
-  .cost-total-row { padding: 10px 14px; }
+  /* Плейсхолдеры в таблице запчастей */
+#sp-tbody input::placeholder { color: #555; }
+#sp-tbody input { color: #ddd !important; }
+
+.cost-total-row { padding: 10px 14px; }
   .cost-total-label { font-size: 11px; }
   .cost-total-val { font-size: 16px; }
   .cost-profit { flex-direction: row; align-items: center; padding: 14px 16px; }
@@ -2021,6 +2034,7 @@ function buildWorkspace(c) {
         <div class="cost-cell paint">
           <div class="c-label">Краска</div>
           <div class="c-val" id="cost-paint">0 ₽</div>
+          <div id="paint-units" style="display:none;font-family:'PT Sans',sans-serif;font-size:12px;color:#5c9bd6;margin-top:4px;letter-spacing:0.3px;"></div>
           <div class="cost-adj" style="display:flex;align-items:center;gap:6px;margin-top:8px;">
             <button class="cost-adj-btn" data-type="paint" data-delta="-3000">−3 000</button>
             <button class="cost-adj-btn" data-type="paint" data-delta="-1000">−1 000</button>
@@ -2197,9 +2211,9 @@ function initSpareParts(c) {
   const cs = c.calcState;
   if (!cs.spareParts) cs.spareParts = [];
 
-  const SP_INPUT_STYLE = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:"PT Sans",sans-serif;font-size:13px;color:#ccc;box-sizing:border-box;';
-  const SP_INPUT_STYLE_PRICE = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:"Oswald",sans-serif;font-size:14px;font-weight:600;color:#ff9800;text-align:right;box-sizing:border-box;';
-  const SP_INPUT_STYLE_CAT = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:monospace;font-size:12px;color:#888;letter-spacing:0.5px;box-sizing:border-box;';
+  const SP_INPUT_STYLE = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:"PT Sans",sans-serif;font-size:15px;color:#ddd;box-sizing:border-box;';
+  const SP_INPUT_STYLE_PRICE = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:"Oswald",sans-serif;font-size:16px;font-weight:600;color:#ff9800;text-align:right;box-sizing:border-box;';
+  const SP_INPUT_STYLE_CAT = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:monospace;font-size:14px;color:#aaa;letter-spacing:0.5px;box-sizing:border-box;';
 
   function renderRows() {
     const tbody = document.getElementById('sp-tbody');
@@ -2484,7 +2498,7 @@ function updateSummary(c) {
   const cs = c.calcState;
   let total = 0, su = 0, z = 0, rem = 0, paint = 0;
   let repairParts = 0, paintCost = 0, otherCost = 0;
-  let detailCount = 0;
+  let detailCount = 0, paintUnits = 0;
 
   const allIds = [...cs.selected, ...(cs.details||[]).map(d => d.id)];
   allIds.forEach(id => {
@@ -2505,9 +2519,11 @@ function updateSummary(c) {
     });
     // Count repair ops for cost
     if (st.r1 || st.r2) repairParts++;
-    // Count paint ops for cost
-    if (st.p2) paintCost += PAINT_COST_2;
-    else if (st.p1) paintCost += PAINT_COST_1;
+    // Count paint ops for cost — kap/kry/bag стоят 4500, остальные 3000; p2 = p1*1.3
+    const PAINT_LARGE = ['kap', 'kry', 'bag'];
+    const paintBase = PAINT_LARGE.includes(id) ? 4500 : PAINT_COST_1;
+    if (st.p2) { paintCost += Math.round(paintBase * 1.3); paintUnits += 1.3; }
+    else if (st.p1) { paintCost += paintBase; paintUnits += 1.0; }
     detailCount++;
   });
 
@@ -2515,8 +2531,7 @@ function updateSummary(c) {
   const extraPaint  = cs.extraPaint  || 0;
   const totalRepairCost = repairParts * REPAIR_COST_PER_PART + extraRepair;
   const totalPaintCost  = paintCost + extraPaint;
-  // Итоговая сумма = сумма клиенту + затраты мастера (расходники + краска)
-  const grandTotal = total + extraRepair + extraPaint;
+  // grandTotal вычислим позже — после подсчёта запчастей
 
   // Update DOM
   const sel = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
@@ -2528,6 +2543,21 @@ function updateSummary(c) {
   sel('sum-paint', paint.toLocaleString('ru') + ' ₽');
   sel('cost-repair', totalRepairCost.toLocaleString('ru') + ' ₽');
   sel('cost-paint', totalPaintCost.toLocaleString('ru') + ' ₽');
+
+  // Счётчик единиц краски (1.0 за однослойную, 1.3 за двухслойную)
+  const paintCountEl = document.getElementById('paint-units');
+  if (paintCountEl) {
+    if (paintUnits > 0) {
+      // Форматируем: целое число без .0, с одним знаком если дробное
+      const puStr = paintUnits % 1 === 0
+        ? paintUnits.toFixed(0)
+        : paintUnits.toFixed(1).replace('.', ',');
+      paintCountEl.textContent = puStr + ' ед.';
+      paintCountEl.style.display = '';
+    } else {
+      paintCountEl.style.display = 'none';
+    }
+  }
 
   // Прочие затраты = 5% от суммы запчастей
   const spSum = ((c.calcState.spareParts)||[]).reduce((acc, row) => {
@@ -2545,6 +2575,9 @@ function updateSummary(c) {
   // Общая сумма затрат = расходники + краска + прочие
   const totalCosts = totalRepairCost + totalPaintCost + otherRounded;
   sel('cost-total', totalCosts.toLocaleString('ru') + ' ₽');
+
+  // Итог с затратами = Итог расчёта + Сумма запчастей + Общая сумма затрат
+  const grandTotal = total + spSum + totalCosts;
 
   // Показываем корректировки
   const extraRepairEl = document.getElementById('extra-repair');
