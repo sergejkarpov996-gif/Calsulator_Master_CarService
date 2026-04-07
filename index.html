@@ -682,6 +682,29 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 .profit-val { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: #4caf50; }
 .profit-val.loss { color: var(--red); }
 
+/* Строка "Общая сумма затрат" */
+.cost-total-row {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #1a1a1a;
+  background: #0a0a0a;
+}
+.cost-total-label {
+  font-family: 'Oswald', sans-serif;
+  color: #555;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.cost-total-val {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ddd;
+}
+
 /* ═══ MODAL ══════════════════════════════════════════════════ */
 .modal-overlay {
   display: none;
@@ -1397,6 +1420,9 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   .cost-cell .c-label { font-size: 10px; }
   .cost-cell .c-val { font-size: 20px; }
   .cost-cell .c-note { font-size: 11px; }
+  .cost-total-row { padding: 10px 14px; }
+  .cost-total-label { font-size: 11px; }
+  .cost-total-val { font-size: 16px; }
   .cost-profit { flex-direction: row; align-items: center; padding: 14px 16px; }
   .profit-label { font-size: 12px; }
   .profit-val { font-size: 22px; }
@@ -1693,7 +1719,7 @@ let editingClientId = null;
 function defaultCalcState() {
   const svcState = {};
   PARTS.forEach(p => { svcState[p.id] = {}; SVC_KEYS.forEach(k => svcState[p.id][k] = false); });
-  return { tier: 'light', selected: [], svcState, details: [], detailUid: 0, extraRepair: 0, extraPaint: 0 };
+  return { tier: 'light', selected: [], svcState, details: [], detailUid: 0, extraRepair: 0, extraPaint: 0, spareParts: [] };
 }
 
 function getClientState(id) {
@@ -1952,6 +1978,30 @@ function buildWorkspace(c) {
       </div>
     </div>
 
+    <!-- SPARE PARTS TABLE -->
+    <div class="cost-section" id="spare-parts-section">
+      <div class="cost-header">Запчасти</div>
+      <table id="spare-parts-table" style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="background:#0a0a0a;border-bottom:1px solid #2a2a2a;">
+            <th style="font-family:'Oswald',sans-serif;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:9px 14px;text-align:left;">Запчасть</th>
+            <th style="font-family:'Oswald',sans-serif;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:9px 10px;text-align:right;white-space:nowrap;">Цена, ₽</th>
+            <th style="font-family:'Oswald',sans-serif;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:9px 10px;text-align:left;white-space:nowrap;">Кат.№ ориг.</th>
+            <th style="font-family:'Oswald',sans-serif;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:9px 10px;text-align:left;white-space:nowrap;">Кат.№ не ориг.</th>
+            <th style="width:32px;"></th>
+          </tr>
+        </thead>
+        <tbody id="sp-tbody"></tbody>
+      </table>
+      <button id="sp-add-btn" style="width:100%;background:#111;border:none;border-top:1px solid #1e1e1e;color:#555;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:11px 16px;cursor:pointer;text-align:left;transition:color .15s,background .15s;">
+        + Добавить запчасть
+      </button>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:#0a0a0a;border-top:1px solid #1e1e1e;">
+        <span style="font-family:'Oswald',sans-serif;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;">Сумма запчастей</span>
+        <span style="font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;color:#ff9800;" id="sp-total">0 ₽</span>
+      </div>
+    </div>
+
     <!-- COST BREAKDOWN (затраты мастера) -->
     <div class="cost-section">
       <div class="cost-header">Расчёт затрат мастера</div>
@@ -1971,7 +2021,6 @@ function buildWorkspace(c) {
         <div class="cost-cell paint">
           <div class="c-label">Краска</div>
           <div class="c-val" id="cost-paint">0 ₽</div>
-          <div class="c-note">3 000 ₽ (1 сл.) / 6 000 ₽ (2 сл. — Окрас 2 ст.)</div>
           <div class="cost-adj" style="display:flex;align-items:center;gap:6px;margin-top:8px;">
             <button class="cost-adj-btn" data-type="paint" data-delta="-3000">−3 000</button>
             <button class="cost-adj-btn" data-type="paint" data-delta="-1000">−1 000</button>
@@ -1983,11 +2032,15 @@ function buildWorkspace(c) {
         <div class="cost-cell other">
           <div class="c-label">Прочие затраты</div>
           <div class="c-val" id="cost-other">0 ₽</div>
-          <div class="c-note">С/У + Разборка + Замена</div>
+          <div class="c-note" id="cost-other-note">5% от суммы запчастей</div>
         </div>
       </div>
+      <div class="cost-total-row">
+        <span class="cost-total-label">Общая сумма затрат</span>
+        <span class="cost-total-val" id="cost-total">0 ₽</span>
+      </div>
       <div class="cost-profit">
-        <span class="profit-label">Прибыль мастера</span>
+        <span class="profit-label">Итог с затратами</span>
         <span class="profit-val" id="cost-profit">0 ₽</span>
       </div>
     </div>
@@ -2012,17 +2065,23 @@ function buildDetailTableHTML(detailId, name, cs) {
 
 function buildRowHTML(id, name, pr, state, currentTier) {
   const tier = currentTier || 'light';
+  const isCustom = id.startsWith('detail_');
+
   const cols = SVC_KEYS.map((k, i) => {
     const val = pr[k];
     const disp = val > 0 ? val.toLocaleString('ru') + ' ₽' : '—';
     const disabled = val === 0 ? 'disabled' : '';
+    // For custom details: price is clickable to edit
+    const priceCell = isCustom
+      ? `<div class="price-label custom-price-lbl" data-id="${id}" data-key="${k}" title="Нажмите для редактирования цены" style="cursor:pointer;border-bottom:1px dashed #999;display:inline-block;min-width:40px;">${disp}</div>`
+      : `<div class="price-label">${disp}</div>`;
     return `<div class="svc-col">
       <div class="col-label">${SVC_LABELS[i]}</div>
       <div class="toggle-wrap">
         <input type="checkbox" class="toggle-cb" id="cb_${id}_${k}" ${state[k]?'checked':''} ${disabled}>
         <label class="toggle-label" for="cb_${id}_${k}" style="${val===0?'opacity:.3;pointer-events:none':''}"></label>
       </div>
-      <div class="price-label">${disp}</div>
+      ${priceCell}
     </div>`;
   }).join('');
 
@@ -2038,6 +2097,14 @@ function buildRowHTML(id, name, pr, state, currentTier) {
     </div>`
   ).join('');
 
+  // For custom details: name is an editable input field
+  const nameEl = isCustom
+    ? `<input class="custom-name-input" id="name_${id}" type="text" value="${name}" maxlength="40"
+        style="font-size:15px;font-weight:600;color:#333;font-family:'PT Sans',sans-serif;
+               background:transparent;border:none;border-bottom:1px dashed #999;outline:none;
+               width:100%;padding:2px 0;cursor:text;" placeholder="Название детали">`
+    : `<div class="part-name-val">${name}</div>`;
+
   return `<div class="pt-outer">
     <div class="pt-inner">
       <div class="pt-trash" id="trash_${id}">
@@ -2050,7 +2117,7 @@ function buildRowHTML(id, name, pr, state, currentTier) {
       </div>
       <div class="pt-name">
         <div class="col-label">элемент</div>
-        <div class="part-name-val">${name}</div>
+        ${nameEl}
       </div>
       <div class="pt-services">
         <div class="pt-services-inner">
@@ -2118,11 +2185,91 @@ function attachAllEvents(c) {
   // Add detail button
   const addBtn = document.getElementById('add-detail-btn');
   if (addBtn) addBtn.addEventListener('click', () => addDetail(c));
+
+  // Spare parts table
+  initSpareParts(c);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SPARE PARTS TABLE
+// ═══════════════════════════════════════════════════════════
+function initSpareParts(c) {
+  const cs = c.calcState;
+  if (!cs.spareParts) cs.spareParts = [];
+
+  const SP_INPUT_STYLE = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:"PT Sans",sans-serif;font-size:13px;color:#ccc;box-sizing:border-box;';
+  const SP_INPUT_STYLE_PRICE = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:"Oswald",sans-serif;font-size:14px;font-weight:600;color:#ff9800;text-align:right;box-sizing:border-box;';
+  const SP_INPUT_STYLE_CAT = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:monospace;font-size:12px;color:#888;letter-spacing:0.5px;box-sizing:border-box;';
+
+  function renderRows() {
+    const tbody = document.getElementById('sp-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = cs.spareParts.map((row, i) => `
+      <tr style="border-bottom:1px solid #1a1a1a;" data-spi="${i}">
+        <td style="padding:0;"><input class="sp-field" data-i="${i}" data-f="name"    value="${escHtml(row.name||'')}"    placeholder="Название"  style="${SP_INPUT_STYLE}"></td>
+        <td style="padding:0;min-width:90px;"><input class="sp-field" data-i="${i}" data-f="price"   value="${escHtml(row.price||'')}"   placeholder="0"       style="${SP_INPUT_STYLE_PRICE}"></td>
+        <td style="padding:0;"><input class="sp-field" data-i="${i}" data-f="orig"    value="${escHtml(row.orig||'')}"    placeholder="—"         style="${SP_INPUT_STYLE_CAT}"></td>
+        <td style="padding:0;"><input class="sp-field" data-i="${i}" data-f="nonorig" value="${escHtml(row.nonorig||'')}" placeholder="—"         style="${SP_INPUT_STYLE_CAT}"></td>
+        <td style="padding:0 8px;text-align:center;">
+          <button class="sp-del" data-i="${i}" title="Удалить"
+            style="background:none;border:none;color:#333;font-size:16px;cursor:pointer;padding:4px 6px;line-height:1;transition:color .15s;"
+            onmouseenter="this.style.color='#d20124'" onmouseleave="this.style.color='#333'">✕</button>
+        </td>
+      </tr>`).join('');
+    bindRowEvents();
+  }
+
+  function bindRowEvents() {
+    const tbody = document.getElementById('sp-tbody');
+    if (!tbody) return;
+    tbody.querySelectorAll('.sp-field').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const i = +inp.dataset.i;
+        const f = inp.dataset.f;
+        if (!cs.spareParts[i]) return;
+        cs.spareParts[i][f] = inp.value;
+        if (f === 'price') updateSummary(c);
+        saveClients();
+      });
+      // Highlight row on focus
+      inp.addEventListener('focus', () => { const tr = inp.closest('tr'); if (tr) tr.style.background = '#111'; });
+      inp.addEventListener('blur',  () => { const tr = inp.closest('tr'); if (tr) tr.style.background = ''; });
+    });
+    tbody.querySelectorAll('.sp-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        cs.spareParts.splice(+btn.dataset.i, 1);
+        renderRows();
+        updateSummary(c);
+        saveClients();
+      });
+    });
+  }
+
+  const addBtn = document.getElementById('sp-add-btn');
+  if (addBtn) {
+    addBtn.onmouseenter = () => { addBtn.style.color='#bbb'; addBtn.style.background='#161616'; };
+    addBtn.onmouseleave = () => { addBtn.style.color='#555'; addBtn.style.background='#111'; };
+    addBtn.onclick = () => {
+      cs.spareParts.push({ name:'', price:'', orig:'', nonorig:'' });
+      renderRows();
+      // Focus the last name field
+      const tbody = document.getElementById('sp-tbody');
+      if (tbody) {
+        const all = tbody.querySelectorAll('.sp-field[data-f="name"]');
+        if (all.length) all[all.length-1].focus();
+      }
+      saveClients();
+    };
+  }
+
+  renderRows();
 }
 
 function attachDetailEvents(c, detailId) {
   const cs = c.calcState;
   if (!cs.svcState[detailId]) { cs.svcState[detailId] = {}; SVC_KEYS.forEach(k => cs.svcState[detailId][k] = false); }
+
+  // Checkboxes
   SVC_KEYS.forEach(k => {
     const cb = document.getElementById('cb_' + detailId + '_' + k);
     if (cb) cb.addEventListener('change', () => {
@@ -2132,8 +2279,52 @@ function attachDetailEvents(c, detailId) {
       saveClients();
     });
   });
+
+  // Trash
   const trash = document.getElementById('trash_' + detailId);
   if (trash) trash.addEventListener('click', () => removeDetail(c, detailId));
+
+  // Editable name input
+  const nameInput = document.getElementById('name_' + detailId);
+  if (nameInput) {
+    nameInput.addEventListener('input', () => {
+      const detail = (cs.details||[]).find(d => d.id === detailId);
+      if (detail) {
+        detail.name = nameInput.value || 'Деталь';
+        // Also update mobile label
+        const mob = document.querySelector('#table_' + detailId + ' .mobile-part-name');
+        if (mob) mob.textContent = detail.name;
+        saveClients();
+      }
+    });
+  }
+
+  // Editable price labels (click → prompt)
+  document.querySelectorAll(`#table_${detailId} .custom-price-lbl`).forEach(lbl => {
+    lbl.addEventListener('click', () => {
+      const key = lbl.dataset.key;
+      if (!cs._detailPrices) cs._detailPrices = {};
+      if (!cs._detailPrices[detailId]) cs._detailPrices[detailId] = { ...DETAIL_BASE };
+      const cur = cs._detailPrices[detailId][key] || 0;
+      const raw = prompt(`Цена для "${SVC_LABELS[SVC_KEYS.indexOf(key)]}" (₽):`, cur);
+      if (raw === null) return;
+      const num = parseInt(raw.replace(/\D/g, ''), 10);
+      if (isNaN(num) || num < 0) return;
+      cs._detailPrices[detailId][key] = num;
+      // Rebuild this row
+      const detail = (cs.details||[]).find(d => d.id === detailId);
+      const tableDiv = document.getElementById('table_' + detailId);
+      if (tableDiv && detail) {
+        const partTier = (cs._partTiers && cs._partTiers[detailId]) || cs.tier;
+        const newPr = getPrices(detailId, partTier, cs);
+        tableDiv.innerHTML = buildRowHTML(detailId, detail.name, newPr, cs.svcState[detailId] || {}, partTier);
+        attachDetailEvents(c, detailId);
+      }
+      updateRowTotal(detailId, cs);
+      updateSummary(c);
+      saveClients();
+    });
+  });
 }
 
 function togglePart(c, id, name) {
@@ -2218,15 +2409,6 @@ function removeDetail(c, id) {
   if (cs._detailPrices) delete cs._detailPrices[id];
   const div = document.getElementById('table_' + id);
   if (div) div.remove();
-  // Renumber
-  (cs.details||[]).forEach((d, idx) => {
-    const newName = 'Деталь' + (cs.details.length > 1 ? ' ' + (idx+1) : '');
-    d.name = newName;
-    const nameEl = document.querySelector('#table_' + d.id + ' .part-name-val');
-    const mobileEl = document.querySelector('#table_' + d.id + ' .mobile-part-name');
-    if (nameEl) nameEl.textContent = newName;
-    if (mobileEl) mobileEl.textContent = newName;
-  });
   updateSummary(c);
   saveClients();
 }
@@ -2333,8 +2515,8 @@ function updateSummary(c) {
   const extraPaint  = cs.extraPaint  || 0;
   const totalRepairCost = repairParts * REPAIR_COST_PER_PART + extraRepair;
   const totalPaintCost  = paintCost + extraPaint;
-  const totalCost = totalRepairCost + totalPaintCost + otherCost * 0.15;
-  const profit = total - totalRepairCost - totalPaintCost;
+  // Итоговая сумма = сумма клиенту + затраты мастера (расходники + краска)
+  const grandTotal = total + extraRepair + extraPaint;
 
   // Update DOM
   const sel = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
@@ -2346,7 +2528,23 @@ function updateSummary(c) {
   sel('sum-paint', paint.toLocaleString('ru') + ' ₽');
   sel('cost-repair', totalRepairCost.toLocaleString('ru') + ' ₽');
   sel('cost-paint', totalPaintCost.toLocaleString('ru') + ' ₽');
-  sel('cost-other', Math.round(otherCost * 0.15).toLocaleString('ru') + ' ₽');
+
+  // Прочие затраты = 5% от суммы запчастей
+  const spSum = ((c.calcState.spareParts)||[]).reduce((acc, row) => {
+    const v = parseInt(String(row.price||'').replace(/\D/g,''), 10);
+    return acc + (isNaN(v) ? 0 : v);
+  }, 0);
+  const otherRounded = Math.round(spSum * 0.05);
+  sel('sp-total', spSum.toLocaleString('ru') + ' ₽');
+  sel('cost-other', otherRounded.toLocaleString('ru') + ' ₽');
+  const noteEl = document.getElementById('cost-other-note');
+  if (noteEl) noteEl.textContent = spSum > 0
+    ? `5% от ${spSum.toLocaleString('ru')} ₽`
+    : '5% от суммы запчастей';
+
+  // Общая сумма затрат = расходники + краска + прочие
+  const totalCosts = totalRepairCost + totalPaintCost + otherRounded;
+  sel('cost-total', totalCosts.toLocaleString('ru') + ' ₽');
 
   // Показываем корректировки
   const extraRepairEl = document.getElementById('extra-repair');
@@ -2362,8 +2560,8 @@ function updateSummary(c) {
 
   const profitEl = document.getElementById('cost-profit');
   if (profitEl) {
-    profitEl.textContent = profit.toLocaleString('ru') + ' ₽';
-    profitEl.className = 'profit-val' + (profit < 0 ? ' loss' : '');
+    profitEl.textContent = grandTotal.toLocaleString('ru') + ' ₽';
+    profitEl.className = 'profit-val';
   }
 
   // Update client status
