@@ -1303,54 +1303,56 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 }
 .settings-prices-grid {
   display: grid;
-  grid-template-columns: 1fr repeat(7, auto);
+  grid-template-columns: 160px repeat(7, 1fr);
   gap: 1px;
   background: #1a1a1a;
   margin-bottom: 16px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .sp-head {
   background: #0a0a0a;
   font-family: 'Oswald', sans-serif;
-  font-size: 10px;
-  color: #555;
+  font-size: 12px;
+  color: #888;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: 7px 8px;
+  padding: 10px 8px;
   text-align: center;
   white-space: nowrap;
 }
-.sp-head:first-child { text-align: left; padding-left: 12px; }
+.sp-head:first-child { text-align: left; padding-left: 14px; }
 .sp-name {
-  background: #0d0d0d;
+  background: #111;
   font-family: 'PT Sans', sans-serif;
-  color: #bbb;
-  font-size: 13px;
-  padding: 6px 12px;
+  color: #ccc;
+  font-size: 14px;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid #1a1a1a;
 }
 .sp-cell {
-  background: #0d0d0d;
-  padding: 3px;
+  background: #111;
+  padding: 6px;
+  border-bottom: 1px solid #1a1a1a;
 }
 .sp-cell input {
-  width: 72px;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #222;
-  color: #ddd;
+  background: #1a1a1a;
+  border: 1px solid #222;
+  border-radius: 2px;
+  color: #fff;
   font-family: 'Oswald', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-align: right;
-  padding: 4px 6px;
+  padding: 6px 8px;
   outline: none;
   width: 100%;
   transition: border-color .15s;
 }
-.sp-cell input:focus { border-bottom-color: var(--red); background: #111; }
-.sp-cell input:disabled { color: #333; }
+.sp-cell input:focus { border-color: var(--red); background: #222; }
+.sp-cell input:disabled { color: #2a2a2a; background: #0d0d0d; border-color: #1a1a1a; }
 .settings-save-btn {
   background: var(--red);
   color: #fff;
@@ -1866,10 +1868,10 @@ const SETTINGS_KEY = 'cs_settings';
 const DEFAULT_SETTINGS = {
   colorSurcharge: 2000,
   paintCoeff2layer: 1.3,
-  repairCostPerRepair: 4000,   // за каждую деталь с ремонтом (р1/р2)
-  repairCostPerSU: 0,          // за каждую деталь со Снять/Установить
-  repairCostPerRC: 0,          // за каждую деталь с Разобр./Собрать
-  repairCostPerZ: 0,           // за каждую деталь с Заменой
+  repairCostPerRepair: 4000,
+  repairCostPerSU: 4000,
+  repairCostPerRC: 4000,
+  repairCostPerZ: 4000,
   prices: {}
 };
 
@@ -1962,8 +1964,8 @@ function getPrices(partId, tier, calcState, colorSurcharge) {
     s:  base.s,
     rc: base.rc > 0 ? base.rc + add : 0,
     z:  base.z  > 0 ? base.z  + add : 0,
-    p1: base.p1 > 0 ? base.p1 + cSurcharge : 0,
-    p2: base.p2 > 0 ? base.p2 + cSurcharge : 0,
+    p1: base.p1 > 0 ? base.p1 : 0,
+    p2: base.p2 > 0 ? base.p2 : 0,
     r2: base.r2,
     r1: base.r1,
   };
@@ -2056,6 +2058,11 @@ function openClient(id) {
   if (!c) return;
   if (!c.calcState) c.calcState = defaultCalcState();
   if (!c.calcState._detailPrices) c.calcState._detailPrices = {};
+  // Устанавливаем colorSurcharge ДО рендера таблиц — чтобы цены отображались правильно
+  const _PREMIUM_COLORS = ['Ксералик', '3-х сл. перламутровая'];
+  const _st = loadSettings();
+  c.calcState._colorSurcharge = _PREMIUM_COLORS.includes(c.color||'')
+    ? (_st.colorSurcharge ?? 2000) : 0;
   renderClientList();
 
   document.getElementById('work-empty').style.display = 'none';
@@ -2771,7 +2778,6 @@ function updateSummary(c) {
   let total = 0, su = 0, z = 0, rem = 0, paint = 0;
   let repairParts = 0, paintCost = 0, otherCost = 0;
   let detailCount = 0, paintUnits = 0;
-  let suParts = 0, rcParts = 0, zParts = 0;
 
   // Надбавка за тип покрытия — берём из настроек
   const PREMIUM_COLORS = ['Ксералик', '3-х сл. перламутровая'];
@@ -2801,9 +2807,6 @@ function updateSummary(c) {
     });
     // Count repair ops for cost
     if (st.r1 || st.r2) repairParts++;
-    if (st.s)  suParts++;
-    if (st.rc) rcParts++;
-    if (st.z)  zParts++;
     // Count paint ops for cost — kap/kry/bag стоят 4500, остальные 3000; p2 = p1*1.3
     const PAINT_LARGE = ['kap', 'kry', 'bag'];
     const paintBase = PAINT_LARGE.includes(id) ? 4500 : PAINT_COST_1;
@@ -2815,15 +2818,14 @@ function updateSummary(c) {
 
   const extraRepair = cs.extraRepair || 0;
   const extraPaint  = cs.extraPaint  || 0;
-  const repairCostPerRepair = _settings.repairCostPerRepair || 4000;
-  const repairCostPerSU  = _settings.repairCostPerSU  || 0;
-  const repairCostPerRC  = _settings.repairCostPerRC  || 0;
-  const repairCostPerZ   = _settings.repairCostPerZ   || 0;
-  const totalRepairCost = repairParts * repairCostPerRepair
-    + suParts * repairCostPerSU
-    + rcParts * repairCostPerRC
-    + zParts  * repairCostPerZ
-    + extraRepair;
+  const cRep = _settings.repairCostPerRepair ?? 4000;
+  const cSU  = _settings.repairCostPerSU ?? 0;
+  const cRC  = _settings.repairCostPerRC ?? 0;
+  const cZ   = _settings.repairCostPerZ  ?? 0;
+  let cntSU=0, cntRC=0, cntZ=0;
+  allIds.forEach(id => { const st=cs.svcState[id]||{}; if(st.s)cntSU++; if(st.rc)cntRC++; if(st.z)cntZ++; });
+  const repairMaterialCost = repairParts*cRep + cntSU*cSU + cntRC*cRC + cntZ*cZ;
+  const totalRepairCost = repairMaterialCost + extraRepair;
   const totalPaintCost  = paintCost + extraPaint;
   // grandTotal вычислим позже — после подсчёта запчастей
 
@@ -3471,6 +3473,51 @@ function openVisitDetail(clientId, visitIdx) {
             <tbody>${tableRows}</tbody>
           </table>
         </div>` : '<div style="color:#333;font-family:Oswald,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Нет услуг</div>'}
+
+        ${(()=>{
+          // Запчасти
+          const sp = cs.spareParts || [];
+          if (sp.length === 0) return '';
+          const spTotal = sp.reduce((s,r) => s + (parseFloat(r.price)||0), 0);
+          const spRows = sp.filter(r=>r.name||r.price).map(r=>`
+            <tr style="border-bottom:1px solid #1e1e1e;">
+              <td style="padding:8px 14px;font-size:13px;color:#ccc;">${escHtml(r.name||'—')}</td>
+              <td style="padding:8px 14px;text-align:right;font-family:Oswald,sans-serif;font-size:14px;font-weight:600;color:#ff9800;white-space:nowrap;">${r.price?parseFloat(r.price).toLocaleString('ru')+' ₽':'—'}</td>
+              <td style="padding:8px 14px;font-size:12px;color:#555;font-family:monospace;">${escHtml(r.orig||'')}</td>
+              <td style="padding:8px 14px;font-size:12px;color:#555;font-family:monospace;">${escHtml(r.nonorig||'')}</td>
+            </tr>`).join('');
+          return `
+            <div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:20px 0 12px;padding-bottom:8px;border-bottom:1px solid #1e1e1e;">Запчасти</div>
+            <div style="overflow-x:auto;">
+              <table style="width:100%;border-collapse:collapse;min-width:400px;">
+                <thead><tr style="background:#0a0a0a;">
+                  <th style="padding:8px 14px;text-align:left;border:1px solid #1e1e1e;font-family:Oswald,sans-serif;color:#666;font-size:11px;text-transform:uppercase;">Запчасть</th>
+                  <th style="padding:8px 14px;text-align:right;border:1px solid #1e1e1e;font-family:Oswald,sans-serif;color:#666;font-size:11px;text-transform:uppercase;">Цена</th>
+                  <th style="padding:8px 14px;text-align:left;border:1px solid #1e1e1e;font-family:Oswald,sans-serif;color:#666;font-size:11px;text-transform:uppercase;">Кат.№ ориг.</th>
+                  <th style="padding:8px 14px;text-align:left;border:1px solid #1e1e1e;font-family:Oswald,sans-serif;color:#666;font-size:11px;text-transform:uppercase;">Кат.№ не ориг.</th>
+                </tr></thead>
+                <tbody>${spRows}</tbody>
+                <tfoot><tr style="background:#0a0a0a;">
+                  <td colspan="3" style="padding:8px 14px;font-family:Oswald,sans-serif;color:#666;font-size:11px;text-transform:uppercase;border:1px solid #1e1e1e;">Итого запчасти</td>
+                  <td style="padding:8px 14px;text-align:right;font-family:Oswald,sans-serif;font-size:15px;font-weight:700;color:#ff9800;border:1px solid #1e1e1e;">${spTotal.toLocaleString('ru')} ₽</td>
+                </tr></tfoot>
+              </table>
+            </div>`;
+        })()}
+
+        ${(()=>{
+          // Дни
+          const db = cs.daysBody || 0;
+          const dp = cs.daysPaint || 0;
+          if (!db && !dp) return '';
+          return `
+            <div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:20px 0 12px;padding-bottom:8px;border-bottom:1px solid #1e1e1e;">Сроки</div>
+            <div style="display:flex;gap:24px;flex-wrap:wrap;">
+              ${db?`<div style="display:flex;flex-direction:column;gap:2px;"><span style="font-family:Oswald,sans-serif;color:#555;font-size:10px;text-transform:uppercase;letter-spacing:1px;">Кузовные работы</span><span style="font-family:Oswald,sans-serif;color:#ddd;font-size:18px;font-weight:700;">${db} дн.</span></div>`:''}
+              ${dp?`<div style="display:flex;flex-direction:column;gap:2px;"><span style="font-family:Oswald,sans-serif;color:#555;font-size:10px;text-transform:uppercase;letter-spacing:1px;">Покраска</span><span style="font-family:Oswald,sans-serif;color:#ddd;font-size:18px;font-weight:700;">${dp} дн.</span></div>`:''}
+              ${(db||dp)?`<div style="display:flex;flex-direction:column;gap:2px;"><span style="font-family:Oswald,sans-serif;color:#555;font-size:10px;text-transform:uppercase;letter-spacing:1px;">Итого</span><span style="font-family:Oswald,sans-serif;color:#fff;font-size:18px;font-weight:700;">${db+dp} дн.</span></div>`:''}
+            </div>`;
+        })()}
       </div>
     </div>`;
 
@@ -3818,18 +3865,17 @@ if (_origShowPage) {
 
 
 // ─── СТРАНИЦА НАСТРОЕК ──────────────────────────────────────
-// Парные детали: [id1, id2, label] — в таблице одна строка, редактируется сразу оба
-const PARTS_META_PAIRED = [
-  {ids:['ppk','lpk'], name:'Крыло П/Л (перед.)'},
-  {ids:['ppd','lpd'], name:'Дверь П/Л (перед.)'},
-  {ids:['pzd','lzd'], name:'Дверь П/Л (зад.)'},
-  {ids:['pzk','lzk'], name:'Крыло П/Л (зад.)'},
+const PARTS_META = [
+  {ids:['ppk','lpk'], name:'Крыло П/Л (переднее)'},
+  {ids:['pzk','lzk'], name:'Крыло П/Л (заднее)'},
+  {ids:['ppd','lpd'], name:'Дверь передняя П/Л'},
+  {ids:['pzd','lzd'], name:'Дверь задняя П/Л'},
   {ids:['pb'],        name:'Передний бампер'},
   {ids:['zb'],        name:'Задний бампер'},
   {ids:['kry'],       name:'Крыша'},
   {ids:['kap'],       name:'Капот'},
   {ids:['bag'],       name:'Крышка бага'},
-  {ids:['pp','lp'],   name:'Порог П/Л'},
+  {ids:['pp','lp'],  name:'Порог П/Л'},
 ];
 const SVC_COL_LABELS = ['С/У','Р/С','Замена','Окрас 1','Окрас 2','Рем >50%','Рем <50%'];
 
@@ -3838,24 +3884,22 @@ function renderSettingsPage() {
   if (!container) return;
   const s = loadSettings();
 
-  // Строим таблицу цен — парные детали в одной строке
+  // Строим таблицу цен
   const colKeys = ['s','rc','z','p1','p2','r2','r1'];
-  const priceRows = PARTS_META_PAIRED.map(row => {
-    // Берём базовые цены из первого id пары
-    const bp = BASE_PRICES[row.ids[0]] || {};
-    const ov = (s.prices && s.prices[row.ids[0]]) || {};
+  const priceRows = PARTS_META.map(g => {
+    const primaryId = g.ids[0];
+    const bp = BASE_PRICES[primaryId] || {};
+    const ov = (s.prices && s.prices[primaryId]) || {};
     const cells = colKeys.map(k => {
       const base = bp[k] ?? 0;
       const val = ov[k] !== undefined ? ov[k] : base;
       const disabled = base === 0 ? 'disabled' : '';
-      // data-parts хранит все id через запятую
       return `<div class="sp-cell"><input type="number" min="0" step="100"
-        data-parts="${row.ids.join(',')}" data-key="${k}" value="${disabled ? '' : val}"
+        data-group="${g.ids.join(',')}" data-key="${k}" value="${disabled ? '' : val}"
         ${disabled} placeholder="${disabled ? '—' : ''}"></div>`;
     }).join('');
-    const pairBadge = row.ids.length > 1
-      ? `<span style="font-size:10px;color:#555;margin-left:4px;">(П+Л)</span>` : '';
-    return `<div class="sp-name">${row.name}${pairBadge}</div>${cells}`;
+    const idHint = g.ids.length > 1 ? `<small style="color:#444;font-size:10px;display:block;">${g.ids.join(', ')}</small>` : '';
+    return `<div class="sp-name">${g.name}${idHint}</div>${cells}`;
   }).join('');
 
   container.innerHTML = `
@@ -3885,31 +3929,30 @@ function renderSettingsPage() {
     <p style="font-size:12px;color:#444;font-family:'PT Sans',sans-serif;margin-bottom:12px;">
       Сколько прибавляется к блоку «Расходные материалы» за каждую деталь с данной услугой.
     </p>
-
     <div class="settings-row">
       <div class="settings-label">За ремонт (Рем &lt;50% / Рем &gt;50%)<small>Затраты на рихтовку, шпаклёвку</small></div>
-      <input class="settings-input" type="number" id="st-repair-per-repair" min="0" step="100" value="${s.repairCostPerRepair ?? 4000}">
+      <input class="settings-input" type="number" id="st-cost-repair" min="0" step="100" value="${s.repairCostPerRepair ?? 4000}">
       <span class="settings-unit">₽</span>
     </div>
     <div class="settings-row">
       <div class="settings-label">За Снять / Установить<small>Расходники при снятии</small></div>
-      <input class="settings-input" type="number" id="st-repair-per-su" min="0" step="100" value="${s.repairCostPerSU ?? 0}">
+      <input class="settings-input" type="number" id="st-cost-su" min="0" step="100" value="${s.repairCostPerSU ?? 0}">
       <span class="settings-unit">₽</span>
     </div>
     <div class="settings-row">
       <div class="settings-label">За Разобр. / Собрать<small>Расходники при разборке</small></div>
-      <input class="settings-input" type="number" id="st-repair-per-rc" min="0" step="100" value="${s.repairCostPerRC ?? 0}">
+      <input class="settings-input" type="number" id="st-cost-rc" min="0" step="100" value="${s.repairCostPerRC ?? 0}">
       <span class="settings-unit">₽</span>
     </div>
     <div class="settings-row">
       <div class="settings-label">За Замену<small>Расходники при замене детали</small></div>
-      <input class="settings-input" type="number" id="st-repair-per-z" min="0" step="100" value="${s.repairCostPerZ ?? 0}">
+      <input class="settings-input" type="number" id="st-cost-z" min="0" step="100" value="${s.repairCostPerZ ?? 0}">
       <span class="settings-unit">₽</span>
     </div>
 
     <div class="settings-section-title" style="margin-top:24px;">Таблица цен</div>
     <p style="font-size:12px;color:#444;font-family:'PT Sans',sans-serif;margin-bottom:12px;">
-      Оставьте поле пустым чтобы использовать базовую цену. Строки П+Л применяются сразу к обеим сторонам.
+      Оставьте поле пустым чтобы использовать базовую цену. Изменения применяются сразу после сохранения.
     </p>
 
     <div style="overflow-x:auto;">
@@ -3929,31 +3972,37 @@ function renderSettingsPage() {
   // Сохранить
   document.getElementById('st-save-btn').addEventListener('click', () => {
     const ns = { ...loadSettings() };
-    ns.colorSurcharge   = Math.max(0, parseInt(document.getElementById('st-color-surcharge').value) || 0);
+    // Общие параметры
+    ns.colorSurcharge = Math.max(0, parseInt(document.getElementById('st-color-surcharge').value) || 0);
     ns.paintCoeff2layer = Math.max(1, parseFloat(document.getElementById('st-paint-coeff').value) || 1.3);
-    ns.repairCostPerRepair = Math.max(0, parseInt(document.getElementById('st-repair-per-repair').value) || 0);
-    ns.repairCostPerSU     = Math.max(0, parseInt(document.getElementById('st-repair-per-su').value) || 0);
-    ns.repairCostPerRC     = Math.max(0, parseInt(document.getElementById('st-repair-per-rc').value) || 0);
-    ns.repairCostPerZ      = Math.max(0, parseInt(document.getElementById('st-repair-per-z').value) || 0);
-    // Цены деталей — парные: одно поле → несколько id
+    ns.repairCostPerRepair = Math.max(0, parseInt(document.getElementById('st-cost-repair').value) || 0);
+    ns.repairCostPerSU     = Math.max(0, parseInt(document.getElementById('st-cost-su').value) || 0);
+    ns.repairCostPerRC     = Math.max(0, parseInt(document.getElementById('st-cost-rc').value) || 0);
+    ns.repairCostPerZ      = Math.max(0, parseInt(document.getElementById('st-cost-z').value) || 0);
+    // Цены деталей
     ns.prices = {};
-    document.querySelectorAll('#st-prices-grid input[data-parts]').forEach(inp => {
+    document.querySelectorAll('#st-prices-grid input[data-group]').forEach(inp => {
       if (inp.disabled || inp.value.trim() === '') return;
-      const parts = inp.dataset.parts.split(',');
-      const key   = inp.dataset.key;
-      const val   = parseInt(inp.value);
+      const key = inp.dataset.key;
+      const val = parseInt(inp.value);
       if (isNaN(val)) return;
-      parts.forEach(part => {
-        if (!ns.prices[part]) ns.prices[part] = {};
-        ns.prices[part][key] = val;
+      inp.dataset.group.split(',').forEach(partId => {
+        partId = partId.trim();
+        if (!ns.prices[partId]) ns.prices[partId] = {};
+        ns.prices[partId][key] = val;
       });
     });
     saveSettings(ns);
+    // Обновляем открытого клиента
     if (activeClientId) openClient(activeClientId);
+    // Подтверждение
     const btn = document.getElementById('st-save-btn');
     btn.textContent = '✓ Сохранено!';
     btn.style.background = '#1a8a3c';
-    setTimeout(() => { btn.textContent = '💾 Сохранить настройки'; btn.style.background = ''; }, 2000);
+    setTimeout(() => {
+      btn.textContent = '💾 Сохранить настройки';
+      btn.style.background = '';
+    }, 2000);
   });
 
   // Сбросить
