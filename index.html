@@ -1241,6 +1241,152 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 #pdf-preview { display: none; }
 
 /* Archive page full screen */
+/* ═══ SETTINGS PAGE ════════════════════════════════════════ */
+.settings-page {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  top: 56px; left: 0; right: 0; bottom: 0;
+  z-index: 50;
+  overflow-y: auto;
+  background: #141414;
+}
+.settings-page.active { display: flex; }
+.settings-content { max-width: 900px; margin: 0 auto; padding: 24px 20px 60px; width: 100%; }
+.settings-section-title {
+  font-family: 'Oswald', sans-serif;
+  color: #888;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 16px 0 10px;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.settings-section-title::after { content:''; flex:1; height:1px; background:#1a1a1a; }
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+.settings-label {
+  font-family: 'PT Sans', sans-serif;
+  color: #ccc;
+  font-size: 14px;
+  flex: 1;
+}
+.settings-label small { display: block; color: #555; font-size: 12px; margin-top: 2px; }
+.settings-input {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 7px 12px;
+  width: 120px;
+  text-align: right;
+  outline: none;
+  transition: border-color .15s;
+}
+.settings-input:focus { border-color: var(--red); }
+.settings-unit {
+  font-family: 'Oswald', sans-serif;
+  color: #555;
+  font-size: 13px;
+  min-width: 20px;
+}
+.settings-prices-grid {
+  display: grid;
+  grid-template-columns: 1fr repeat(7, auto);
+  gap: 1px;
+  background: #1a1a1a;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+.sp-head {
+  background: #0a0a0a;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 7px 8px;
+  text-align: center;
+  white-space: nowrap;
+}
+.sp-head:first-child { text-align: left; padding-left: 12px; }
+.sp-name {
+  background: #0d0d0d;
+  font-family: 'PT Sans', sans-serif;
+  color: #bbb;
+  font-size: 13px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+}
+.sp-cell {
+  background: #0d0d0d;
+  padding: 3px;
+}
+.sp-cell input {
+  width: 72px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #222;
+  color: #ddd;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  padding: 4px 6px;
+  outline: none;
+  width: 100%;
+  transition: border-color .15s;
+}
+.sp-cell input:focus { border-bottom-color: var(--red); background: #111; }
+.sp-cell input:disabled { color: #333; }
+.settings-save-btn {
+  background: var(--red);
+  color: #fff;
+  border: none;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 12px 32px;
+  cursor: pointer;
+  transition: background .15s;
+  margin-top: 20px;
+}
+.settings-save-btn:hover { background: #b50120; }
+.settings-reset-btn {
+  background: transparent;
+  color: #555;
+  border: 1px solid #333;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all .15s;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+.settings-reset-btn:hover { border-color: var(--red); color: var(--red); }
+@media (max-width: 600px) {
+  .settings-content { padding: 16px 12px 80px; }
+  .settings-prices-grid { grid-template-columns: 1fr repeat(7, 56px); overflow-x: auto; }
+}
+
 .archive-page {
   display: none;
   flex-direction: column;
@@ -1522,6 +1668,11 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
     widows: 4;
   }
 }
+
+/* Hide number spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+input[type=number] { -moz-appearance:textfield; }
 </style>
 </head>
 <body>
@@ -1532,6 +1683,7 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   <nav class="header-nav">
     <button class="nav-btn active" id="nav-calc" onclick="showPage('calc')">Расчёты</button>
     <button class="nav-btn" id="nav-archive" onclick="showPage('archive')">Архив</button>
+    <button class="nav-btn" id="nav-settings" onclick="showPage('settings')">⚙️ Настройки</button>
   </nav>
   <div class="master-badge">Панель мастера</div>
 </header>
@@ -1586,7 +1738,18 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
     <span class="mob-nav-icon">📁</span>
     <span class="mob-nav-label">Архив</span>
   </button>
+  <button class="mob-nav-btn" id="mob-nav-settings" onclick="showPage('settings');setMobNav('settings')">
+    <span class="mob-nav-icon">⚙️</span>
+    <span class="mob-nav-label">Настройки</span>
+  </button>
 </nav>
+
+<!-- SETTINGS PAGE -->
+<div class="settings-page" id="settings-page">
+  <div class="settings-content" id="settings-content">
+    <!-- Заполняется через JS -->
+  </div>
+</div>
 
 <!-- ARCHIVE PAGE (full screen) -->
 <div class="archive-page" id="archive-page">
@@ -1650,8 +1813,14 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
           <input type="text" id="f-car" placeholder="Toyota Camry 2019">
         </div>
         <div class="form-group">
-          <label>Цвет кузова</label>
-          <input type="text" id="f-color" placeholder="Белый перламутр">
+          <label>Тип лакокрасочного покрытия</label>
+          <select id="f-color">
+            <option value="">— Выберите тип —</option>
+            <option value="Акрил">Акрил</option>
+            <option value="Металлик">Металлик</option>
+            <option value="Ксералик">Ксералик (+2 000 ₽)</option>
+            <option value="3-х сл. перламутровая">3-х сл. перламутровая (+2 000 ₽)</option>
+          </select>
         </div>
       </div>
       <div class="form-group">
@@ -1691,6 +1860,34 @@ const BASE_PRICES = {
   lp:  {s:3000,  rc:2000,  z:15000, p1:5000, p2:0,    r2:12000, r1:6000 },
 };
 const DETAIL_BASE = {s:4000, rc:5000, z:4000, p1:5000, p2:0, r2:15000, r1:7000};
+
+// ─── НАСТРОЙКИ (загружаем из localStorage) ──────────────────
+const SETTINGS_KEY = 'cs_settings';
+const DEFAULT_SETTINGS = {
+  colorSurcharge: 2000,
+  paintCoeff2layer: 1.3,
+  repairCostPerRepair: 4000,   // за каждую деталь с ремонтом (р1/р2)
+  repairCostPerSU: 0,          // за каждую деталь со Снять/Установить
+  repairCostPerRC: 0,          // за каждую деталь с Разобр./Собрать
+  repairCostPerZ: 0,           // за каждую деталь с Заменой
+  prices: {}
+};
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) return { ...DEFAULT_SETTINGS };
+    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+  } catch (e) { return { ...DEFAULT_SETTINGS }; }
+}
+
+function saveSettings(s) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+}
+
+function resetSettings() {
+  localStorage.removeItem(SETTINGS_KEY);
+}
 
 const TIER_ADD   = { light: 0, standard: 1000, premium: 3000 };
 const TIER_LABELS = { light: 'Лайт', standard: 'Стандарт', premium: 'Премиум' };
@@ -1732,7 +1929,7 @@ let editingClientId = null;
 function defaultCalcState() {
   const svcState = {};
   PARTS.forEach(p => { svcState[p.id] = {}; SVC_KEYS.forEach(k => svcState[p.id][k] = false); });
-  return { tier: 'light', selected: [], svcState, details: [], detailUid: 0, extraRepair: 0, extraPaint: 0, spareParts: [] };
+  return { tier: 'light', selected: [], svcState, details: [], detailUid: 0, extraRepair: 0, extraPaint: 0, spareParts: [], daysBody: 0, daysPaint: 0 };
 }
 
 function getClientState(id) {
@@ -1745,8 +1942,7 @@ function saveClients() {
   localStorage.setItem('cs_clients', JSON.stringify(clients));
 }
 
-function getPrices(partId, tier, calcState) {
-  // Для detail_ деталей берём из _detailPrices или DETAIL_BASE
+function getPrices(partId, tier, calcState, colorSurcharge) {
   let bp;
   if (partId.startsWith('detail_')) {
     bp = (calcState && calcState._detailPrices && calcState._detailPrices[partId])
@@ -1757,14 +1953,19 @@ function getPrices(partId, tier, calcState) {
   }
   if (!bp) return {s:0,rc:0,z:0,p1:0,p2:0,r2:0,r1:0};
   const add = TIER_ADD[tier] || 0;
+  const cSurcharge = colorSurcharge || 0;
+  // Применяем пользовательские цены если они заданы
+  const settings = loadSettings();
+  const overrides = (settings.prices && settings.prices[partId]) || {};
+  const base = { ...bp, ...overrides };
   return {
-    s:  bp.s,
-    rc: bp.rc > 0 ? bp.rc + add : 0,
-    z:  bp.z  > 0 ? bp.z  + add : 0,
-    p1: bp.p1,
-    p2: bp.p2,
-    r2: bp.r2,
-    r1: bp.r1,
+    s:  base.s,
+    rc: base.rc > 0 ? base.rc + add : 0,
+    z:  base.z  > 0 ? base.z  + add : 0,
+    p1: base.p1 > 0 ? base.p1 + cSurcharge : 0,
+    p2: base.p2 > 0 ? base.p2 + cSurcharge : 0,
+    r2: base.r2,
+    r1: base.r1,
   };
 }
 
@@ -1829,16 +2030,19 @@ function statusLabel(s) {
 function calcClientTotal(c) {
   if (!c.calcState) return 0;
   const cs = c.calcState;
+  const PREMIUM_COLORS = ['Ксералик', '3-х сл. перламутровая'];
+  const _s = loadSettings();
+  const colorSurcharge = PREMIUM_COLORS.includes(c.color||'')
+    ? (_s.colorSurcharge ?? 2000) : 0;
   let total = 0;
-  cs.selected.forEach(id => {
+  const allIds = [...cs.selected, ...(cs.details||[]).map(d => d.id)];
+  allIds.forEach(id => {
     const tier = (cs._partTiers && cs._partTiers[id]) || cs.tier;
-    const pr = getPrices(id, tier, cs);
-    SVC_KEYS.forEach(k => { if (cs.svcState[id] && cs.svcState[id][k]) total += pr[k]; });
-  });
-  (cs.details||[]).forEach(d => {
-    const tier = (cs._partTiers && cs._partTiers[d.id]) || cs.tier;
-    const pr = getPrices(d.id, tier, cs);
-    SVC_KEYS.forEach(k => { if (cs.svcState[d.id] && cs.svcState[d.id][k]) total += pr[k]; });
+    const pr = getPrices(id, tier, cs, colorSurcharge); // surcharge included in getPrices
+    const st = cs.svcState[id] || {};
+    SVC_KEYS.forEach(k => {
+      if (st[k]) total += pr[k];
+    });
   });
   return total;
 }
@@ -1961,7 +2165,10 @@ function buildWorkspace(c) {
     <div class="summary-box" id="summary-box">
       <div class="summary-header">
         <h3>Итог расчёта</h3>
-        <div class="summary-total-big" id="sum-total">0 ₽</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span id="color-surcharge-badge" style="display:none;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;padding:3px 9px;background:#c62828;color:#fff;letter-spacing:0.5px;text-transform:uppercase;"></span>
+          <div class="summary-total-big" id="sum-total">0 ₽</div>
+        </div>
       </div>
       <div class="summary-grid">
         <div class="summary-cell">
@@ -2058,6 +2265,39 @@ function buildWorkspace(c) {
         <span class="profit-val" id="cost-profit">0 ₽</span>
       </div>
     </div>
+
+    <!-- WORK DAYS -->
+    <div class="cost-section">
+      <div class="cost-header">Сроки выполнения</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#1a1a1a;">
+        <div style="background:#0d0d0d;padding:16px 20px;border-left:3px solid #ff9800;">
+          <div style="font-family:'Oswald',sans-serif;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">🔧 Жестяные работы</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="number" id="days-body" min="0" max="999" placeholder="0"
+              value="${cs.daysBody||''}"
+              style="width:70px;background:#1a1a1a;border:none;border-bottom:2px solid #ff9800;
+                     color:#ff9800;font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;
+                     text-align:center;outline:none;padding:2px 0;">
+            <span style="font-family:'Oswald',sans-serif;color:#555;font-size:13px;text-transform:uppercase;letter-spacing:1px;">дней</span>
+          </div>
+        </div>
+        <div style="background:#0d0d0d;padding:16px 20px;border-left:3px solid #2196f3;">
+          <div style="font-family:'Oswald',sans-serif;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">🎨 Покрасочные работы</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="number" id="days-paint" min="0" max="999" placeholder="0"
+              value="${cs.daysPaint||''}"
+              style="width:70px;background:#1a1a1a;border:none;border-bottom:2px solid #2196f3;
+                     color:#2196f3;font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;
+                     text-align:center;outline:none;padding:2px 0;">
+            <span style="font-family:'Oswald',sans-serif;color:#555;font-size:13px;text-transform:uppercase;letter-spacing:1px;">дней</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding:11px 20px;background:#0a0a0a;border-top:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-family:'Oswald',sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Итого дней</span>
+        <span style="font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;color:#ddd;" id="days-total">—</span>
+      </div>
+    </div>
   `;
 }
 
@@ -2065,15 +2305,13 @@ function buildWorkspace(c) {
 // TABLE HTML BUILDERS
 // ═══════════════════════════════════════════════════════════
 function buildPartTableHTML(partId, name, cs) {
-  // Берём per-part тир если есть, иначе глобальный
   const partTier = (cs._partTiers && cs._partTiers[partId]) || cs.tier;
-  const pr = getPrices(partId, partTier, cs);
+  const pr = getPrices(partId, partTier, cs, cs._colorSurcharge || 0);
   return buildRowHTML(partId, name, pr, cs.svcState[partId] || {}, partTier);
 }
 function buildDetailTableHTML(detailId, name, cs) {
-  // Берём per-part тир если есть, иначе глобальный
   const partTier = (cs._partTiers && cs._partTiers[detailId]) || cs.tier;
-  const pr = getPrices(detailId, partTier, cs);
+  const pr = getPrices(detailId, partTier, cs, cs._colorSurcharge || 0);
   return buildRowHTML(detailId, name, pr, cs.svcState[detailId] || {}, partTier);
 }
 
@@ -2085,9 +2323,14 @@ function buildRowHTML(id, name, pr, state, currentTier) {
     const val = pr[k];
     const disp = val > 0 ? val.toLocaleString('ru') + ' ₽' : '—';
     const disabled = val === 0 ? 'disabled' : '';
-    // For custom details: price is clickable to edit
+    // For custom details: price is an inline editable input
     const priceCell = isCustom
-      ? `<div class="price-label custom-price-lbl" data-id="${id}" data-key="${k}" title="Нажмите для редактирования цены" style="cursor:pointer;border-bottom:1px dashed #999;display:inline-block;min-width:40px;">${disp}</div>`
+      ? `<input class="custom-price-input" data-id="${id}" data-key="${k}"
+           type="text" inputmode="numeric" value="${val > 0 ? val : ''}"
+           placeholder="—" ${val===0 ? '' : ''}
+           style="width:100%;background:transparent;border:none;border-bottom:1px dashed #aaa;
+                  outline:none;text-align:center;font-size:13px;color:#555;
+                  font-family:'PT Sans',sans-serif;padding:1px 0;cursor:text;">`
       : `<div class="price-label">${disp}</div>`;
     return `<div class="svc-col">
       <div class="col-label">${SVC_LABELS[i]}</div>
@@ -2202,6 +2445,35 @@ function attachAllEvents(c) {
 
   // Spare parts table
   initSpareParts(c);
+
+  // Work days
+  initWorkDays(c);
+}
+
+// ═══════════════════════════════════════════════════════════
+// WORK DAYS
+// ═══════════════════════════════════════════════════════════
+function initWorkDays(c) {
+  const cs = c.calcState;
+  function updateDaysTotal() {
+    const b = parseInt(document.getElementById('days-body')?.value || '0', 10) || 0;
+    const p = parseInt(document.getElementById('days-paint')?.value || '0', 10) || 0;
+    const tot = b + p;
+    const el = document.getElementById('days-total');
+    if (el) el.textContent = tot > 0 ? tot + ' дн.' : '—';
+  }
+  ['days-body', 'days-paint'].forEach(fid => {
+    const inp = document.getElementById(fid);
+    if (!inp) return;
+    inp.addEventListener('input', () => {
+      const val = parseInt(inp.value, 10);
+      if (fid === 'days-body') cs.daysBody = isNaN(val) ? 0 : val;
+      else cs.daysPaint = isNaN(val) ? 0 : val;
+      updateDaysTotal();
+      saveClients();
+    });
+  });
+  updateDaysTotal();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -2313,31 +2585,31 @@ function attachDetailEvents(c, detailId) {
     });
   }
 
-  // Editable price labels (click → prompt)
-  document.querySelectorAll(`#table_${detailId} .custom-price-lbl`).forEach(lbl => {
-    lbl.addEventListener('click', () => {
-      const key = lbl.dataset.key;
+  // Inline price inputs — change/blur saves value immediately
+  document.querySelectorAll(`#table_${detailId} .custom-price-input`).forEach(inp => {
+    function applyPrice() {
+      const key = inp.dataset.key;
       if (!cs._detailPrices) cs._detailPrices = {};
       if (!cs._detailPrices[detailId]) cs._detailPrices[detailId] = { ...DETAIL_BASE };
-      const cur = cs._detailPrices[detailId][key] || 0;
-      const raw = prompt(`Цена для "${SVC_LABELS[SVC_KEYS.indexOf(key)]}" (₽):`, cur);
-      if (raw === null) return;
-      const num = parseInt(raw.replace(/\D/g, ''), 10);
-      if (isNaN(num) || num < 0) return;
-      cs._detailPrices[detailId][key] = num;
-      // Rebuild this row
-      const detail = (cs.details||[]).find(d => d.id === detailId);
-      const tableDiv = document.getElementById('table_' + detailId);
-      if (tableDiv && detail) {
-        const partTier = (cs._partTiers && cs._partTiers[detailId]) || cs.tier;
-        const newPr = getPrices(detailId, partTier, cs);
-        tableDiv.innerHTML = buildRowHTML(detailId, detail.name, newPr, cs.svcState[detailId] || {}, partTier);
-        attachDetailEvents(c, detailId);
+      const num = parseInt(inp.value.replace(/\D/g, ''), 10);
+      cs._detailPrices[detailId][key] = isNaN(num) || num < 0 ? 0 : num;
+      // Update checkbox disable state without full rebuild
+      const val = cs._detailPrices[detailId][key];
+      const cb = document.getElementById('cb_' + detailId + '_' + key);
+      if (cb) {
+        cb.disabled = val === 0;
+        const lbl = document.querySelector(`label[for="cb_${detailId}_${key}"]`);
+        if (lbl) lbl.style.opacity = val === 0 ? '0.3' : '1';
+        if (val === 0) { cb.checked = false; cs.svcState[detailId][key] = false; }
       }
       updateRowTotal(detailId, cs);
       updateSummary(c);
       saveClients();
-    });
+    }
+    inp.addEventListener('change', applyPrice);
+    inp.addEventListener('blur', applyPrice);
+    // Select all on focus for easy overwriting
+    inp.addEventListener('focus', () => inp.select());
   });
 }
 
@@ -2499,15 +2771,25 @@ function updateSummary(c) {
   let total = 0, su = 0, z = 0, rem = 0, paint = 0;
   let repairParts = 0, paintCost = 0, otherCost = 0;
   let detailCount = 0, paintUnits = 0;
+  let suParts = 0, rcParts = 0, zParts = 0;
+
+  // Надбавка за тип покрытия — берём из настроек
+  const PREMIUM_COLORS = ['Ксералик', '3-х сл. перламутровая'];
+  const _settings = loadSettings();
+  const colorSurcharge = PREMIUM_COLORS.includes(c.color||'')
+    ? (_settings.colorSurcharge ?? 2000) : 0;
+  // Сохраняем в cs чтобы buildPartTableHTML мог использовать при рендере
+  cs._colorSurcharge = colorSurcharge;
 
   const allIds = [...cs.selected, ...(cs.details||[]).map(d => d.id)];
   allIds.forEach(id => {
     const partTier = (cs._partTiers && cs._partTiers[id]) || cs.tier;
-    const pr = getPrices(id, partTier, cs);
+    const pr = getPrices(id, partTier, cs, colorSurcharge);
     const st = cs.svcState[id] || {};
+    const hasPaint = st.p1 || st.p2;
     SVC_KEYS.forEach(k => {
       if (st[k]) {
-        const v = pr[k];
+        const v = pr[k]; // colorSurcharge уже включён в getPrices
         total += v;
         if (k === 's')  { su += v; otherCost += v; }
         if (k === 'rc') { otherCost += v; }
@@ -2519,23 +2801,45 @@ function updateSummary(c) {
     });
     // Count repair ops for cost
     if (st.r1 || st.r2) repairParts++;
+    if (st.s)  suParts++;
+    if (st.rc) rcParts++;
+    if (st.z)  zParts++;
     // Count paint ops for cost — kap/kry/bag стоят 4500, остальные 3000; p2 = p1*1.3
     const PAINT_LARGE = ['kap', 'kry', 'bag'];
     const paintBase = PAINT_LARGE.includes(id) ? 4500 : PAINT_COST_1;
-    if (st.p2) { paintCost += Math.round(paintBase * 1.3); paintUnits += 1.3; }
+    const paintCoeff = _settings.paintCoeff2layer || 1.3;
+    if (st.p2) { paintCost += Math.round(paintBase * paintCoeff); paintUnits += paintCoeff; }
     else if (st.p1) { paintCost += paintBase; paintUnits += 1.0; }
     detailCount++;
   });
 
   const extraRepair = cs.extraRepair || 0;
   const extraPaint  = cs.extraPaint  || 0;
-  const totalRepairCost = repairParts * REPAIR_COST_PER_PART + extraRepair;
+  const repairCostPerRepair = _settings.repairCostPerRepair || 4000;
+  const repairCostPerSU  = _settings.repairCostPerSU  || 0;
+  const repairCostPerRC  = _settings.repairCostPerRC  || 0;
+  const repairCostPerZ   = _settings.repairCostPerZ   || 0;
+  const totalRepairCost = repairParts * repairCostPerRepair
+    + suParts * repairCostPerSU
+    + rcParts * repairCostPerRC
+    + zParts  * repairCostPerZ
+    + extraRepair;
   const totalPaintCost  = paintCost + extraPaint;
   // grandTotal вычислим позже — после подсчёта запчастей
 
   // Update DOM
   const sel = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
   sel('sum-total', total.toLocaleString('ru') + ' ₽');
+  // Show/hide premium color badge
+  const colorBadge = document.getElementById('color-surcharge-badge');
+  if (colorBadge) {
+    if (colorSurcharge > 0) {
+      colorBadge.textContent = c.color + ' +' + colorSurcharge.toLocaleString('ru') + ' ₽/эл.';
+      colorBadge.style.display = '';
+    } else {
+      colorBadge.style.display = 'none';
+    }
+  }
   sel('sum-count', allIds.length);
   sel('sum-su', su.toLocaleString('ru') + ' ₽');
   sel('sum-z', z.toLocaleString('ru') + ' ₽');
@@ -2730,6 +3034,13 @@ function printPDF() {
       z: bp.z > 0 ? bp.z + add : 0,
       p1: bp.p1, p2: bp.p2, r2: bp.r2, r1: bp.r1
     };
+    // Apply premium color surcharge to paint operations
+    const PREMIUM_COLORS_PDF = ['Ксералик', '3-х сл. перламутровая'];
+    const colorSurchargePDF = PREMIUM_COLORS_PDF.includes(c.color||'') ? 2000 : 0;
+    if (colorSurchargePDF > 0) {
+      if (pr.p1 > 0) pr.p1 += colorSurchargePDF;
+      if (pr.p2 > 0) pr.p2 += colorSurchargePDF;
+    }
 
     const st = cs.svcState[id] || {};
     const anyChecked = SVC_KEYS.some(k => st[k]);
@@ -2750,6 +3061,7 @@ function printPDF() {
 
   // Считаем итог напрямую
   let grandTotal = 0;
+  const _pdfSurcharge = ['Ксералик','3-х сл. перламутровая'].includes(c.color||'') ? 2000 : 0;
   allIds.forEach(id => {
     let bp = id.startsWith('detail_')
       ? ((cs._detailPrices && cs._detailPrices[id]) ? cs._detailPrices[id] : {...DETAIL_BASE})
@@ -2757,6 +3069,7 @@ function printPDF() {
     if (!bp) return;
     const add = TIER_ADD[cs.tier] || 0;
     const pr = { s:bp.s, rc:bp.rc>0?bp.rc+add:0, z:bp.z>0?bp.z+add:0, p1:bp.p1, p2:bp.p2, r2:bp.r2, r1:bp.r1 };
+    if (_pdfSurcharge > 0) { if (pr.p1>0) pr.p1+=_pdfSurcharge; if (pr.p2>0) pr.p2+=_pdfSurcharge; }
     const st = cs.svcState[id] || {};
     SVC_KEYS.forEach(k => { if (st[k] && pr[k] > 0) grandTotal += pr[k]; });
   });
@@ -2764,8 +3077,8 @@ function printPDF() {
   const clientInfoRows = [
     `<tr><td style="color:#888;padding:3px 0;width:110px;font-size:13px;">Клиент:</td><td style="font-weight:700;padding:3px 16px 3px 0;font-size:13px;">${escHtml(c.name)}</td><td style="color:#888;padding:3px 0;width:110px;font-size:13px;">Телефон:</td><td style="font-size:13px;">${escHtml(c.phone||'—')}</td></tr>`,
     `<tr><td style="color:#888;padding:3px 0;font-size:13px;">Автомобиль:</td><td style="padding:3px 16px 3px 0;font-size:13px;">${escHtml(c.car||'—')}</td><td style="color:#888;padding:3px 0;font-size:13px;">Гос. номер:</td><td style="font-weight:700;font-size:13px;">${escHtml(c.plate||'—')}</td></tr>`,
+    c.color ? `<tr><td style="color:#888;padding:3px 0;font-size:13px;">Покрытие:</td><td colspan="3" style="font-size:13px;padding:3px 0;"><b>${escHtml(c.color)}</b>${['Ксералик','3-х сл. перламутровая'].includes(c.color)?'<span style="font-size:11px;color:#d20124;margin-left:6px;">(+2 000 ₽)</span>':''}</td></tr>` : '',
     c.vin ? `<tr><td style="color:#888;padding:3px 0;font-size:13px;">VIN:</td><td colspan="3" style="font-family:monospace;letter-spacing:1px;font-size:12px;padding:3px 0;">${escHtml(c.vin)}</td></tr>` : '',
-    c.color ? `<tr><td style="color:#888;padding:3px 0;font-size:13px;">Цвет:</td><td colspan="3" style="font-size:13px;padding:3px 0;">${escHtml(c.color)}</td></tr>` : '',
   ].filter(Boolean).join('');
 
   const html = `<!DOCTYPE html>
@@ -2812,6 +3125,10 @@ function printPDF() {
   </table>
   <div class="total-row"><span style="font-size:13px;color:#888;">Итого к оплате:&nbsp;</span><span style="font-size:26px;font-weight:900;color:#d20124;">${grandTotal.toLocaleString('ru')}&nbsp;₽</span></div>
   ${c.note?`<div class="note"><b>Примечание:</b> ${escHtml(c.note)}</div>`:''}
+  ${(cs.daysBody||0)+(cs.daysPaint||0) > 0 ? `<div style="margin-bottom:10px;padding:8px 12px;background:#f5f5f5;border-left:3px solid #333;font-size:12px;">
+    Ориентировочные сроки: жестяные работы — <b>${cs.daysBody||0} дн.</b>, покрасочные — <b>${cs.daysPaint||0} дн.</b>
+    (итого: <b>${(cs.daysBody||0)+(cs.daysPaint||0)} дн.</b>)
+  </div>` : ''}
   <div class="footer">Расчёт является предварительным и может быть скорректирован после осмотра автомобиля. Данный документ не является договором.</div>
 </div>
 <script>window.onload=function(){window.print();};<\/script>
@@ -2885,20 +3202,28 @@ const TOP_VIEW_SVG = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" view
 function showPage(page) {
   const layout = document.getElementById('main-layout');
   const archivePage = document.getElementById('archive-page');
+  const settingsPage = document.getElementById('settings-page');
   const navCalc = document.getElementById('nav-calc');
   const navArch = document.getElementById('nav-archive');
+  const navSet  = document.getElementById('nav-settings');
+
+  // Скрываем всё
+  layout.style.display = 'none';
+  archivePage.classList.remove('active');
+  settingsPage.classList.remove('active');
+  [navCalc, navArch, navSet].forEach(b => b && b.classList.remove('active'));
 
   if (page === 'archive') {
-    layout.style.display = 'none';
     archivePage.classList.add('active');
-    navCalc.classList.remove('active');
-    navArch.classList.add('active');
+    navArch && navArch.classList.add('active');
     renderArchive();
+  } else if (page === 'settings') {
+    settingsPage.classList.add('active');
+    navSet && navSet.classList.add('active');
+    renderSettingsPage();
   } else {
     layout.style.display = 'grid';
-    archivePage.classList.remove('active');
-    navCalc.classList.add('active');
-    navArch.classList.remove('active');
+    navCalc && navCalc.classList.add('active');
   }
 }
 
@@ -3489,6 +3814,155 @@ if (_origShowPage) {
     _origShowPage(page);
     setMobNav(page);
   };
+}
+
+
+// ─── СТРАНИЦА НАСТРОЕК ──────────────────────────────────────
+// Парные детали: [id1, id2, label] — в таблице одна строка, редактируется сразу оба
+const PARTS_META_PAIRED = [
+  {ids:['ppk','lpk'], name:'Крыло П/Л (перед.)'},
+  {ids:['ppd','lpd'], name:'Дверь П/Л (перед.)'},
+  {ids:['pzd','lzd'], name:'Дверь П/Л (зад.)'},
+  {ids:['pzk','lzk'], name:'Крыло П/Л (зад.)'},
+  {ids:['pb'],        name:'Передний бампер'},
+  {ids:['zb'],        name:'Задний бампер'},
+  {ids:['kry'],       name:'Крыша'},
+  {ids:['kap'],       name:'Капот'},
+  {ids:['bag'],       name:'Крышка бага'},
+  {ids:['pp','lp'],   name:'Порог П/Л'},
+];
+const SVC_COL_LABELS = ['С/У','Р/С','Замена','Окрас 1','Окрас 2','Рем >50%','Рем <50%'];
+
+function renderSettingsPage() {
+  const container = document.getElementById('settings-content');
+  if (!container) return;
+  const s = loadSettings();
+
+  // Строим таблицу цен — парные детали в одной строке
+  const colKeys = ['s','rc','z','p1','p2','r2','r1'];
+  const priceRows = PARTS_META_PAIRED.map(row => {
+    // Берём базовые цены из первого id пары
+    const bp = BASE_PRICES[row.ids[0]] || {};
+    const ov = (s.prices && s.prices[row.ids[0]]) || {};
+    const cells = colKeys.map(k => {
+      const base = bp[k] ?? 0;
+      const val = ov[k] !== undefined ? ov[k] : base;
+      const disabled = base === 0 ? 'disabled' : '';
+      // data-parts хранит все id через запятую
+      return `<div class="sp-cell"><input type="number" min="0" step="100"
+        data-parts="${row.ids.join(',')}" data-key="${k}" value="${disabled ? '' : val}"
+        ${disabled} placeholder="${disabled ? '—' : ''}"></div>`;
+    }).join('');
+    const pairBadge = row.ids.length > 1
+      ? `<span style="font-size:10px;color:#555;margin-left:4px;">(П+Л)</span>` : '';
+    return `<div class="sp-name">${row.name}${pairBadge}</div>${cells}`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="settings-section-title">Общие параметры</div>
+
+    <div class="settings-row">
+      <div class="settings-label">
+        Надбавка за сложное покрытие
+        <small>Ксералик, 3-х сл. перламутровая — добавляется к цене окраски каждой детали</small>
+      </div>
+      <input class="settings-input" type="number" id="st-color-surcharge" min="0" step="100"
+        value="${s.colorSurcharge ?? 2000}">
+      <span class="settings-unit">₽</span>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-label">
+        Коэффициент двухслойной покраски
+        <small>Умножается на базовую стоимость краски. Обычно 1.3</small>
+      </div>
+      <input class="settings-input" type="number" id="st-paint-coeff" min="1" step="0.05"
+        value="${s.paintCoeff2layer ?? 1.3}" style="width:100px;">
+      <span class="settings-unit">×</span>
+    </div>
+
+    <div class="settings-section-title" style="margin-top:24px;">Расходные материалы (затраты мастера)</div>
+    <p style="font-size:12px;color:#444;font-family:'PT Sans',sans-serif;margin-bottom:12px;">
+      Сколько прибавляется к блоку «Расходные материалы» за каждую деталь с данной услугой.
+    </p>
+
+    <div class="settings-row">
+      <div class="settings-label">За ремонт (Рем &lt;50% / Рем &gt;50%)<small>Затраты на рихтовку, шпаклёвку</small></div>
+      <input class="settings-input" type="number" id="st-repair-per-repair" min="0" step="100" value="${s.repairCostPerRepair ?? 4000}">
+      <span class="settings-unit">₽</span>
+    </div>
+    <div class="settings-row">
+      <div class="settings-label">За Снять / Установить<small>Расходники при снятии</small></div>
+      <input class="settings-input" type="number" id="st-repair-per-su" min="0" step="100" value="${s.repairCostPerSU ?? 0}">
+      <span class="settings-unit">₽</span>
+    </div>
+    <div class="settings-row">
+      <div class="settings-label">За Разобр. / Собрать<small>Расходники при разборке</small></div>
+      <input class="settings-input" type="number" id="st-repair-per-rc" min="0" step="100" value="${s.repairCostPerRC ?? 0}">
+      <span class="settings-unit">₽</span>
+    </div>
+    <div class="settings-row">
+      <div class="settings-label">За Замену<small>Расходники при замене детали</small></div>
+      <input class="settings-input" type="number" id="st-repair-per-z" min="0" step="100" value="${s.repairCostPerZ ?? 0}">
+      <span class="settings-unit">₽</span>
+    </div>
+
+    <div class="settings-section-title" style="margin-top:24px;">Таблица цен</div>
+    <p style="font-size:12px;color:#444;font-family:'PT Sans',sans-serif;margin-bottom:12px;">
+      Оставьте поле пустым чтобы использовать базовую цену. Строки П+Л применяются сразу к обеим сторонам.
+    </p>
+
+    <div style="overflow-x:auto;">
+      <div class="settings-prices-grid" id="st-prices-grid">
+        <div class="sp-head" style="text-align:left;padding-left:12px;">Деталь</div>
+        ${SVC_COL_LABELS.map(l => `<div class="sp-head">${l}</div>`).join('')}
+        ${priceRows}
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0;flex-wrap:wrap;">
+      <button class="settings-save-btn" id="st-save-btn">💾 Сохранить настройки</button>
+      <button class="settings-reset-btn" id="st-reset-btn">↺ Сбросить к базовым</button>
+    </div>
+  `;
+
+  // Сохранить
+  document.getElementById('st-save-btn').addEventListener('click', () => {
+    const ns = { ...loadSettings() };
+    ns.colorSurcharge   = Math.max(0, parseInt(document.getElementById('st-color-surcharge').value) || 0);
+    ns.paintCoeff2layer = Math.max(1, parseFloat(document.getElementById('st-paint-coeff').value) || 1.3);
+    ns.repairCostPerRepair = Math.max(0, parseInt(document.getElementById('st-repair-per-repair').value) || 0);
+    ns.repairCostPerSU     = Math.max(0, parseInt(document.getElementById('st-repair-per-su').value) || 0);
+    ns.repairCostPerRC     = Math.max(0, parseInt(document.getElementById('st-repair-per-rc').value) || 0);
+    ns.repairCostPerZ      = Math.max(0, parseInt(document.getElementById('st-repair-per-z').value) || 0);
+    // Цены деталей — парные: одно поле → несколько id
+    ns.prices = {};
+    document.querySelectorAll('#st-prices-grid input[data-parts]').forEach(inp => {
+      if (inp.disabled || inp.value.trim() === '') return;
+      const parts = inp.dataset.parts.split(',');
+      const key   = inp.dataset.key;
+      const val   = parseInt(inp.value);
+      if (isNaN(val)) return;
+      parts.forEach(part => {
+        if (!ns.prices[part]) ns.prices[part] = {};
+        ns.prices[part][key] = val;
+      });
+    });
+    saveSettings(ns);
+    if (activeClientId) openClient(activeClientId);
+    const btn = document.getElementById('st-save-btn');
+    btn.textContent = '✓ Сохранено!';
+    btn.style.background = '#1a8a3c';
+    setTimeout(() => { btn.textContent = '💾 Сохранить настройки'; btn.style.background = ''; }, 2000);
+  });
+
+  // Сбросить
+  document.getElementById('st-reset-btn').addEventListener('click', () => {
+    if (!confirm('Сбросить все настройки цен к стандартным?')) return;
+    resetSettings();
+    if (activeClientId) openClient(activeClientId);
+    renderSettingsPage();
+  });
 }
 
 renderClientList();
