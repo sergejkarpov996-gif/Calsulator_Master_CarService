@@ -561,723 +561,7 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
 
 .summary-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: #222;
-}
-.summary-cell {
-  background: #111;
-  padding: 14px 20px;
-}
-.summary-cell .s-label {
-  font-family: 'Oswald', sans-serif;
-  color: #666;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 5px;
-}
-.summary-cell .s-val {
-  font-family: 'Oswald', sans-serif;
-  color: #ddd;
-  font-size: 20px;
-  font-weight: 600;
-}
-.summary-cell .s-val.red { color: var(--red); }
-.summary-cell .s-val.green { color: #4caf50; }
-.summary-cell .s-val.orange { color: #ff9800; }
-.summary-cell .s-note {
-  font-size: 12px;
-  color: #555;
-  font-family: 'PT Sans', sans-serif;
-  margin-top: 4px;
-  line-height: 1.4;
-}
-
-/* ═══ COST BREAKDOWN ═════════════════════════════════════════ */
-.cost-section {
-  background: #0a0a0a;
-  border-top: 1px solid #222;
-  padding: 0;
-}
-.cost-header {
-  padding: 12px 20px;
-  border-bottom: 1px solid #1e1e1e;
-  font-family: 'Oswald', sans-serif;
-  color: #666;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.cost-header::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #222;
-}
-.cost-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: #1a1a1a;
-}
-.cost-cell {
-  background: #0d0d0d;
-  padding: 14px 16px;
-  border-left: 3px solid transparent;
-}
-.cost-cell.repair { border-left-color: #ff9800; }
-.cost-cell.paint { border-left-color: #2196f3; }
-.cost-cell.other { border-left-color: #4caf50; }
-.cost-cell .c-label {
-  font-family: 'Oswald', sans-serif;
-  color: #666;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 6px;
-}
-.cost-cell .c-val {
-  font-family: 'Oswald', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: #ddd;
-}
-.cost-cell.repair .c-val { color: #ff9800; }
-.cost-cell.paint .c-val { color: #2196f3; }
-.cost-cell.other .c-val { color: #4caf50; }
-.cost-cell .c-note {
-  font-size: 12px;
-  color: #555;
-  margin-top: 5px;
-  font-family: 'PT Sans', sans-serif;
-  line-height: 1.4;
-}
-.cost-adj-btn {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  color: #777;
-  font-family: 'Oswald', sans-serif;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 3px 7px;
-  cursor: pointer;
-  transition: all .15s;
-  white-space: nowrap;
-  border-radius: 2px;
-  letter-spacing: 0.3px;
-}
-.cost-adj-btn:hover { background: #252525; color: #bbb; border-color: #444; }
-
-/* Запчасти — поля ввода */
-.sp-field { caret-color: #fff; }
-.sp-field::placeholder { color: #3a3a3a; font-size: 13px; }
-.sp-field:focus { background: rgba(255,255,255,0.03) !important; }
-.cost-profit {
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid #1a1a1a;
-}
-.profit-label { font-family: 'Oswald', sans-serif; color: #666; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-.profit-val { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 700; color: #4caf50; }
-.profit-val.loss { color: var(--red); }
-
-/* Строка "Общая сумма затрат" */
-/* Плейсхолдеры в таблице запчастей */
-#sp-tbody input::placeholder { color: #555; }
-#sp-tbody input { color: #ddd !important; }
-
-.cost-total-row {
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid #1a1a1a;
-  background: #0a0a0a;
-}
-.cost-total-label {
-  font-family: 'Oswald', sans-serif;
-  color: #555;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.cost-total-val {
-  font-family: 'Oswald', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #ddd;
-}
-
-/* ═══ MODAL ══════════════════════════════════════════════════ */
-.modal-overlay {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.92);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  overflow: hidden;
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: #111;
-  border: 1px solid #2a2a2a;
-  border-top: 3px solid var(--red);
-  width: 100%;
-  max-width: 520px;
-  max-height: calc(100vh - 40px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  box-sizing: border-box;
-}
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; }
-.form-group { display: flex; flex-direction: column; gap: 5px; width: 100%; }
-.form-group label {
-  font-family: 'Oswald', sans-serif;
-  color: #888;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.form-group input, .form-group select, .form-group textarea {
-  background: #1e1e1e;
-  border: 1px solid #333;
-  colo.master-header .logo {
-  font-family: 'Oswald', sans-serif;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-.master-header .logo span { color: var(--red); }
-.master-badge {
-  background: var(--red);
-  color: #fff;
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-.header-nav { display: flex; gap: 4px; }
-.nav-btn {
-  background: transparent;
-  border: none;
-  color: #888;
-  font-family: 'Oswald', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 8px 16px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all .2s;
-}
-.nav-btn:hover { color: #ccc; }
-.nav-btn.active { color: #fff; border-bottom-color: var(--red); }
-
-/* ═══ LAYOUT ════════════════════════════════════════════════ */
-.master-layout { display: grid; grid-template-columns: 320px 1fr; min-height: calc(100vh - 56px); }
-
-/* ═══ LEFT PANEL — CLIENT LIST ══════════════════════════════ */
-.client-panel {
-  background: #141414;
-  border-right: 1px solid #2a2a2a;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.client-panel-header {
-  padding: 14px 12px;
-  border-bottom: 1px solid #2a2a2a;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.client-panel-title {
-  font-family: 'Oswald', sans-serif;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  padding-bottom: 4px;
-  border-bottom: 2px solid var(--red);
-  display: inline-block;
-  margin-bottom: 2px;
-}
-.search-wrap {
-  position: relative;
-}
-.search-wrap .search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 13px;
-  pointer-events: none;
-}
-.search-box {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: 4px;
-  padding: 8px 10px 8px 32px;
-  color: #ddd;
-  font-family: 'PT Sans', sans-serif;
-  font-size: 13px;
-  width: 100%;
-  outline: none;
-  transition: border-color .15s;
-}
-.search-box:focus { border-color: var(--red); background: #1e1e1e; }
-.search-box::placeholder { color: #444; }
-.btn-new-client {
-  background: var(--red);
-  color: #fff;
-  border: none;
-  font-family: 'Oswald', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 11px;
-  cursor: pointer;
-  width: 100%;
-  transition: background .15s;
-  border-radius: 2px;
-  margin-top: 2px;
-}
-.btn-new-client:hover { background: #b50120; }
-
-.client-list { overflow-y: auto; flex: 1; }
-.client-item {
-  padding: 14px 16px;
-  border-bottom: 1px solid #1e1e1e;
-  cursor: pointer;
-  transition: background .15s;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  position: relative;
-}
-.client-item:hover { background: #1e1e1e; }
-.client-item.active { background: #1e1e1e; border-left: 3px solid var(--red); }
-.client-item.active { padding-left: 13px; }
-.client-name {
-  font-family: 'Oswald', sans-serif;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-}
-.client-sub {
-  color: #888;
-  font-size: 12px;
-  font-family: 'PT Sans', sans-serif;
-}
-.client-sum {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: 'Oswald', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--red);
-}
-.client-sum.zero { color: #444; }
-
-.client-empty {
-  padding: 40px 20px;
-  text-align: center;
-  color: #444;
-  font-size: 13px;
-  font-family: 'Oswald', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* ═══ RIGHT PANEL — WORK AREA ═══════════════════════════════ */
-.work-area {
-  background: #1a1a1a;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.work-empty {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-  color: #333;
-}
-.work-empty svg { opacity: 0.15; }
-.work-empty p {
-  font-family: 'Oswald', sans-serif;
-  font-size: 16px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #444;
-}
-
-/* ═══ CLIENT CARD ═══════════════════════════════════════════ */
-.client-card {
-  background: #111;
-  border-bottom: 1px solid #222;
-  padding: 14px 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 20px;
-  align-items: center;
-}
-.client-card-info { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; }
-.client-card-name {
-  font-family: 'Oswald', sans-serif;
-  color: #fff;
-  font-size: 22px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.client-card-fields {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 20px;
-  align-items: center;
-}
-.client-field {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.client-field label {
-  font-size: 11px;
-  color: #555;
-  font-family: 'Oswald', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-.client-field span {
-  font-size: 14px;
-  color: #ccc;
-  font-family: 'PT Sans', sans-serif;
-  white-space: nowrap;
-}
-.client-card-actions {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  flex-shrink: 0;
-}
-.btn-action {
-  border: none;
-  font-family: 'Oswald', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 8px 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: all .15s;
-  white-space: nowrap;
-}
-.btn-pdf { background: var(--red); color: #fff; }
-.btn-pdf:hover { background: #b50120; }
-.btn-edit { background: #2a2a2a; color: #aaa; }
-.btn-edit:hover { background: #333; color: #fff; }
-.btn-delete { background: transparent; color: #555; border: 1px solid #333; }
-.btn-delete:hover { border-color: var(--red); color: var(--red); }
-
-/* ═══ TIER SELECTOR ══════════════════════════════════════════ */
-.tier-row {
-  background: #0d0d0d;
-  display: flex;
-  border-bottom: 1px solid #1a1a1a;
-}
-.tier-btn {
-  flex: 1;
-  padding: 10px 8px 8px;
-  text-align: center;
-  font-family: 'Oswald', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #444;
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  border-right: 1px solid #1a1a1a;
-  transition: all .2s;
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-.tier-btn:last-child { border-right: none; }
-.tier-btn .tier-sub { font-size: 10px; font-family: 'PT Sans', sans-serif; color: #333; font-weight: 400; text-transform: none; letter-spacing: 0; }
-.tier-btn:hover { color: #888; background: #111; }
-.tier-btn:hover .tier-sub { color: #555; }
-.tier-btn.active.tier-light { color: #66bb6a; border-bottom-color: #66bb6a; background: #0d1a0d; }
-.tier-btn.active.tier-light .tier-sub { color: #388e3c; }
-.tier-btn.active.tier-standard { color: #ffa726; border-bottom-color: #ffa726; background: #1a1200; }
-.tier-btn.active.tier-standard .tier-sub { color: #f57c00; }
-.tier-btn.active.tier-premium { color: var(--red); border-bottom-color: var(--red); background: #1a0000; }
-.tier-btn.active.tier-premium .tier-sub { color: #c62828; }
-
-/* ═══ CAR SELECTOR ══════════════════════════════════════════ */
-.calc-wrapper { padding: 16px 24px; }
-
-.section-title {
-  font-family: 'Oswald', sans-serif;
-  color: #888;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #2a2a2a;
-}
-
-/* ═══ QUICK SELECT ═══════════════════════════════════════════ */
-.quick-select {
-  display: flex;
-  align-items: stretch;
-  background: #d7d8d9;
-  flex-wrap: wrap;
-}
-.qs-label {
-  background: #d7d8d9;
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #333;
-  padding: 10px 14px;
-  border-bottom: 3px solid var(--red);
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-}
-.qs-btns { display: flex; flex-wrap: wrap; flex: 1; }
-.qs-btn {
-  background: #d7d8d9;
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #333;
-  padding: 10px 14px;
-  border-right: 1px solid #fff;
-  border-bottom: 3px solid var(--red);
-  cursor: pointer;
-  transition: background .15s;
-}
-.qs-btn:hover { background: #c2c3c5; }
-.add-detail-btn {
-  background: var(--red) !important;
-  color: #fff !important;
-  border-bottom-color: #900 !important;
-  border-right: none !important;
-  margin-left: auto;
-  padding: 10px 18px !important;
-  font-family: 'Oswald', sans-serif;
-  font-size: 12px !important;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  border-bottom: 3px solid #900 !important;
-}
-.add-detail-btn:hover { background: #b50120 !important; }
-
-/* ═══ PARTS TABLE ════════════════════════════════════════════ */
-.tables-section { margin-top: 16px; }
-.part-table {
-  display: none;
-  margin-bottom: 0;
-  background: transparent;
-}
-.part-table.visible { display: block; }
-.pt-inner { display: flex; flex-wrap: wrap; }
-.pt-trash {
-  width: 70px; min-width: 70px;
-  border: 1px solid var(--border);
-  padding: 8px; text-align: center; cursor: pointer;
-}
-.pt-trash .col-label {
-  font-size: 11px; color: #888;
-  border-bottom: 1px solid var(--border);
-  padding: 4px 0; margin: -8px -8px 8px;
-}
-.pt-trash svg { fill: #ccc; transition: fill .2s; }
-.pt-trash:hover svg { fill: var(--red); }
-.mobile-part-name { display: none; }
-.pt-name {
-  width: 150px; min-width: 150px;
-  border: 1px solid var(--border);
-  padding: 8px; text-align: center;
-}
-.pt-name .col-label {
-  font-size: 12px; color: #666;
-  border-bottom: 1px solid var(--border);
-  padding: 5px 0; margin: -8px -8px 8px;
-  font-family: 'Oswald', sans-serif; font-weight: 500;
-}
-.pt-name .part-name-val { font-size: 16px; color: #333; margin-top: 6px; font-weight: 600; }
-.pt-services { flex: 1; }
-.pt-services-inner { display: flex; flex-wrap: wrap; }
-.svc-col {
-  flex: 1; min-width: 80px;
-  border: 1px solid var(--border);
-  padding: 8px; text-align: center;
-}
-.svc-col .col-label {
-  font-size: 13px; color: #555;
-  background: #f0f0f0;
-  border-bottom: 1px solid var(--border);
-  padding: 6px 3px; margin: -8px -8px 8px;
-  white-space: nowrap;
-  font-family: 'Oswald', sans-serif; font-weight: 500;
-  letter-spacing: 0.2px;
-}
-.svc-total-col {
-  flex: 1; min-width: 90px;
-  border: 1px solid var(--border);
-  padding: 8px; text-align: center;
-}
-.svc-total-col .col-label {
-  font-size: 12px; color: #555;
-  border-bottom: 1px solid var(--border);
-  padding: 6px 0; margin: -8px -8px 8px;
-  font-family: 'Oswald', sans-serif; font-weight: 500;
-}
-.svc-total-col .total-val {
-  font-size: 19px; color: var(--red);
-  font-family: 'Oswald', sans-serif;
-  font-weight: 600; margin-top: 6px;
-}
-
-/* Toggle */
-.toggle-wrap { display: flex; align-items: center; gap: 4px; justify-content: center; margin-top: 4px; }
-.toggle-cb { position: absolute; opacity: 0; width: 0; height: 0; }
-.toggle-label {
-  position: relative; width: 42px; height: 21px;
-  cursor: pointer; display: inline-block;
-}
-.toggle-label::before {
-  content: ''; position: absolute; top: 0; left: 0;
-  width: 42px; height: 21px; border-radius: 11px;
-  background: #bbb; box-shadow: inset 0 2px 3px rgba(0,0,0,.2);
-  transition: background .2s;
-}
-.toggle-label::after {
-  content: ''; position: absolute; top: -1px; left: -1px;
-  width: 23px; height: 23px; border-radius: 12px;
-  background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,.3);
-  transition: left .2s;
-}
-.toggle-cb:checked + .toggle-label::before { background: var(--red); }
-.toggle-cb:checked + .toggle-label::after { left: 20px; }
-.price-label { font-size: 13px; color: #555; margin-top: 3px; }
-
-/* ═══ PER-PART TIER ROW ══════════════════════════════════════ */
-.pt-outer { background: #fff; margin-bottom: 10px; box-shadow: 0 0 9px #ccc; }
-.pt-tier-row {
-  display: flex;
-  border-top: 1px solid #eee;
-}
-.pt-tier-btn {
-  flex: 1;
-  padding: 7px 6px;
-  font-family: 'Oswald', sans-serif;
-  cursor: pointer;
-  text-align: center;
-  background: #f5f5f5;
-  border-right: 1px solid #e8e8e8;
-  transition: all .15s;
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-.pt-tier-btn:last-child { border-right: none; }
-.tier-label {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #bbb;
-}
-.tier-sub {
-  font-size: 10px;
-  font-family: 'PT Sans', sans-serif;
-  color: #ccc;
-}
-.pt-tier-btn:hover { background: #ebebeb; }
-.pt-tier-btn:hover .tier-label { color: #777; }
-.pt-tier-btn:hover .tier-sub { color: #999; }
-.pt-tier-btn.active.tier-light { background: #f1f8e9; border-top: 2px solid #66bb6a; }
-.pt-tier-btn.active.tier-light .tier-label { color: #2e7d32; }
-.pt-tier-btn.active.tier-light .tier-sub { color: #388e3c; }
-.pt-tier-btn.active.tier-standard { background: #fff8e1; border-top: 2px solid #ffa726; }
-.pt-tier-btn.active.tier-standard .tier-label { color: #e65100; }
-.pt-tier-btn.active.tier-standard .tier-sub { color: #f57c00; }
-.pt-tier-btn.active.tier-premium { background: #fff0f0; border-top: 2px solid var(--red); }
-.pt-tier-btn.active.tier-premium .tier-label { color: var(--red); }
-.pt-tier-btn.active.tier-premium .tier-sub { color: #c62828; }
-
-/* ═══ SUMMARY BOX ════════════════════════════════════════════ */
-.summary-box {
-  background: #0d0d0d;
-  border-top: 3px solid #222;
-  margin-top: 20px;
-}
-.summary-header {
-  padding: 14px 20px;
-  border-bottom: 1px solid #222;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.summary-header h3 {
-  font-family: 'Oswald', sans-serif;
-  color: #888;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-.summary-total-big {
-  font-family: 'Oswald', sans-serif;
-  color: var(--red);
-  font-size: 28px;
-  font-weight: 700;
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1px;
   background: #222;
 }
@@ -2065,10 +1349,11 @@ body { font-family: 'PT Sans', sans-serif; background: #1a1a1a; color: var(--tex
   padding: 6px 8px;
   outline: none;
   width: 100%;
-  transition: border-color .15s;
+  transition: border-color .15s, background .15s, color .15s;
 }
 .sp-cell input:focus { border-color: var(--red); background: #222; }
 .sp-cell input:disabled { color: #2a2a2a; background: #0d0d0d; border-color: #1a1a1a; }
+.sp-cell input[data-zero="1"] { color: #333; background: #0a0a0a; border-color: #1a1a1a; }
 .settings-save-btn {
   background: var(--red);
   color: #fff;
@@ -2590,7 +1875,8 @@ const DEFAULT_SETTINGS = {
   repairCostPerSU: 4000,
   repairCostPerRC: 4000,
   repairCostPerZ: 4000,
-  prices: {}
+  prices: {},
+  materialCosts: {} // per-part material costs: { partId: { r: N, s: N, rc: N, z: N } }
 };
 
 function loadSettings() {
@@ -2890,77 +2176,26 @@ function buildWorkspace(c) {
     <div class="summary-box" id="summary-box">
       <div class="summary-header">
         <h3>Итог расчёта</h3>
-        <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;align-items:center;gap:16px;">
           <span id="color-surcharge-badge" style="display:none;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;padding:3px 9px;background:#c62828;color:#fff;letter-spacing:0.5px;text-transform:uppercase;"></span>
+          <span style="font-family:'Oswald',sans-serif;font-size:13px;color:#555;display:flex;align-items:center;gap:5px;">
+            <span id="sum-count" style="font-size:16px;font-weight:700;color:#888;">0</span>
+            <span>эл.</span>
+          </span>
           <div class="summary-total-big" id="sum-total">0 ₽</div>
         </div>
       </div>
-      <div class="summary-grid">
-        <div class="summary-cell">
-          <div class="s-label">Выбрано элементов</div>
-          <div class="s-val" id="sum-count">0</div>
-        </div>
-        <div class="summary-cell">
-          <div class="s-label">Уровень</div>
-          <div class="s-val">${TIER_LABELS[cs.tier]}</div>
-        </div>
-        <div class="summary-cell">
-          <div class="s-label">Снять / Установить</div>
-          <div class="s-val orange" id="sum-su">0 ₽</div>
-        </div>
-        <div class="summary-cell">
-          <div class="s-label">Замена деталей</div>
-          <div class="s-val red" id="sum-z">0 ₽</div>
-        </div>
-        <div class="summary-cell">
-          <div class="s-label">Ремонт</div>
-          <div class="s-val" id="sum-rem">0 ₽</div>
-        </div>
-        <div class="summary-cell">
-          <div class="s-label">Покраска</div>
-          <div class="s-val" id="sum-paint">0 ₽</div>
-        </div>
-      </div>
+      <!-- Скрытые элементы для updateSummary -->
+      <span id="sum-su" style="display:none">0 ₽</span>
+      <span id="sum-z" style="display:none">0 ₽</span>
+      <span id="sum-rem" style="display:none">0 ₽</span>
+      <span id="sum-paint" style="display:none">0 ₽</span>
     </div>
 
     <!-- SPARE PARTS TABLE -->
-    <div id="spare-parts-section" style="background:#0d0d0d;border-top:3px solid #1a1a1a;margin-top:0;">
-      <!-- Заголовок секции -->
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1px solid #1a1a1a;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-family:'Oswald',sans-serif;color:#ff9800;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">🔩 Запчасти</span>
-          <span id="sp-count-badge" style="display:none;background:#ff980022;color:#ff9800;font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;padding:2px 8px;"></span>
-        </div>
-        <span style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#ff9800;" id="sp-total">—</span>
-      </div>
-
-      <!-- Шапка таблицы -->
-      <div id="sp-table-header" style="display:none;background:#080808;border-bottom:1px solid #1a1a1a;padding:0 20px;">
-        <div style="display:grid;grid-template-columns:2fr 1fr 1.2fr 1.2fr 36px;gap:0;">
-          <div style="font-family:'Oswald',sans-serif;font-size:10px;color:#444;text-transform:uppercase;letter-spacing:1.5px;padding:8px 0 8px 4px;">Наименование</div>
-          <div style="font-family:'Oswald',sans-serif;font-size:10px;color:#444;text-transform:uppercase;letter-spacing:1.5px;padding:8px 8px;text-align:right;">Цена, ₽</div>
-          <div style="font-family:'Oswald',sans-serif;font-size:10px;color:#444;text-transform:uppercase;letter-spacing:1.5px;padding:8px 8px;">Кат.№ ориг.</div>
-          <div style="font-family:'Oswald',sans-serif;font-size:10px;color:#444;text-transform:uppercase;letter-spacing:1.5px;padding:8px 8px;">Кат.№ не ориг.</div>
-          <div></div>
-        </div>
-      </div>
-
-      <!-- Строки запчастей -->
-      <div id="sp-tbody"></div>
-
-      <!-- Кнопка добавить -->
-      <button id="sp-add-btn"
-        style="width:100%;background:transparent;border:none;border-top:1px solid #1a1a1a;
-               color:#444;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;
-               text-transform:uppercase;letter-spacing:1px;padding:13px 20px;cursor:pointer;
-               text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px;">
-        <span style="font-size:18px;line-height:1;color:#333;">+</span> Добавить запчасть
-      </button>
-    </div>
-
     <!-- COST BREAKDOWN (затраты мастера) -->
     <div class="cost-section">
-      <div class="cost-header">Расчёт затрат мастера</div>
+      <div class="cost-header">Краска и Расходные материалы</div>
       <div class="cost-grid">
         <div class="cost-cell repair">
           <div class="c-label">Расходные материалы</div>
@@ -2989,7 +2224,7 @@ function buildWorkspace(c) {
           </div>
         </div>
         <div class="cost-cell other">
-          <div class="c-label">Прочие затраты</div>
+          <div class="c-label">Мелкие детали</div>
           <div class="c-val" id="cost-other">0 ₽</div>
           <div class="c-note" id="cost-other-note">5% от суммы запчастей</div>
         </div>
@@ -2998,10 +2233,46 @@ function buildWorkspace(c) {
         <span class="cost-total-label">Общая сумма затрат</span>
         <span class="cost-total-val" id="cost-total">0 ₽</span>
       </div>
-      <div class="cost-profit">
-        <span class="profit-label">Итог с затратами</span>
-        <span class="profit-val" id="cost-profit">0 ₽</span>
+    </div>
+
+    <div id="spare-parts-section" style="background:#0d0d0d;border-top:3px solid #1a1a1a;margin-top:0;">
+      <!-- Заголовок секции -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1px solid #1a1a1a;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-family:'Oswald',sans-serif;color:#ff9800;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">🔩 Запчасти</span>
+          <span id="sp-count-badge" style="display:none;background:#ff980022;color:#ff9800;font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;padding:2px 8px;"></span>
+        </div>
+        <span style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#ff9800;" id="sp-total">—</span>
       </div>
+
+      <!-- Шапка таблицы -->
+      <div id="sp-table-header" style="display:none;background:#080808;border-bottom:1px solid #252525;">
+        <div style="display:grid;grid-template-columns:1.8fr 0.9fr 1.1fr 1.1fr 36px;gap:0;">
+          <div style="font-family:'Oswald',sans-serif;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1.5px;padding:8px 10px 8px 14px;border-right:1px solid #252525;">Наименование</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:11px;color:#ff9800;text-transform:uppercase;letter-spacing:1.5px;padding:8px 10px;border-right:1px solid #252525;">Цена, ₽</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1.5px;padding:8px 10px;border-right:1px solid #252525;">Кат.№ ориг.</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1.5px;padding:8px 10px;border-right:1px solid #252525;">Кат.№ не ориг.</div>
+          <div></div>
+        </div>
+      </div>
+
+      <!-- Строки запчастей -->
+      <div id="sp-tbody"></div>
+
+      <!-- Кнопка добавить -->
+      <button id="sp-add-btn"
+        style="width:100%;background:transparent;border:none;border-top:1px solid #1a1a1a;
+               color:#444;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;
+               text-transform:uppercase;letter-spacing:1px;padding:13px 20px;cursor:pointer;
+               text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;line-height:1;color:#333;">+</span> Добавить запчасть
+      </button>
+    </div>
+
+    <!-- GRAND TOTAL -->
+    <div style="background:#080808;border-top:2px solid #222;display:flex;align-items:center;justify-content:space-between;padding:18px 24px;">
+      <span style="font-family:'Oswald',sans-serif;color:#888;font-size:13px;text-transform:uppercase;letter-spacing:2px;">Итог с затратами</span>
+      <span class="profit-val" id="cost-profit" style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:#4caf50;">0 ₽</span>
     </div>
 
     <!-- WORK DAYS -->
@@ -3221,19 +2492,21 @@ function initSpareParts(c) {
   const cs = c.calcState;
   if (!cs.spareParts) cs.spareParts = [];
 
-  const ROW_BASE = 'display:grid;grid-template-columns:2fr 1fr 1.2fr 1.2fr 36px;gap:0;border-bottom:1px solid #111;transition:background .1s;';
-  const INP_BASE = 'background:transparent;border:none;outline:none;width:100%;padding:12px 8px 12px;box-sizing:border-box;';
-  const INP_NAME  = INP_BASE + 'font-family:"PT Sans",sans-serif;font-size:14px;color:#ccc;padding-left:20px;';
-  const INP_PRICE = INP_BASE + 'font-family:"Oswald",sans-serif;font-size:15px;font-weight:700;color:#ff9800;text-align:right;padding-right:8px;';
-  const INP_CAT   = INP_BASE + 'font-family:monospace;font-size:12px;color:#777;letter-spacing:0.5px;padding:12px 8px;';
+  const ROW_BASE  = 'display:grid;grid-template-columns:1.8fr 0.9fr 1.1fr 1.1fr 36px;gap:0;border-bottom:1px solid #252525;transition:background .1s;align-items:stretch;';
+  const CELL_BORDER = 'border-right:1px solid #252525;';
+  const INP_BASE  = 'background:transparent;border:none;outline:none;width:100%;box-sizing:border-box;transition:background .15s;';
+  const INP_NAME  = INP_BASE + 'font-family:"PT Sans",sans-serif;font-size:15px;color:#ddd;padding:12px 10px 12px 14px;display:block;height:100%;';
+  const INP_PRICE = INP_BASE + 'font-family:"Oswald",sans-serif;font-size:15px;font-weight:700;color:#ff9800;text-align:left;padding:12px 10px 12px 10px;display:block;width:100%;height:100%;';
+  const INP_CAT   = INP_BASE + 'font-family:monospace;font-size:13px;color:#aaa;letter-spacing:0.5px;padding:12px 10px;display:block;height:100%;';
 
   function updateHeaderVisibility() {
     const hdr = document.getElementById('sp-table-header');
     const badge = document.getElementById('sp-count-badge');
     const hasRows = cs.spareParts.length > 0;
     if (hdr) hdr.style.display = hasRows ? '' : 'none';
+    const filledCount = cs.spareParts.filter(r => r.name || r.price).length;
     if (badge) {
-      if (hasRows) { badge.textContent = cs.spareParts.length + ' поз.'; badge.style.display = ''; }
+      if (filledCount > 0) { badge.textContent = filledCount + ' поз.'; badge.style.display = ''; }
       else badge.style.display = 'none';
     }
   }
@@ -3242,23 +2515,23 @@ function initSpareParts(c) {
     const container = document.getElementById('sp-tbody');
     if (!container) return;
     container.innerHTML = cs.spareParts.map((row, i) => {
-      const evenBg = i % 2 === 0 ? '#0d0d0d' : '#0a0a0a';
+      const evenBg = i % 2 === 0 ? '#0e0e0e' : '#0b0b0b';
       return `<div class="sp-row" data-i="${i}" style="${ROW_BASE}background:${evenBg};">
-        <div style="padding:0;border-right:1px solid #111;">
+        <div style="padding:0;${CELL_BORDER}display:flex;">
           <input class="sp-field" data-i="${i}" data-f="name" value="${escHtml(row.name||'')}"
-            placeholder="Наименование запчасти" style="${INP_NAME}">
+            placeholder="Введите наименование..." style="${INP_NAME}">
         </div>
-        <div style="padding:0;border-right:1px solid #111;">
+        <div style="padding:0;${CELL_BORDER}display:flex;">
           <input class="sp-field" data-i="${i}" data-f="price" value="${escHtml(row.price||'')}"
-            placeholder="0 ₽" style="${INP_PRICE}" inputmode="numeric">
+            placeholder="0" style="${INP_PRICE}" inputmode="numeric">
         </div>
-        <div style="padding:0;border-right:1px solid #111;">
+        <div style="padding:0;${CELL_BORDER}display:flex;">
           <input class="sp-field" data-i="${i}" data-f="orig" value="${escHtml(row.orig||'')}"
-            placeholder="—" style="${INP_CAT}">
+            placeholder="Кат. № ориг." style="${INP_CAT}">
         </div>
-        <div style="padding:0;border-right:1px solid #111;">
+        <div style="padding:0;${CELL_BORDER}display:flex;">
           <input class="sp-field" data-i="${i}" data-f="nonorig" value="${escHtml(row.nonorig||'')}"
-            placeholder="—" style="${INP_CAT}">
+            placeholder="Кат. № не ориг." style="${INP_CAT}">
         </div>
         <div style="display:flex;align-items:center;justify-content:center;">
           <button class="sp-del" data-i="${i}"
@@ -3589,9 +2862,20 @@ function updateSummary(c) {
   const cSU  = _settings.repairCostPerSU ?? 0;
   const cRC  = _settings.repairCostPerRC ?? 0;
   const cZ   = _settings.repairCostPerZ  ?? 0;
-  let cntSU=0, cntRC=0, cntZ=0;
-  allIds.forEach(id => { const st=cs.svcState[id]||{}; if(st.s)cntSU++; if(st.rc)cntRC++; if(st.z)cntZ++; });
-  const repairMaterialCost = repairParts*cRep + cntSU*cSU + cntRC*cRC + cntZ*cZ;
+  const matCosts = _settings.materialCosts || {};
+  let repairMaterialCost = 0;
+  allIds.forEach(id => {
+    const st = cs.svcState[id] || {};
+    const mc = matCosts[id] || {};
+    // Ремонт
+    if (st.r1 || st.r2) repairMaterialCost += (mc.r !== undefined ? mc.r : cRep);
+    // С/У
+    if (st.s)  repairMaterialCost += (mc.s !== undefined ? mc.s : cSU);
+    // Р/С
+    if (st.rc) repairMaterialCost += (mc.rc !== undefined ? mc.rc : cRC);
+    // Замена
+    if (st.z)  repairMaterialCost += (mc.z !== undefined ? mc.z : cZ);
+  });
   const totalRepairCost = repairMaterialCost + extraRepair;
   const totalPaintCost  = paintCost + extraPaint;
   // grandTotal вычислим позже — после подсчёта запчастей
@@ -3632,8 +2916,10 @@ function updateSummary(c) {
     }
   }
 
-  // Прочие затраты = 5% от суммы запчастей
+  // Прочие затраты = 5% от суммы запчастей (пустые строки не учитываются)
   const spSum = ((c.calcState.spareParts)||[]).reduce((acc, row) => {
+    // Пропускаем строки без названия и без цены
+    if (!row.name && !row.price) return acc;
     const v = parseInt(String(row.price||'').replace(/\D/g,''), 10);
     return acc + (isNaN(v) ? 0 : v);
   }, 0);
@@ -3643,13 +2929,13 @@ function updateSummary(c) {
   if (spTotalEl) spTotalEl.textContent = spSum > 0 ? spSum.toLocaleString('ru') + ' ₽' : '—';
   // update badge
   const spBadge = document.getElementById('sp-count-badge');
-  const spCount = (cs.spareParts||[]).length;
+  const spCount = (cs.spareParts||[]).filter(r => r.name || r.price).length;
   if (spBadge) {
     if (spCount > 0) { spBadge.textContent = spCount + ' поз.'; spBadge.style.display = ''; }
     else spBadge.style.display = 'none';
   }
   const spHdr = document.getElementById('sp-table-header');
-  if (spHdr) spHdr.style.display = spCount > 0 ? '' : 'none';
+  if (spHdr) spHdr.style.display = (cs.spareParts||[]).length > 0 ? '' : 'none';
   sel('cost-other', otherRounded.toLocaleString('ru') + ' ₽');
   const _pct = _settings.sparePartsPercent ?? 5;
   const noteEl = document.getElementById('cost-other-note');
@@ -3679,7 +2965,8 @@ function updateSummary(c) {
   const profitEl = document.getElementById('cost-profit');
   if (profitEl) {
     profitEl.textContent = grandTotal.toLocaleString('ru') + ' ₽';
-    profitEl.className = 'profit-val';
+    // Color: green if positive, red if zero/negative
+    profitEl.style.color = grandTotal > 0 ? '#4caf50' : '#d20124';
   }
 
   // Сохраняем полную итоговую сумму в calcState для архивирования
@@ -3794,76 +3081,100 @@ function printPDF() {
   const allIds = [...(cs.selected||[]), ...(cs.details||[]).map(d => d.id)];
   const date = new Date().toLocaleDateString('ru-RU');
   const shortLabels = ['С/У','Разборка','Замена','Окрас 1','Окрас 2','Рем >50%','Рем <50%'];
+  const _settings = loadSettings();
 
+  // ── Строки деталей ──────────────────────────────────────────
   let rows = '';
   let hasRows = false;
+  const PREMIUM_COLORS_PDF = ['Ксералик', '3-х сл. перламутровая'];
+  const colorSurchargePDF = PREMIUM_COLORS_PDF.includes(c.color||'') ? (_settings.colorSurcharge ?? 2000) : 0;
 
   allIds.forEach(id => {
-    // Определяем название
     const part = PARTS.find(p => p.id === id);
     const detail = (cs.details||[]).find(d => d.id === id);
     const name = part ? part.name : (detail ? detail.name : 'Деталь');
-
-    // Получаем цены напрямую — не через getPrices чтобы избежать ошибок
-    let bp;
-    if (id.startsWith('detail_')) {
-      bp = (cs._detailPrices && cs._detailPrices[id]) ? cs._detailPrices[id] : {...DETAIL_BASE};
-    } else {
-      bp = BASE_PRICES[id];
-    }
+    let bp = id.startsWith('detail_')
+      ? ((cs._detailPrices && cs._detailPrices[id]) ? cs._detailPrices[id] : {...DETAIL_BASE})
+      : BASE_PRICES[id];
     if (!bp) return;
-    const add = TIER_ADD[cs.tier] || 0;
-    const pr = {
-      s: bp.s, rc: bp.rc > 0 ? bp.rc + add : 0,
-      z: bp.z > 0 ? bp.z + add : 0,
-      p1: bp.p1, p2: bp.p2, r2: bp.r2, r1: bp.r1
-    };
-    // Apply premium color surcharge to paint operations
-    const PREMIUM_COLORS_PDF = ['Ксералик', '3-х сл. перламутровая'];
-    const colorSurchargePDF = PREMIUM_COLORS_PDF.includes(c.color||'') ? (loadSettings().colorSurcharge ?? 2000) : 0;
-    if (colorSurchargePDF > 0) {
-      if (pr.p1 > 0) pr.p1 += colorSurchargePDF;
-      if (pr.p2 > 0) pr.p2 += colorSurchargePDF;
-    }
-
+    const partTier = (cs._partTiers && cs._partTiers[id]) || cs.tier;
+    const add = TIER_ADD[partTier] || 0;
+    const pr = { s:bp.s, rc:bp.rc>0?bp.rc+add:0, z:bp.z>0?bp.z+add:0, p1:bp.p1, p2:bp.p2, r2:bp.r2, r1:bp.r1 };
+    if (colorSurchargePDF > 0) { if (pr.p1>0) pr.p1+=colorSurchargePDF; if (pr.p2>0) pr.p2+=colorSurchargePDF; }
     const st = cs.svcState[id] || {};
-    const anyChecked = SVC_KEYS.some(k => st[k]);
-    if (!anyChecked) return;
-
+    if (!SVC_KEYS.some(k => st[k])) return;
     let rowTotal = 0;
-    SVC_KEYS.forEach(k => { if (st[k] && pr[k] > 0) rowTotal += pr[k]; });
+    SVC_KEYS.forEach(k => { if (st[k] && pr[k]>0) rowTotal += pr[k]; });
     hasRows = true;
-
     const cells = SVC_KEYS.map((k,i) => {
       const v = pr[k];
       const active = st[k] && v > 0;
-      return `<td style="text-align:center;padding:6px 3px;border:1px solid #e0e0e0;font-size:11px;${active?'color:#111;font-weight:700;':'color:#ccc;'}">${active ? v.toLocaleString('ru')+'\u202f₽' : '—'}</td>`;
+      return `<td>${active ? v.toLocaleString('ru')+'\u202f₽' : '—'}</td>`;
     }).join('');
-
-    rows += `<tr><td style="padding:7px 10px;border:1px solid #e0e0e0;font-weight:600;font-size:13px;">${escHtml(name)}</td>${cells}<td style="text-align:right;padding:7px 10px;border:1px solid #e0e0e0;font-weight:700;font-size:13px;color:#d20124;white-space:nowrap;">${rowTotal.toLocaleString('ru')}\u202f₽</td></tr>`;
+    rows += `<tr class="data-row"><td class="name-cell">${escHtml(name)}</td>${cells}<td class="sum-cell">${rowTotal.toLocaleString('ru')}\u202f₽</td></tr>`;
   });
 
-  // Считаем итог напрямую
-  let grandTotal = 0;
-  const _pdfSurcharge = ['Ксералик','3-х сл. перламутровая'].includes(c.color||'') ? (loadSettings().colorSurcharge ?? 2000) : 0;
+  // ── Итог деталей ────────────────────────────────────────────
+  let grandServices = 0;
   allIds.forEach(id => {
     let bp = id.startsWith('detail_')
       ? ((cs._detailPrices && cs._detailPrices[id]) ? cs._detailPrices[id] : {...DETAIL_BASE})
       : BASE_PRICES[id];
     if (!bp) return;
-    const add = TIER_ADD[cs.tier] || 0;
+    const partTier = (cs._partTiers && cs._partTiers[id]) || cs.tier;
+    const add = TIER_ADD[partTier] || 0;
     const pr = { s:bp.s, rc:bp.rc>0?bp.rc+add:0, z:bp.z>0?bp.z+add:0, p1:bp.p1, p2:bp.p2, r2:bp.r2, r1:bp.r1 };
-    if (_pdfSurcharge > 0) { if (pr.p1>0) pr.p1+=_pdfSurcharge; if (pr.p2>0) pr.p2+=_pdfSurcharge; }
+    if (colorSurchargePDF > 0) { if (pr.p1>0) pr.p1+=colorSurchargePDF; if (pr.p2>0) pr.p2+=colorSurchargePDF; }
     const st = cs.svcState[id] || {};
-    SVC_KEYS.forEach(k => { if (st[k] && pr[k] > 0) grandTotal += pr[k]; });
+    SVC_KEYS.forEach(k => { if (st[k] && pr[k]>0) grandServices += pr[k]; });
   });
 
-  const clientInfoRows = [
-    `<tr><td style="color:#888;padding:3px 0;width:110px;font-size:13px;">Клиент:</td><td style="font-weight:700;padding:3px 16px 3px 0;font-size:13px;">${escHtml(c.name)}</td><td style="color:#888;padding:3px 0;width:110px;font-size:13px;">Телефон:</td><td style="font-size:13px;">${escHtml(c.phone||'—')}</td></tr>`,
-    `<tr><td style="color:#888;padding:3px 0;font-size:13px;">Автомобиль:</td><td style="padding:3px 16px 3px 0;font-size:13px;">${escHtml(c.car||'—')}</td><td style="color:#888;padding:3px 0;font-size:13px;">Гос. номер:</td><td style="font-weight:700;font-size:13px;">${escHtml(c.plate||'—')}</td></tr>`,
-    c.color ? `<tr><td style="color:#888;padding:3px 0;font-size:13px;">Покрытие:</td><td colspan="3" style="font-size:13px;padding:3px 0;"><b>${escHtml(c.color)}</b>${['Ксералик','3-х сл. перламутровая'].includes(c.color)?'<span style="font-size:11px;color:#d20124;margin-left:6px;">(+2 000 ₽)</span>':''}</td></tr>` : '',
-    c.vin ? `<tr><td style="color:#888;padding:3px 0;font-size:13px;">VIN:</td><td colspan="3" style="font-family:monospace;letter-spacing:1px;font-size:12px;padding:3px 0;">${escHtml(c.vin)}</td></tr>` : '',
-  ].filter(Boolean).join('');
+  // ── Запчасти ─────────────────────────────────────────────────
+  const spares = (cs.spareParts||[]).filter(r => r.name || r.price);
+  const spSum = spares.reduce((s,r) => s + (parseFloat(String(r.price||'').replace(/\s/g,''))||0), 0);
+  let spareRows = '';
+  if (spares.length > 0) {
+    spareRows = spares.map(r => `<tr class="data-row"><td class="name-cell">${escHtml(r.name||'—')}</td><td class="sum-cell" style="color:#c47f00;">${r.price?(parseFloat(String(r.price||'').replace(/\s/g,''))||0).toLocaleString('ru')+'\u202f₽':'—'}</td></tr>`).join('');
+  }
+
+  // ── Затраты мастера ──────────────────────────────────────────
+  let repairParts=0, paintCost=0;
+  let cntSU=0, cntRC=0, cntZ=0;
+  const cRep = _settings.repairCostPerRepair ?? 4000;
+  const cSU  = _settings.repairCostPerSU ?? 4000;
+  const cRC  = _settings.repairCostPerRC ?? 4000;
+  const cZ   = _settings.repairCostPerZ  ?? 4000;
+  const paintCoeff = _settings.paintCoeff2layer || 1.3;
+  const PAINT_LARGE = ['kap','kry','bag'];
+  allIds.forEach(id => {
+    const st = cs.svcState[id] || {};
+    if (st.r1 || st.r2) repairParts++;
+    if (st.s)  cntSU++;
+    if (st.rc) cntRC++;
+    if (st.z)  cntZ++;
+    const paintBase = PAINT_LARGE.includes(id) ? 4500 : 3000;
+    if (st.p2) paintCost += Math.round(paintBase * paintCoeff);
+    else if (st.p1) paintCost += paintBase;
+  });
+  const extraRepair = cs.extraRepair || 0;
+  const extraPaint  = cs.extraPaint  || 0;
+  const repairMaterialCost = repairParts*cRep + cntSU*cSU + cntRC*cRC + cntZ*cZ;
+  const totalRepairCost = repairMaterialCost + extraRepair;
+  const totalPaintCost  = paintCost + extraPaint;
+  const _spPct = (_settings.sparePartsPercent ?? 5) / 100;
+  const otherCost = Math.round(spSum * _spPct);
+  const totalCosts = totalRepairCost + totalPaintCost + otherCost;
+
+  // Итог с затратами
+  const grandTotal = grandServices + spSum + totalCosts;
+
+  // ── Уровень ──────────────────────────────────────────────────
+  const tierLabel = TIER_LABELS[cs.tier] || 'Лайт';
+  const daysTotal = (cs.daysBody||0) + (cs.daysPaint||0);
+
+  // ── QR-код ───────────────────────────────────────────────────
+  // Base64 QR-кода из загруженного изображения (VK ссылка)
+  const QR_DATA_URL = 'data:image/jpeg;base64,/9j/'; // placeholder — используем URL вместо base64
 
   const html = `<!DOCTYPE html>
 <html lang="ru">
@@ -3871,48 +3182,188 @@ function printPDF() {
 <meta charset="UTF-8">
 <title>Расчёт — ${escHtml(c.name)}</title>
 <style>
-  @page { size:A4; margin:14mm 14mm 12mm 14mm; }
+  @page { size:A4; margin:12mm 14mm 12mm 14mm; }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .wrap{max-width:760px;margin:0 auto;}
-  .hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;border-bottom:3px solid #d20124;margin-bottom:14px;}
-  .logo{font-size:26px;font-weight:900;text-transform:uppercase;letter-spacing:3px;line-height:1;}
-  .logo-sub{color:#888;font-size:11px;margin-top:4px;}
-  .hdr-r{text-align:right;font-size:12px;color:#666;line-height:1.8;}
-  .hdr-r b{color:#111;}
-  .cbox{background:#f7f7f7;padding:10px 14px;border-left:4px solid #d20124;margin-bottom:14px;}
-  table.main{width:100%;border-collapse:collapse;margin-bottom:14px;}
+  body{font-family:'Arial',Helvetica,sans-serif;color:#111;background:#fff;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .wrap{max-width:780px;margin:0 auto;}
+
+  /* Шапка */
+  .hdr{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:10px;border-bottom:3px solid #d20124;margin-bottom:16px;}
+  .logo-wrap{}
+  .logo-name{font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:4px;color:#111;line-height:1;}
+  .logo-sub{color:#999;font-size:10px;margin-top:3px;letter-spacing:1px;text-transform:uppercase;}
+  .hdr-meta{text-align:right;font-size:11px;color:#888;line-height:1.9;}
+  .hdr-meta b{color:#111;font-size:12px;}
+  .hdr-title{font-size:13px;font-weight:700;color:#111;margin-bottom:2px;}
+
+  /* Клиент */
+  .client-box{display:flex;justify-content:space-between;align-items:stretch;border:1px solid #e8e8e8;margin-bottom:16px;border-radius:3px;overflow:hidden;}
+  .client-info{padding:10px 14px;flex:1;}
+  .client-info table{border-collapse:collapse;width:100%;}
+  .client-info td{padding:3px 12px 3px 0;font-size:12px;vertical-align:top;}
+  .client-info td:first-child{color:#999;font-weight:600;white-space:nowrap;width:90px;font-size:11px;text-transform:uppercase;letter-spacing:0.3px;}
+  .client-info td:nth-child(2){font-weight:700;color:#111;}
+  .client-accent{width:4px;background:#d20124;flex-shrink:0;}
+
+  /* Таблица деталей */
+  .section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#999;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #f0f0f0;}
+  table.main{width:100%;border-collapse:collapse;margin-bottom:4px;font-size:11px;}
   table.main thead tr{background:#1a1a1a;color:#fff;}
-  table.main th{padding:7px 4px;font-size:10px;font-weight:600;text-align:center;}
-  table.main th:first-child{text-align:left;padding-left:10px;min-width:110px;}
+  table.main th{padding:7px 5px;font-size:9px;font-weight:700;text-align:center;letter-spacing:0.5px;white-space:nowrap;}
+  table.main th:first-child{text-align:left;padding-left:10px;}
   table.main th:last-child{text-align:right;padding-right:10px;}
-  table.main tbody tr{border-bottom:1px solid #eee;}
-  .total-row{text-align:right;padding:10px 0;border-top:2px solid #eee;margin-bottom:12px;}
-  .footer{color:#bbb;font-size:10px;border-top:1px solid #eee;padding-top:8px;line-height:1.5;}
-  .note{background:#fffbf0;border:1px solid #ffe082;padding:8px 12px;font-size:12px;color:#555;margin-bottom:12px;}
+  tr.data-row td{padding:6px 5px;border-bottom:1px solid #f4f4f4;vertical-align:middle;text-align:center;color:#555;font-size:11px;}
+  tr.data-row td.name-cell{text-align:left;padding-left:10px;font-weight:600;color:#111;font-size:12px;}
+  tr.data-row td.sum-cell{text-align:right;padding-right:10px;font-weight:700;color:#d20124;font-size:12px;white-space:nowrap;}
+  tr.data-row:nth-child(even){background:#fafafa;}
+
+  /* Запчасти */
+  table.spares{width:100%;border-collapse:collapse;margin-bottom:4px;font-size:11px;}
+  table.spares thead tr{background:#2a2a2a;color:#fff;}
+  table.spares th{padding:6px 10px;font-size:9px;font-weight:700;text-align:left;letter-spacing:0.5px;}
+  table.spares th:last-child{text-align:right;}
+  table.spares tr.data-row td{padding:6px 10px;border-bottom:1px solid #f4f4f4;font-size:11px;}
+  table.spares tr.data-row td.sum-cell{text-align:right;}
+  table.spares tr.data-row:nth-child(even){background:#fafafa;}
+
+  /* Итог */
+  .total-box{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:10px 10px;background:#fff;border-top:2px solid #111;margin-bottom:14px;}
+  .total-label{font-size:13px;color:#555;font-weight:600;}
+  .total-val{font-size:28px;font-weight:900;color:#d20124;letter-spacing:-0.5px;}
+
+  /* Затраты мастера */
+  .costs-box{background:#f7f7f7;border:1px solid #e8e8e8;border-radius:3px;padding:10px 14px;margin-bottom:14px;}
+  .costs-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#aaa;margin-bottom:8px;}
+  .costs-grid{display:flex;gap:0;}
+  .cost-item{flex:1;padding:6px 10px;border-right:1px solid #e0e0e0;}
+  .cost-item:last-child{border-right:none;}
+  .cost-item-label{font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:#aaa;margin-bottom:3px;}
+  .cost-item-val{font-size:16px;font-weight:700;color:#333;}
+  .cost-item-val.repair{color:#ff9800;}
+  .cost-item-val.paint{color:#2196f3;}
+  .cost-item-val.total{color:#111;font-size:18px;}
+
+  /* Сроки */
+  .days-box{background:#f0f4ff;border-left:3px solid #3f51b5;padding:7px 12px;margin-bottom:14px;font-size:12px;color:#333;}
+
+  /* QR + контакты */
+  .bottom-section{display:flex;gap:16px;align-items:flex-start;margin-bottom:14px;}
+  .qr-block{flex-shrink:0;text-align:center;}
+  .qr-block img{width:90px;height:90px;display:block;}
+  .qr-label{font-size:9px;color:#999;text-align:center;margin-top:3px;max-width:90px;line-height:1.3;}
+  .contact-block{flex:1;}
+  .contact-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:6px;}
+  .contact-phone{font-size:20px;font-weight:900;color:#111;letter-spacing:-0.3px;margin-bottom:4px;}
+  .notice-box{background:#fffde7;border:1px solid #ffe082;border-radius:3px;padding:7px 12px;font-size:12px;color:#555;line-height:1.5;}
+  .notice-box b{color:#111;}
+
+  /* Сноска */
+  .footer{color:#bbb;font-size:9px;border-top:1px solid #eee;padding-top:6px;margin-top:4px;line-height:1.5;}
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <!-- ШАПКА -->
   <div class="hdr">
-    <div><div class="logo">CarService</div><div class="logo-sub">Магнитогорск · carservicemgn.ru</div></div>
-    <div class="hdr-r">Расчёт от <b>${date}</b><br>Уровень: <b>${TIER_LABELS[cs.tier]}</b></div>
+    <div class="logo-wrap">
+      <div class="logo-name">CarService</div>
+      <div class="logo-sub">Магнитогорск · carservicemgn.ru</div>
+    </div>
+    <div class="hdr-meta">
+      <div class="hdr-title">Расчёт — ${escHtml(c.name)}</div>
+      <div>Расчёт от <b>${date}</b></div>
+      <div>Уровень: <b>${tierLabel}</b></div>
+    </div>
   </div>
-  <div class="cbox"><table style="width:100%;border-collapse:collapse;">${clientInfoRows}</table></div>
+
+  <!-- КЛИЕНТ -->
+  <div class="client-box">
+    <div class="client-accent"></div>
+    <div class="client-info">
+      <table>
+        <tr><td>Клиент:</td><td>${escHtml(c.name)}</td><td style="color:#999;font-size:11px;text-transform:uppercase;letter-spacing:0.3px;padding-right:12px;">Телефон:</td><td style="font-weight:700;">${escHtml(c.phone||'—')}</td></tr>
+        <tr><td>Автомобиль:</td><td>${escHtml(c.car||'—')}</td><td style="color:#999;font-size:11px;text-transform:uppercase;letter-spacing:0.3px;padding-right:12px;">Гос. номер:</td><td style="font-weight:700;">${escHtml(c.plate||'—')}</td></tr>
+        ${c.color ? `<tr><td>Покрытие:</td><td colspan="3"><b>${escHtml(c.color)}</b>${PREMIUM_COLORS_PDF.includes(c.color)?` <span style="font-size:10px;color:#d20124;font-weight:700;">(+${colorSurchargePDF.toLocaleString('ru')}\u202f₽)</span>`:''}</td></tr>` : ''}
+        ${c.vin ? `<tr><td>VIN:</td><td colspan="3" style="font-family:monospace;letter-spacing:1px;font-size:11px;">${escHtml(c.vin)}</td></tr>` : ''}
+      </table>
+    </div>
+  </div>
+
+  <!-- ДЕТАЛИ -->
+  <div class="section-title">Работы</div>
   <table class="main">
     <thead><tr>
-      <th style="text-align:left;padding-left:10px;">Деталь</th>
+      <th style="text-align:left;padding-left:10px;min-width:120px;">Деталь</th>
       ${shortLabels.map(l=>`<th>${l}</th>`).join('')}
       <th style="text-align:right;padding-right:10px;">Сумма</th>
     </tr></thead>
-    <tbody>${hasRows ? rows : '<tr><td colspan="9" style="padding:16px;text-align:center;color:#aaa;">Нет отмеченных услуг</td></tr>'}</tbody>
+    <tbody>${hasRows ? rows : '<tr><td colspan="9" style="padding:14px;text-align:center;color:#aaa;">Нет отмеченных услуг</td></tr>'}</tbody>
   </table>
-  <div class="total-row"><span style="font-size:13px;color:#888;">Итого к оплате:&nbsp;</span><span style="font-size:26px;font-weight:900;color:#d20124;">${grandTotal.toLocaleString('ru')}&nbsp;₽</span></div>
-  ${c.note?`<div class="note"><b>Примечание:</b> ${escHtml(c.note)}</div>`:''}
-  ${(cs.daysBody||0)+(cs.daysPaint||0) > 0 ? `<div style="margin-bottom:10px;padding:8px 12px;background:#f5f5f5;border-left:3px solid #333;font-size:12px;">
-    Ориентировочные сроки: жестяные работы — <b>${cs.daysBody||0} дн.</b>, покрасочные — <b>${cs.daysPaint||0} дн.</b>
-    (итого: <b>${(cs.daysBody||0)+(cs.daysPaint||0)} дн.</b>)
+
+  ${spares.length > 0 ? `
+  <!-- ЗАПЧАСТИ -->
+  <div class="section-title" style="margin-top:12px;">Запчасти</div>
+  <table class="spares">
+    <thead><tr><th>Запчасть</th><th style="text-align:right;">Цена</th></tr></thead>
+    <tbody>${spareRows}</tbody>
+    ${spares.length > 1 ? `<tfoot><tr style="background:#1a1a1a;color:#fff;"><td style="padding:5px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Итого запчасти</td><td style="padding:5px 10px;text-align:right;font-weight:700;color:#ffa726;">${spSum.toLocaleString('ru')}\u202f₽</td></tr></tfoot>` : ''}
+  </table>` : ''}
+
+  <!-- ИТОГ -->
+  <div class="total-box">
+    <span class="total-label">Итого к оплате:</span>
+    <span class="total-val">${grandTotal.toLocaleString('ru')}\u202f₽</span>
+  </div>
+
+  ${totalCosts > 0 ? `
+  <!-- ЗАТРАТЫ МАСТЕРА -->
+  <div class="costs-box">
+    <div class="costs-title">Краска и Расходные материалы</div>
+    <div class="costs-grid">
+      <div class="cost-item">
+        <div class="cost-item-label">Расходные материалы</div>
+        <div class="cost-item-val repair">${totalRepairCost.toLocaleString('ru')}\u202f₽</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-item-label">Краска</div>
+        <div class="cost-item-val paint">${totalPaintCost.toLocaleString('ru')}\u202f₽</div>
+      </div>
+      ${otherCost > 0 ? `<div class="cost-item">
+        <div class="cost-item-label">Прочие (${_settings.sparePartsPercent??5}% от запчастей)</div>
+        <div class="cost-item-val">${otherCost.toLocaleString('ru')}\u202f₽</div>
+      </div>` : ''}
+      <div class="cost-item" style="background:#fff;border-left:2px solid #ddd;">
+        <div class="cost-item-label">Итого затраты</div>
+        <div class="cost-item-val total">${totalCosts.toLocaleString('ru')}\u202f₽</div>
+      </div>
+    </div>
   </div>` : ''}
+
+  ${daysTotal > 0 ? `
+  <!-- СРОКИ -->
+  <div class="days-box">
+    Ориентировочные сроки: жестяные работы — <b>${cs.daysBody||0} дн.</b>, покрасочные — <b>${cs.daysPaint||0} дн.</b> (итого: <b>${daysTotal} дн.</b>)
+  </div>` : ''}
+
+  <!-- QR + КОНТАКТЫ -->
+  <div class="bottom-section">
+    <div class="qr-block">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https://vk.com/carservicemgn" alt="QR">
+      <div class="qr-label">Онлайн Запись на СТО</div>
+    </div>
+    <div class="contact-block">
+      <div class="contact-title">Связаться можно:</div>
+      <div class="contact-phone">+7 (908) 086-22-66</div>
+      <div class="notice-box">
+        <b>Внимание!</b><br>
+        В стоимость включены все работы и расходные материалы
+      </div>
+    </div>
+  </div>
+
+  ${c.note ? `<div style="background:#fffde7;border:1px solid #ffe082;border-radius:3px;padding:7px 12px;font-size:12px;color:#555;margin-bottom:12px;"><b>Примечание:</b> ${escHtml(c.note)}</div>` : ''}
+
   <div class="footer">Расчёт является предварительным и может быть скорректирован после осмотра автомобиля. Данный документ не является договором.</div>
 </div>
 <script>window.onload=function(){window.print();};<\/script>
@@ -4317,7 +3768,7 @@ function openVisitDetail(clientId, visitIdx) {
         })()}
 
         ${(()=>{
-          // Расчёт затрат мастера
+          // Краска и Расходные материалы
           const _vs = loadSettings();
           const _PREMIUM_COLORS2 = ['Ксералик', '3-х сл. перламутровая'];
           const _vColorSurcharge = _PREMIUM_COLORS2.includes(c.color||'') ? (_vs.colorSurcharge??2000) : 0;
@@ -4349,30 +3800,30 @@ function openVisitDetail(clientId, visitIdx) {
           }, 0);
           const _vGrandTotal = _vServicesTotal + _vSpSum + _vTotalCosts;
 
-          return \`
-            <div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:20px 0 12px;padding-bottom:8px;border-bottom:1px solid #1e1e1e;">Расчёт затрат мастера</div>
+          return `
+            <div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:20px 0 12px;padding-bottom:8px;border-bottom:1px solid #1e1e1e;">Краска и Расходные материалы</div>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1a1a;margin-bottom:1px;">
               <div style="background:#0d0d0d;padding:14px 16px;border-left:3px solid #ff9800;">
                 <div style="font-family:Oswald,sans-serif;color:#666;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Расходные материалы</div>
-                <div style="font-family:Oswald,sans-serif;font-size:18px;font-weight:700;color:#ff9800;">\${_vCostRepair.toLocaleString('ru')} ₽</div>
+                <div style="font-family:Oswald,sans-serif;font-size:18px;font-weight:700;color:#ff9800;">${_vCostRepair.toLocaleString('ru')} ₽</div>
               </div>
               <div style="background:#0d0d0d;padding:14px 16px;border-left:3px solid #2196f3;">
                 <div style="font-family:Oswald,sans-serif;color:#666;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Краска</div>
-                <div style="font-family:Oswald,sans-serif;font-size:18px;font-weight:700;color:#2196f3;">\${_vCostPaint.toLocaleString('ru')} ₽</div>
+                <div style="font-family:Oswald,sans-serif;font-size:18px;font-weight:700;color:#2196f3;">${_vCostPaint.toLocaleString('ru')} ₽</div>
               </div>
               <div style="background:#0d0d0d;padding:14px 16px;border-left:3px solid #4caf50;">
-                <div style="font-family:Oswald,sans-serif;color:#666;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Прочие затраты (\${(_vs.sparePartsPercent??5)}%)</div>
-                <div style="font-family:Oswald,sans-serif;font-size:18px;font-weight:700;color:#4caf50;">\${_vOther.toLocaleString('ru')} ₽</div>
+                <div style="font-family:Oswald,sans-serif;color:#666;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Прочие затраты (${(_vs.sparePartsPercent??5)}%)</div>
+                <div style="font-family:Oswald,sans-serif;font-size:18px;font-weight:700;color:#4caf50;">${_vOther.toLocaleString('ru')} ₽</div>
               </div>
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;background:#0a0a0a;padding:12px 16px;border-top:1px solid #1a1a1a;">
               <span style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Общая сумма затрат</span>
-              <span style="font-family:Oswald,sans-serif;font-size:17px;font-weight:700;color:#ddd;">\${_vTotalCosts.toLocaleString('ru')} ₽</span>
+              <span style="font-family:Oswald,sans-serif;font-size:17px;font-weight:700;color:#ddd;">${_vTotalCosts.toLocaleString('ru')} ₽</span>
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;background:#080808;padding:14px 16px;border-top:2px solid #222;">
               <span style="font-family:Oswald,sans-serif;color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Итог с затратами (услуги + запчасти + затраты)</span>
-              <span style="font-family:Oswald,sans-serif;font-size:22px;font-weight:900;color:#4caf50;">\${_vGrandTotal.toLocaleString('ru')} ₽</span>
-            </div>\`;
+              <span style="font-family:Oswald,sans-serif;font-size:22px;font-weight:900;color:#4caf50;">${_vGrandTotal.toLocaleString('ru')} ₽</span>
+            </div>`;
         })()}
       </div>
     </div>`;
@@ -4801,30 +4252,7 @@ function renderSettingsPage() {
       <span class="settings-unit">%</span>
     </div>
 
-    <div class="settings-section-title" style="margin-top:24px;">Расходные материалы (затраты мастера)</div>
-    <p style="font-size:12px;color:#444;font-family:'PT Sans',sans-serif;margin-bottom:12px;">
-      Сколько прибавляется к блоку «Расходные материалы» за каждую деталь с данной услугой.
-    </p>
-    <div class="settings-row">
-      <div class="settings-label">За ремонт (Рем &lt;50% / Рем &gt;50%)<small>Затраты на рихтовку, шпаклёвку</small></div>
-      <input class="settings-input" type="number" id="st-cost-repair" min="0" step="100" value="${s.repairCostPerRepair ?? 4000}">
-      <span class="settings-unit">₽</span>
-    </div>
-    <div class="settings-row">
-      <div class="settings-label">За Снять / Установить<small>Расходники при снятии</small></div>
-      <input class="settings-input" type="number" id="st-cost-su" min="0" step="100" value="${s.repairCostPerSU ?? 0}">
-      <span class="settings-unit">₽</span>
-    </div>
-    <div class="settings-row">
-      <div class="settings-label">За Разобр. / Собрать<small>Расходники при разборке</small></div>
-      <input class="settings-input" type="number" id="st-cost-rc" min="0" step="100" value="${s.repairCostPerRC ?? 0}">
-      <span class="settings-unit">₽</span>
-    </div>
-    <div class="settings-row">
-      <div class="settings-label">За Замену<small>Расходники при замене детали</small></div>
-      <input class="settings-input" type="number" id="st-cost-z" min="0" step="100" value="${s.repairCostPerZ ?? 0}">
-      <span class="settings-unit">₽</span>
-    </div>
+
 
     <div class="settings-section-title" style="margin-top:24px;">Таблица цен</div>
     <p style="font-size:12px;color:#444;font-family:'PT Sans',sans-serif;margin-bottom:12px;">
@@ -4843,20 +4271,81 @@ function renderSettingsPage() {
       <button class="settings-save-btn" id="st-save-btn">💾 Сохранить настройки</button>
       <button class="settings-reset-btn" id="st-reset-btn">↺ Сбросить к базовым</button>
     </div>
+
+    <div class="settings-section-title" style="margin-top:32px;">Расходные материалы по деталям</div>
+    <p style="font-size:12px;color:#444;font-family:'PT Sans',sans-serif;margin-bottom:12px;">
+      Индивидуальная стоимость расходных материалов для каждой детали. Пустое поле = глобальное значение. <b style="color:#555;">0</b> = отключить.
+    </p>
+
+    <!-- Глобальные значения — скрытые инпуты для collectAndSave -->
+    <input type="hidden" id="st-cost-repair" value="${s.repairCostPerRepair ?? 4000}">
+    <input type="hidden" id="st-cost-repair-v" value="${s.repairCostPerRepair ?? 4000}">
+    <input type="hidden" id="st-cost-su"     value="${s.repairCostPerSU ?? 0}">
+    <input type="hidden" id="st-cost-su-v"   value="${s.repairCostPerSU ?? 0}">
+    <input type="hidden" id="st-cost-rc"     value="${s.repairCostPerRC ?? 0}">
+    <input type="hidden" id="st-cost-rc-v"   value="${s.repairCostPerRC ?? 0}">
+    <input type="hidden" id="st-cost-z"      value="${s.repairCostPerZ ?? 0}">
+    <input type="hidden" id="st-cost-z-v"    value="${s.repairCostPerZ ?? 0}">
+
+    <div style="overflow-x:auto;">
+      <div class="settings-prices-grid" style="grid-template-columns:160px repeat(4,1fr);" id="st-mat-grid">
+        <div class="sp-head" style="text-align:left;padding-left:12px;">Деталь</div>
+        <div class="sp-head">Рем &lt;50% / &gt;50%</div>
+        <div class="sp-head">С/У</div>
+        <div class="sp-head">Р/С</div>
+        <div class="sp-head">Замена</div>
+        ${PARTS_META.map(g => {
+          const primaryId = g.ids[0];
+          const mc = (s.materialCosts && s.materialCosts[primaryId]) || {};
+          const mcKeys = ['r','s','rc','z'];
+          const globals = [s.repairCostPerRepair??4000, s.repairCostPerSU??0, s.repairCostPerRC??0, s.repairCostPerZ??0];
+          const cells = mcKeys.map((k, ki) => {
+            const val = mc[k] !== undefined ? mc[k] : '';
+            const isZero = val === 0 || val === '0';
+            return `<div class="sp-cell" style="${isZero?'background:#0a0a0a;':''}">
+              <input type="number" min="0" step="100" class="st-mat-inp"
+                data-ids="${g.ids.join(',')}" data-mc="${k}"
+                value="${val}" placeholder="${globals[ki]}"
+                oninput="this.parentElement.style.background=this.value==='0'?'#0a0a0a':'';this.style.color=this.value==='0'?'#333':'#fff';"
+                style="width:100%;background:transparent;border:none;color:${isZero?'#333':'#fff'};font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;text-align:right;padding:6px 8px;outline:none;">
+            </div>`;
+          }).join('');
+          const idHint = g.ids.length > 1 ? `<small style="color:#444;font-size:10px;display:block;">${g.ids.join(', ')}</small>` : '';
+          return `<div class="sp-name">${g.name}${idHint}</div>${cells}`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0;flex-wrap:wrap;margin-top:16px;">
+      <button class="settings-save-btn" id="st-save-btn2">💾 Сохранить настройки</button>
+    </div>
   `;
 
   // Сохранить
   document.getElementById('st-save-btn').addEventListener('click', () => {
+    collectAndSave();
+    const btn = document.getElementById('st-save-btn');
+    btn.textContent = '✓ Сохранено!';
+    btn.style.background = '#1a8a3c';
+    setTimeout(() => { btn.textContent = '💾 Сохранить настройки'; btn.style.background = ''; }, 2000);
+  });
+
+  // Функция сбора materialCosts
+  function collectAndSave() {
     const ns = { ...loadSettings() };
-    // Общие параметры
     ns.colorSurcharge    = Math.max(0, parseInt(document.getElementById('st-color-surcharge').value) || 0);
     ns.paintCoeff2layer  = Math.max(1, parseFloat(document.getElementById('st-paint-coeff').value) || 1.3);
     ns.paintCost1layer   = Math.max(0, parseInt(document.getElementById('st-paint-cost1').value) || 0);
     ns.sparePartsPercent = Math.max(0, Math.min(100, parseFloat(document.getElementById('st-spare-pct').value) || 5));
-    ns.repairCostPerRepair = Math.max(0, parseInt(document.getElementById('st-cost-repair').value) || 0);
-    ns.repairCostPerSU     = Math.max(0, parseInt(document.getElementById('st-cost-su').value) || 0);
-    ns.repairCostPerRC     = Math.max(0, parseInt(document.getElementById('st-cost-rc').value) || 0);
-    ns.repairCostPerZ      = Math.max(0, parseInt(document.getElementById('st-cost-z').value) || 0);
+    // Читаем глобальные расходники из видимых инпутов -v (или hidden как fallback)
+    const gv = id => {
+      const el = document.getElementById(id + '-v') || document.getElementById(id);
+      return Math.max(0, parseInt(el ? el.value : '0') || 0);
+    };
+    ns.repairCostPerRepair = gv('st-cost-repair');
+    ns.repairCostPerSU     = gv('st-cost-su');
+    ns.repairCostPerRC     = gv('st-cost-rc');
+    ns.repairCostPerZ      = gv('st-cost-z');
     // Цены деталей
     ns.prices = {};
     document.querySelectorAll('#st-prices-grid input[data-group]').forEach(inp => {
@@ -4870,17 +4359,31 @@ function renderSettingsPage() {
         ns.prices[partId][key] = val;
       });
     });
+    // Расходные материалы по деталям
+    ns.materialCosts = {};
+    document.querySelectorAll('.st-mat-inp').forEach(inp => {
+      if (inp.value.trim() === '') return;
+      const val = parseInt(inp.value);
+      if (isNaN(val)) return;
+      const mcKey = inp.dataset.mc;
+      inp.dataset.ids.split(',').forEach(partId => {
+        partId = partId.trim();
+        if (!ns.materialCosts[partId]) ns.materialCosts[partId] = {};
+        ns.materialCosts[partId][mcKey] = val;
+      });
+    });
     saveSettings(ns);
-    // Обновляем открытого клиента
     if (activeClientId) openClient(activeClientId);
-    // Подтверждение
-    const btn = document.getElementById('st-save-btn');
-    btn.textContent = '✓ Сохранено!';
-    btn.style.background = '#1a8a3c';
-    setTimeout(() => {
-      btn.textContent = '💾 Сохранить настройки';
-      btn.style.background = '';
-    }, 2000);
+    return ns;
+  }
+
+  // Кнопка 2 (внизу)
+  const btn2 = document.getElementById('st-save-btn2');
+  if (btn2) btn2.addEventListener('click', () => {
+    collectAndSave();
+    btn2.textContent = '✓ Сохранено!';
+    btn2.style.background = '#1a8a3c';
+    setTimeout(() => { btn2.textContent = '💾 Сохранить настройки'; btn2.style.background = ''; }, 2000);
   });
 
   // Сбросить
@@ -4890,6 +4393,23 @@ function renderSettingsPage() {
     if (activeClientId) openClient(activeClientId);
     renderSettingsPage();
   });
+
+  // Подсветка нуля в таблице цен
+  function initZeroTracking() {
+    document.querySelectorAll('#st-prices-grid .sp-cell input').forEach(inp => {
+      const applyZero = () => {
+        const isZero = inp.value.trim() === '0';
+        inp.dataset.zero = isZero ? '1' : '0';
+        inp.style.color = isZero ? '#333' : '';
+        inp.style.background = isZero ? '#0a0a0a' : '';
+        inp.style.borderColor = isZero ? '#1a1a1a' : '';
+        inp.parentElement.style.background = isZero ? '#0a0a0a' : '';
+      };
+      applyZero();
+      inp.addEventListener('input', applyZero);
+    });
+  }
+  initZeroTracking();
 }
 
 renderClientList();
