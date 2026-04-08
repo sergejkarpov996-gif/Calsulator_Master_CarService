@@ -1868,6 +1868,8 @@ const SETTINGS_KEY = 'cs_settings';
 const DEFAULT_SETTINGS = {
   colorSurcharge: 2000,
   paintCoeff2layer: 1.3,
+  paintCost1layer: 3000,
+  sparePartsPercent: 5,
   repairCostPerRepair: 4000,
   repairCostPerSU: 4000,
   repairCostPerRC: 4000,
@@ -1964,8 +1966,8 @@ function getPrices(partId, tier, calcState, colorSurcharge) {
     s:  base.s,
     rc: base.rc > 0 ? base.rc + add : 0,
     z:  base.z  > 0 ? base.z  + add : 0,
-    p1: base.p1 > 0 ? base.p1 : 0,
-    p2: base.p2 > 0 ? base.p2 : 0,
+    p1: base.p1 > 0 ? base.p1 + cSurcharge : 0,
+    p2: base.p2 > 0 ? base.p2 + cSurcharge : 0,
     r2: base.r2,
     r1: base.r1,
   };
@@ -2206,27 +2208,38 @@ function buildWorkspace(c) {
     </div>
 
     <!-- SPARE PARTS TABLE -->
-    <div class="cost-section" id="spare-parts-section">
-      <div class="cost-header">Запчасти</div>
-      <table id="spare-parts-table" style="width:100%;border-collapse:collapse;">
-        <thead>
-          <tr style="background:#0a0a0a;border-bottom:1px solid #2a2a2a;">
-            <th style="font-family:'Oswald',sans-serif;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:9px 14px;text-align:left;">Запчасть</th>
-            <th style="font-family:'Oswald',sans-serif;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:9px 10px;text-align:right;white-space:nowrap;">Цена, ₽</th>
-            <th style="font-family:'Oswald',sans-serif;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:9px 10px;text-align:left;white-space:nowrap;">Кат.№ ориг.</th>
-            <th style="font-family:'Oswald',sans-serif;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:9px 10px;text-align:left;white-space:nowrap;">Кат.№ не ориг.</th>
-            <th style="width:32px;"></th>
-          </tr>
-        </thead>
-        <tbody id="sp-tbody"></tbody>
-      </table>
-      <button id="sp-add-btn" style="width:100%;background:#111;border:none;border-top:1px solid #1e1e1e;color:#555;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:11px 16px;cursor:pointer;text-align:left;transition:color .15s,background .15s;">
-        + Добавить запчасть
-      </button>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:#0a0a0a;border-top:1px solid #1e1e1e;">
-        <span style="font-family:'Oswald',sans-serif;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;">Сумма запчастей</span>
-        <span style="font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;color:#ff9800;" id="sp-total">0 ₽</span>
+    <div id="spare-parts-section" style="background:#0d0d0d;border-top:3px solid #1a1a1a;margin-top:0;">
+      <!-- Заголовок секции -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1px solid #1a1a1a;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-family:'Oswald',sans-serif;color:#ff9800;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">🔩 Запчасти</span>
+          <span id="sp-count-badge" style="display:none;background:#ff980022;color:#ff9800;font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;padding:2px 8px;"></span>
+        </div>
+        <span style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#ff9800;" id="sp-total">—</span>
       </div>
+
+      <!-- Шапка таблицы -->
+      <div id="sp-table-header" style="display:none;background:#080808;border-bottom:1px solid #1a1a1a;padding:0 20px;">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1.2fr 1.2fr 36px;gap:0;">
+          <div style="font-family:'Oswald',sans-serif;font-size:10px;color:#444;text-transform:uppercase;letter-spacing:1.5px;padding:8px 0 8px 4px;">Наименование</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:10px;color:#444;text-transform:uppercase;letter-spacing:1.5px;padding:8px 8px;text-align:right;">Цена, ₽</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:10px;color:#444;text-transform:uppercase;letter-spacing:1.5px;padding:8px 8px;">Кат.№ ориг.</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:10px;color:#444;text-transform:uppercase;letter-spacing:1.5px;padding:8px 8px;">Кат.№ не ориг.</div>
+          <div></div>
+        </div>
+      </div>
+
+      <!-- Строки запчастей -->
+      <div id="sp-tbody"></div>
+
+      <!-- Кнопка добавить -->
+      <button id="sp-add-btn"
+        style="width:100%;background:transparent;border:none;border-top:1px solid #1a1a1a;
+               color:#444;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;
+               text-transform:uppercase;letter-spacing:1px;padding:13px 20px;cursor:pointer;
+               text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;line-height:1;color:#333;">+</span> Добавить запчасть
+      </button>
     </div>
 
     <!-- COST BREAKDOWN (затраты мастера) -->
@@ -2237,24 +2250,26 @@ function buildWorkspace(c) {
           <div class="c-label">Расходные материалы</div>
           <div class="c-val" id="cost-repair">0 ₽</div>
           <div class="c-note">~4 000 ₽ за деталь (рем. &lt;50% и &gt;50%)</div>
-          <div class="cost-adj" style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+          <div class="cost-adj" style="display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap;">
             <button class="cost-adj-btn" data-type="repair" data-delta="-4000">−4 000</button>
             <button class="cost-adj-btn" data-type="repair" data-delta="-1000">−1 000</button>
             <span class="cost-extra" id="extra-repair" style="font-family:'Oswald',sans-serif;font-size:11px;color:#777;min-width:50px;text-align:center;">0 ₽</span>
             <button class="cost-adj-btn" data-type="repair" data-delta="1000">+1 000</button>
             <button class="cost-adj-btn" data-type="repair" data-delta="4000">+4 000</button>
+            <button class="cost-adj-btn cost-reset-btn" data-type="repair" data-action="reset" title="Сбросить корректировку" style="margin-left:4px;color:#555;border-color:#2a2a2a;">↺</button>
           </div>
         </div>
         <div class="cost-cell paint">
           <div class="c-label">Краска</div>
           <div class="c-val" id="cost-paint">0 ₽</div>
           <div id="paint-units" style="display:none;font-family:'PT Sans',sans-serif;font-size:12px;color:#5c9bd6;margin-top:4px;letter-spacing:0.3px;"></div>
-          <div class="cost-adj" style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+          <div class="cost-adj" style="display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap;">
             <button class="cost-adj-btn" data-type="paint" data-delta="-3000">−3 000</button>
             <button class="cost-adj-btn" data-type="paint" data-delta="-1000">−1 000</button>
             <span class="cost-extra" id="extra-paint" style="font-family:'Oswald',sans-serif;font-size:11px;color:#777;min-width:50px;text-align:center;">0 ₽</span>
             <button class="cost-adj-btn" data-type="paint" data-delta="1000">+1 000</button>
             <button class="cost-adj-btn" data-type="paint" data-delta="3000">+3 000</button>
+            <button class="cost-adj-btn cost-reset-btn" data-type="paint" data-action="reset" title="Сбросить корректировку" style="margin-left:4px;color:#555;border-color:#2a2a2a;">↺</button>
           </div>
         </div>
         <div class="cost-cell other">
@@ -2490,32 +2505,60 @@ function initSpareParts(c) {
   const cs = c.calcState;
   if (!cs.spareParts) cs.spareParts = [];
 
-  const SP_INPUT_STYLE = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:"PT Sans",sans-serif;font-size:15px;color:#ddd;box-sizing:border-box;';
-  const SP_INPUT_STYLE_PRICE = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:"Oswald",sans-serif;font-size:16px;font-weight:600;color:#ff9800;text-align:right;box-sizing:border-box;';
-  const SP_INPUT_STYLE_CAT = 'background:transparent;border:none;outline:none;width:100%;padding:8px 10px;font-family:monospace;font-size:14px;color:#aaa;letter-spacing:0.5px;box-sizing:border-box;';
+  const ROW_BASE = 'display:grid;grid-template-columns:2fr 1fr 1.2fr 1.2fr 36px;gap:0;border-bottom:1px solid #111;transition:background .1s;';
+  const INP_BASE = 'background:transparent;border:none;outline:none;width:100%;padding:12px 8px 12px;box-sizing:border-box;';
+  const INP_NAME  = INP_BASE + 'font-family:"PT Sans",sans-serif;font-size:14px;color:#ccc;padding-left:20px;';
+  const INP_PRICE = INP_BASE + 'font-family:"Oswald",sans-serif;font-size:15px;font-weight:700;color:#ff9800;text-align:right;padding-right:8px;';
+  const INP_CAT   = INP_BASE + 'font-family:monospace;font-size:12px;color:#777;letter-spacing:0.5px;padding:12px 8px;';
+
+  function updateHeaderVisibility() {
+    const hdr = document.getElementById('sp-table-header');
+    const badge = document.getElementById('sp-count-badge');
+    const hasRows = cs.spareParts.length > 0;
+    if (hdr) hdr.style.display = hasRows ? '' : 'none';
+    if (badge) {
+      if (hasRows) { badge.textContent = cs.spareParts.length + ' поз.'; badge.style.display = ''; }
+      else badge.style.display = 'none';
+    }
+  }
 
   function renderRows() {
-    const tbody = document.getElementById('sp-tbody');
-    if (!tbody) return;
-    tbody.innerHTML = cs.spareParts.map((row, i) => `
-      <tr style="border-bottom:1px solid #1a1a1a;" data-spi="${i}">
-        <td style="padding:0;"><input class="sp-field" data-i="${i}" data-f="name"    value="${escHtml(row.name||'')}"    placeholder="Название"  style="${SP_INPUT_STYLE}"></td>
-        <td style="padding:0;min-width:90px;"><input class="sp-field" data-i="${i}" data-f="price"   value="${escHtml(row.price||'')}"   placeholder="0"       style="${SP_INPUT_STYLE_PRICE}"></td>
-        <td style="padding:0;"><input class="sp-field" data-i="${i}" data-f="orig"    value="${escHtml(row.orig||'')}"    placeholder="—"         style="${SP_INPUT_STYLE_CAT}"></td>
-        <td style="padding:0;"><input class="sp-field" data-i="${i}" data-f="nonorig" value="${escHtml(row.nonorig||'')}" placeholder="—"         style="${SP_INPUT_STYLE_CAT}"></td>
-        <td style="padding:0 8px;text-align:center;">
-          <button class="sp-del" data-i="${i}" title="Удалить"
-            style="background:none;border:none;color:#333;font-size:16px;cursor:pointer;padding:4px 6px;line-height:1;transition:color .15s;"
-            onmouseenter="this.style.color='#d20124'" onmouseleave="this.style.color='#333'">✕</button>
-        </td>
-      </tr>`).join('');
+    const container = document.getElementById('sp-tbody');
+    if (!container) return;
+    container.innerHTML = cs.spareParts.map((row, i) => {
+      const evenBg = i % 2 === 0 ? '#0d0d0d' : '#0a0a0a';
+      return `<div class="sp-row" data-i="${i}" style="${ROW_BASE}background:${evenBg};">
+        <div style="padding:0;border-right:1px solid #111;">
+          <input class="sp-field" data-i="${i}" data-f="name" value="${escHtml(row.name||'')}"
+            placeholder="Наименование запчасти" style="${INP_NAME}">
+        </div>
+        <div style="padding:0;border-right:1px solid #111;">
+          <input class="sp-field" data-i="${i}" data-f="price" value="${escHtml(row.price||'')}"
+            placeholder="0 ₽" style="${INP_PRICE}" inputmode="numeric">
+        </div>
+        <div style="padding:0;border-right:1px solid #111;">
+          <input class="sp-field" data-i="${i}" data-f="orig" value="${escHtml(row.orig||'')}"
+            placeholder="—" style="${INP_CAT}">
+        </div>
+        <div style="padding:0;border-right:1px solid #111;">
+          <input class="sp-field" data-i="${i}" data-f="nonorig" value="${escHtml(row.nonorig||'')}"
+            placeholder="—" style="${INP_CAT}">
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;">
+          <button class="sp-del" data-i="${i}"
+            style="background:none;border:none;color:#2a2a2a;font-size:15px;cursor:pointer;padding:8px;line-height:1;transition:color .15s;width:100%;height:100%;"
+            onmouseenter="this.style.color='#d20124'" onmouseleave="this.style.color='#2a2a2a'">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+    updateHeaderVisibility();
     bindRowEvents();
   }
 
   function bindRowEvents() {
-    const tbody = document.getElementById('sp-tbody');
-    if (!tbody) return;
-    tbody.querySelectorAll('.sp-field').forEach(inp => {
+    const container = document.getElementById('sp-tbody');
+    if (!container) return;
+    container.querySelectorAll('.sp-field').forEach(inp => {
       inp.addEventListener('input', () => {
         const i = +inp.dataset.i;
         const f = inp.dataset.f;
@@ -2524,11 +2567,19 @@ function initSpareParts(c) {
         if (f === 'price') updateSummary(c);
         saveClients();
       });
-      // Highlight row on focus
-      inp.addEventListener('focus', () => { const tr = inp.closest('tr'); if (tr) tr.style.background = '#111'; });
-      inp.addEventListener('blur',  () => { const tr = inp.closest('tr'); if (tr) tr.style.background = ''; });
+      inp.addEventListener('focus', () => {
+        const row = inp.closest('.sp-row');
+        if (row) row.style.background = '#161616';
+      });
+      inp.addEventListener('blur', () => {
+        const row = inp.closest('.sp-row');
+        if (row) {
+          const i = +row.dataset.i;
+          row.style.background = i % 2 === 0 ? '#0d0d0d' : '#0a0a0a';
+        }
+      });
     });
-    tbody.querySelectorAll('.sp-del').forEach(btn => {
+    container.querySelectorAll('.sp-del').forEach(btn => {
       btn.addEventListener('click', () => {
         cs.spareParts.splice(+btn.dataset.i, 1);
         renderRows();
@@ -2540,15 +2591,14 @@ function initSpareParts(c) {
 
   const addBtn = document.getElementById('sp-add-btn');
   if (addBtn) {
-    addBtn.onmouseenter = () => { addBtn.style.color='#bbb'; addBtn.style.background='#161616'; };
-    addBtn.onmouseleave = () => { addBtn.style.color='#555'; addBtn.style.background='#111'; };
+    addBtn.onmouseenter = () => { addBtn.style.color='#aaa'; addBtn.style.background='rgba(255,255,255,0.03)'; };
+    addBtn.onmouseleave = () => { addBtn.style.color='#444'; addBtn.style.background='transparent'; };
     addBtn.onclick = () => {
       cs.spareParts.push({ name:'', price:'', orig:'', nonorig:'' });
       renderRows();
-      // Focus the last name field
-      const tbody = document.getElementById('sp-tbody');
-      if (tbody) {
-        const all = tbody.querySelectorAll('.sp-field[data-f="name"]');
+      const container = document.getElementById('sp-tbody');
+      if (container) {
+        const all = container.querySelectorAll('.sp-field[data-f="name"]');
         if (all.length) all[all.length-1].focus();
       }
       saveClients();
@@ -2763,7 +2813,7 @@ function rebuildAllTables(c) {
 
 function updateRowTotal(partId, cs, overrideTier) {
   const tier = overrideTier || (cs._partTiers && cs._partTiers[partId]) || cs.tier;
-  const pr = getPrices(partId, tier, cs);
+  const pr = getPrices(partId, tier, cs, cs._colorSurcharge || 0);
   let sum = 0;
   SVC_KEYS.forEach(k => { if (cs.svcState[partId] && cs.svcState[partId][k]) sum += pr[k]; });
   const el = document.getElementById('total_' + partId);
@@ -2809,7 +2859,8 @@ function updateSummary(c) {
     if (st.r1 || st.r2) repairParts++;
     // Count paint ops for cost — kap/kry/bag стоят 4500, остальные 3000; p2 = p1*1.3
     const PAINT_LARGE = ['kap', 'kry', 'bag'];
-    const paintBase = PAINT_LARGE.includes(id) ? 4500 : PAINT_COST_1;
+    const _pc1 = _settings.paintCost1layer ?? PAINT_COST_1;
+    const paintBase = PAINT_LARGE.includes(id) ? Math.round(_pc1 * 1.5) : _pc1;
     const paintCoeff = _settings.paintCoeff2layer || 1.3;
     if (st.p2) { paintCost += Math.round(paintBase * paintCoeff); paintUnits += paintCoeff; }
     else if (st.p1) { paintCost += paintBase; paintUnits += 1.0; }
@@ -2870,13 +2921,25 @@ function updateSummary(c) {
     const v = parseInt(String(row.price||'').replace(/\D/g,''), 10);
     return acc + (isNaN(v) ? 0 : v);
   }, 0);
-  const otherRounded = Math.round(spSum * 0.05);
-  sel('sp-total', spSum.toLocaleString('ru') + ' ₽');
+  const _spPct = (_settings.sparePartsPercent ?? 5) / 100;
+  const otherRounded = Math.round(spSum * _spPct);
+  const spTotalEl = document.getElementById('sp-total');
+  if (spTotalEl) spTotalEl.textContent = spSum > 0 ? spSum.toLocaleString('ru') + ' ₽' : '—';
+  // update badge
+  const spBadge = document.getElementById('sp-count-badge');
+  const spCount = (cs.spareParts||[]).length;
+  if (spBadge) {
+    if (spCount > 0) { spBadge.textContent = spCount + ' поз.'; spBadge.style.display = ''; }
+    else spBadge.style.display = 'none';
+  }
+  const spHdr = document.getElementById('sp-table-header');
+  if (spHdr) spHdr.style.display = spCount > 0 ? '' : 'none';
   sel('cost-other', otherRounded.toLocaleString('ru') + ' ₽');
+  const _pct = _settings.sparePartsPercent ?? 5;
   const noteEl = document.getElementById('cost-other-note');
   if (noteEl) noteEl.textContent = spSum > 0
-    ? `5% от ${spSum.toLocaleString('ru')} ₽`
-    : '5% от суммы запчастей';
+    ? `${_pct}% от ${spSum.toLocaleString('ru')} ₽`
+    : `${_pct}% от суммы запчастей`;
 
   // Общая сумма затрат = расходники + краска + прочие
   const totalCosts = totalRepairCost + totalPaintCost + otherRounded;
@@ -2902,6 +2965,9 @@ function updateSummary(c) {
     profitEl.textContent = grandTotal.toLocaleString('ru') + ' ₽';
     profitEl.className = 'profit-val';
   }
+
+  // Сохраняем полную итоговую сумму в calcState для архивирования
+  cs._grandTotal = grandTotal;
 
   // Update client status
   if (allIds.length > 0) c.status = 'calc';
@@ -3038,7 +3104,7 @@ function printPDF() {
     };
     // Apply premium color surcharge to paint operations
     const PREMIUM_COLORS_PDF = ['Ксералик', '3-х сл. перламутровая'];
-    const colorSurchargePDF = PREMIUM_COLORS_PDF.includes(c.color||'') ? 2000 : 0;
+    const colorSurchargePDF = PREMIUM_COLORS_PDF.includes(c.color||'') ? (loadSettings().colorSurcharge ?? 2000) : 0;
     if (colorSurchargePDF > 0) {
       if (pr.p1 > 0) pr.p1 += colorSurchargePDF;
       if (pr.p2 > 0) pr.p2 += colorSurchargePDF;
@@ -3063,7 +3129,7 @@ function printPDF() {
 
   // Считаем итог напрямую
   let grandTotal = 0;
-  const _pdfSurcharge = ['Ксералик','3-х сл. перламутровая'].includes(c.color||'') ? 2000 : 0;
+  const _pdfSurcharge = ['Ксералик','3-х сл. перламутровая'].includes(c.color||'') ? (loadSettings().colorSurcharge ?? 2000) : 0;
   allIds.forEach(id => {
     let bp = id.startsWith('detail_')
       ? ((cs._detailPrices && cs._detailPrices[id]) ? cs._detailPrices[id] : {...DETAIL_BASE})
@@ -3282,7 +3348,8 @@ function archiveVisit(clientId, isDone) {
   if (!c) return;
 
   const cs = c.calcState;
-  const total = calcClientTotal(c);
+  // Используем полную сумму (итог с затратами) — она рассчитывается в updateSummary
+  const fullTotal = cs._grandTotal ?? calcClientTotal(c);
   const allIds = [...(cs.selected||[]), ...(cs.details||[]).map(d => d.id)];
 
   if (allIds.length === 0 && !confirm('Нет выбранных деталей. Всё равно архивировать?')) return;
@@ -3295,7 +3362,7 @@ function archiveVisit(clientId, isDone) {
     ts: Date.now(),
     status: isDone ? 'done' : 'archive',
     tier: cs.tier,
-    total,
+    total: fullTotal,
     calcState: JSON.parse(JSON.stringify(cs)),
   });
 
@@ -3330,7 +3397,7 @@ function newVisit(clientId) {
       ts: Date.now(),
       status: 'archive',
       tier: cs.tier,
-      total: calcClientTotal(c),
+      total: cs._grandTotal ?? calcClientTotal(c),
       calcState: JSON.parse(JSON.stringify(cs)),
     });
   }
@@ -3390,8 +3457,21 @@ function openVisitDetail(clientId, visitIdx) {
       ? ((cs._detailPrices && cs._detailPrices[id]) ? cs._detailPrices[id] : {...DETAIL_BASE})
       : BASE_PRICES[id];
     if (!bp) return;
-    const add = TIER_ADD[cs.tier] || 0;
-    const pr = { s:bp.s, rc:bp.rc>0?bp.rc+add:0, z:bp.z>0?bp.z+add:0, p1:bp.p1, p2:bp.p2, r2:bp.r2, r1:bp.r1 };
+    const _vdTier = (cs._partTiers && cs._partTiers[id]) || cs.tier || 'light';
+    const _vdSurcharge = cs._colorSurcharge || 0;
+    const add = TIER_ADD[_vdTier] || 0;
+    const pr = {
+      s:  bp.s,
+      rc: bp.rc>0 ? bp.rc+add : 0,
+      z:  bp.z>0  ? bp.z+add  : 0,
+      p1: bp.p1>0 ? bp.p1+_vdSurcharge : 0,
+      p2: bp.p2>0 ? bp.p2+_vdSurcharge : 0,
+      r2: bp.r2,
+      r1: bp.r1
+    };
+    // Apply settings overrides
+    const _vdOv = (loadSettings().prices || {})[id] || {};
+    Object.keys(_vdOv).forEach(k => { if (pr[k] !== undefined) pr[k] = _vdOv[k] + ((['p1','p2'].includes(k) && _vdSurcharge > 0) ? _vdSurcharge : (['rc','z'].includes(k) ? add : 0)); });
     const st = cs.svcState[id] || {};
     if (!SVC_KEYS.some(k => st[k])) return;
     let rowTotal = 0;
@@ -3447,6 +3527,7 @@ function openVisitDetail(clientId, visitIdx) {
         ${c.phone?`<div><div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Телефон</div><div style="color:#ccc;font-size:16px;font-family:PT Sans,sans-serif;">${escHtml(c.phone)}</div></div>`:''}
         ${c.car?`<div><div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Авто</div><div style="color:#ccc;font-size:16px;font-family:PT Sans,sans-serif;">${escHtml(c.car)}</div></div>`:''}
         ${c.plate?`<div><div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Гос. номер</div><div style="color:#fff;font-size:18px;font-weight:700;font-family:Oswald,sans-serif;">${escHtml(c.plate)}</div></div>`:''}
+        ${c.color?`<div><div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Покрытие</div><div style="font-family:Oswald,sans-serif;font-size:15px;font-weight:700;color:${['Ксералик','3-х сл. перламутровая'].includes(c.color)?'#d20124':'#ddd'};">${escHtml(c.color)}${['Ксералик','3-х сл. перламутровая'].includes(c.color)?` <span style="font-size:11px;color:#d20124;">(+${(loadSettings().colorSurcharge??2000).toLocaleString('ru')} ₽/эл.)</span>`:''}</div></div>`:''}
         <div style="margin-left:auto;">
           <div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;text-align:right;">Итого</div>
           <div style="font-family:Oswald,sans-serif;color:#d20124;font-size:32px;font-weight:900;">${v.total>0?v.total.toLocaleString('ru'):'0'} ₽</div>
@@ -3517,6 +3598,65 @@ function openVisitDetail(clientId, visitIdx) {
               ${dp?`<div style="display:flex;flex-direction:column;gap:2px;"><span style="font-family:Oswald,sans-serif;color:#555;font-size:10px;text-transform:uppercase;letter-spacing:1px;">Покраска</span><span style="font-family:Oswald,sans-serif;color:#ddd;font-size:18px;font-weight:700;">${dp} дн.</span></div>`:''}
               ${(db||dp)?`<div style="display:flex;flex-direction:column;gap:2px;"><span style="font-family:Oswald,sans-serif;color:#555;font-size:10px;text-transform:uppercase;letter-spacing:1px;">Итого</span><span style="font-family:Oswald,sans-serif;color:#fff;font-size:18px;font-weight:700;">${db+dp} дн.</span></div>`:''}
             </div>`;
+        })()}
+
+        ${(()=>{
+          // Расчёт затрат мастера
+          const _vs = loadSettings();
+          const _PREMIUM_COLORS2 = ['Ксералик', '3-х сл. перламутровая'];
+          const _vColorSurcharge = _PREMIUM_COLORS2.includes(c.color||'') ? (_vs.colorSurcharge??2000) : 0;
+          const _vAllIds = [...(cs.selected||[]), ...(cs.details||[]).map(d => d.id)];
+          if (_vAllIds.length === 0) return '';
+
+          let _vRepairParts = 0, _vPaintCost = 0;
+          const _PAINT_LARGE = ['kap','kry','bag'];
+          const _vPc1 = _vs.paintCost1layer ?? 3000;
+          const _vCoeff = _vs.paintCoeff2layer || 1.3;
+          _vAllIds.forEach(id => {
+            const st = cs.svcState[id] || {};
+            if (st.r1 || st.r2) _vRepairParts++;
+            const paintBase = _PAINT_LARGE.includes(id) ? Math.round(_vPc1 * 1.5) : _vPc1;
+            if (st.p2) _vPaintCost += Math.round(paintBase * _vCoeff);
+            else if (st.p1) _vPaintCost += paintBase;
+          });
+          const _vCostRepair = _vRepairParts * (_vs.repairCostPerRepair??4000) + (cs.extraRepair||0);
+          const _vCostPaint  = _vPaintCost + (cs.extraPaint||0);
+          const _vSpSum = (cs.spareParts||[]).reduce((a,r)=>a+(parseInt(String(r.price||'').replace(/\D/g,''),10)||0),0);
+          const _vPct = (_vs.sparePartsPercent??5)/100;
+          const _vOther = Math.round(_vSpSum * _vPct);
+          const _vTotalCosts = _vCostRepair + _vCostPaint + _vOther;
+          const _vServicesTotal = _vAllIds.reduce((sum, id) => {
+            const tier = (cs._partTiers&&cs._partTiers[id])||cs.tier||'light';
+            const pr = getPrices(id, tier, cs, _vColorSurcharge);
+            const st = cs.svcState[id]||{};
+            return sum + SVC_KEYS.reduce((s,k)=>s+(st[k]?pr[k]:0),0);
+          }, 0);
+          const _vGrandTotal = _vServicesTotal + _vSpSum + _vTotalCosts;
+
+          return \`
+            <div style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:2px;margin:20px 0 12px;padding-bottom:8px;border-bottom:1px solid #1e1e1e;">Расчёт затрат мастера</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1a1a;margin-bottom:1px;">
+              <div style="background:#0d0d0d;padding:14px 16px;border-left:3px solid #ff9800;">
+                <div style="font-family:Oswald,sans-serif;color:#666;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Расходные материалы</div>
+                <div style="font-family:Oswald,sans-serif;font-size:18px;font-weight:700;color:#ff9800;">\${_vCostRepair.toLocaleString('ru')} ₽</div>
+              </div>
+              <div style="background:#0d0d0d;padding:14px 16px;border-left:3px solid #2196f3;">
+                <div style="font-family:Oswald,sans-serif;color:#666;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Краска</div>
+                <div style="font-family:Oswald,sans-serif;font-size:18px;font-weight:700;color:#2196f3;">\${_vCostPaint.toLocaleString('ru')} ₽</div>
+              </div>
+              <div style="background:#0d0d0d;padding:14px 16px;border-left:3px solid #4caf50;">
+                <div style="font-family:Oswald,sans-serif;color:#666;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Прочие затраты (\${(_vs.sparePartsPercent??5)}%)</div>
+                <div style="font-family:Oswald,sans-serif;font-size:18px;font-weight:700;color:#4caf50;">\${_vOther.toLocaleString('ru')} ₽</div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;background:#0a0a0a;padding:12px 16px;border-top:1px solid #1a1a1a;">
+              <span style="font-family:Oswald,sans-serif;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Общая сумма затрат</span>
+              <span style="font-family:Oswald,sans-serif;font-size:17px;font-weight:700;color:#ddd;">\${_vTotalCosts.toLocaleString('ru')} ₽</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;background:#080808;padding:14px 16px;border-top:2px solid #222;">
+              <span style="font-family:Oswald,sans-serif;color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Итог с затратами (услуги + запчасти + затраты)</span>
+              <span style="font-family:Oswald,sans-serif;font-size:22px;font-weight:900;color:#4caf50;">\${_vGrandTotal.toLocaleString('ru')} ₽</span>
+            </div>\`;
         })()}
       </div>
     </div>`;
@@ -3925,6 +4065,26 @@ function renderSettingsPage() {
       <span class="settings-unit">×</span>
     </div>
 
+    <div class="settings-row">
+      <div class="settings-label">
+        Стоимость краски (1 слой)
+        <small>Базовая себестоимость краски за одну деталь в 1 слой</small>
+      </div>
+      <input class="settings-input" type="number" id="st-paint-cost1" min="0" step="100"
+        value="${s.paintCost1layer ?? 3000}">
+      <span class="settings-unit">₽</span>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-label">
+        % прочих затрат от суммы запчастей
+        <small>Прочие затраты = X% от суммы запчастей из таблицы</small>
+      </div>
+      <input class="settings-input" type="number" id="st-spare-pct" min="0" max="100" step="0.5"
+        value="${s.sparePartsPercent ?? 5}" style="width:80px;">
+      <span class="settings-unit">%</span>
+    </div>
+
     <div class="settings-section-title" style="margin-top:24px;">Расходные материалы (затраты мастера)</div>
     <p style="font-size:12px;color:#444;font-family:'PT Sans',sans-serif;margin-bottom:12px;">
       Сколько прибавляется к блоку «Расходные материалы» за каждую деталь с данной услугой.
@@ -3973,8 +4133,10 @@ function renderSettingsPage() {
   document.getElementById('st-save-btn').addEventListener('click', () => {
     const ns = { ...loadSettings() };
     // Общие параметры
-    ns.colorSurcharge = Math.max(0, parseInt(document.getElementById('st-color-surcharge').value) || 0);
-    ns.paintCoeff2layer = Math.max(1, parseFloat(document.getElementById('st-paint-coeff').value) || 1.3);
+    ns.colorSurcharge    = Math.max(0, parseInt(document.getElementById('st-color-surcharge').value) || 0);
+    ns.paintCoeff2layer  = Math.max(1, parseFloat(document.getElementById('st-paint-coeff').value) || 1.3);
+    ns.paintCost1layer   = Math.max(0, parseInt(document.getElementById('st-paint-cost1').value) || 0);
+    ns.sparePartsPercent = Math.max(0, Math.min(100, parseFloat(document.getElementById('st-spare-pct').value) || 5));
     ns.repairCostPerRepair = Math.max(0, parseInt(document.getElementById('st-cost-repair').value) || 0);
     ns.repairCostPerSU     = Math.max(0, parseInt(document.getElementById('st-cost-su').value) || 0);
     ns.repairCostPerRC     = Math.max(0, parseInt(document.getElementById('st-cost-rc').value) || 0);
@@ -4082,17 +4244,24 @@ document.addEventListener('click', function(e) {
   }
 
   // Кнопки корректировки затрат +/-
-  const adjBtn = e.target.closest('.cost-adj-btn[data-type][data-delta]');
+  const adjBtn = e.target.closest('.cost-adj-btn[data-type]');
   if (adjBtn) {
     if (!activeClientId) return;
     const c = clients.find(c => c.id === activeClientId);
     if (!c) return;
     const cs = c.calcState;
-    const type  = adjBtn.dataset.type;
-    const delta = parseInt(adjBtn.dataset.delta, 10);
-    if (type === 'repair') cs.extraRepair = (cs.extraRepair || 0) + delta;
-    if (type === 'paint')  cs.extraPaint  = (cs.extraPaint  || 0) + delta;
+    const type = adjBtn.dataset.type;
+    if (adjBtn.dataset.action === 'reset') {
+      // Сброс корректировки в 0
+      if (type === 'repair') cs.extraRepair = 0;
+      if (type === 'paint')  cs.extraPaint  = 0;
+    } else {
+      const delta = parseInt(adjBtn.dataset.delta, 10);
+      if (type === 'repair') cs.extraRepair = (cs.extraRepair || 0) + delta;
+      if (type === 'paint')  cs.extraPaint  = (cs.extraPaint  || 0) + delta;
+    }
     updateSummary(c);
+    saveClients();
   }
 });
 </script>
