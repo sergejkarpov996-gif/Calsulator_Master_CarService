@@ -1950,8 +1950,7 @@ function saveClients() {
 
 function getPrices(partId, tier, calcState, colorSurcharge) {
   let bp;
-  const isCustomDetail = partId.startsWith('detail_');
-  if (isCustomDetail) {
+  if (partId.startsWith('detail_')) {
     bp = (calcState && calcState._detailPrices && calcState._detailPrices[partId])
       ? calcState._detailPrices[partId]
       : DETAIL_BASE;
@@ -1959,14 +1958,11 @@ function getPrices(partId, tier, calcState, colorSurcharge) {
     bp = BASE_PRICES[partId];
   }
   if (!bp) return {s:0,rc:0,z:0,p1:0,p2:0,r2:0,r1:0};
-  // Для кастомных деталей tier_add НЕ применяется:
-  // пользователь сам задаёт финальную цену в inline-инпуте,
-  // добавление надбавки сверху приводило бы к накоплению ошибки.
-  const add = isCustomDetail ? 0 : (TIER_ADD[tier] || 0);
+  const add = TIER_ADD[tier] || 0;
   const cSurcharge = colorSurcharge || 0;
-  // Применяем пользовательские цены из настроек (только для стандартных деталей)
+  // Применяем пользовательские цены если они заданы
   const settings = loadSettings();
-  const overrides = (!isCustomDetail && settings.prices && settings.prices[partId]) ? settings.prices[partId] : {};
+  const overrides = (settings.prices && settings.prices[partId]) || {};
   const base = { ...bp, ...overrides };
   return {
     s:  base.s,
@@ -2680,7 +2676,17 @@ function selectPart(c, id, name) {
     t.classList.add('visible');
     t.innerHTML = buildPartTableHTML(id, name, cs);
     if (!cs.svcState[id]) cs.svcState[id] = {};
-    attachPartRowEvents(c, id);
+    SVC_KEYS.forEach(k => {
+      const cb = document.getElementById('cb_' + id + '_' + k);
+      if (cb) cb.addEventListener('change', () => {
+        cs.svcState[id][k] = cb.checked;
+        updateRowTotal(id, cs);
+        updateSummary(c);
+        saveClients();
+      });
+    });
+    const trash = document.getElementById('trash_' + id);
+    if (trash) trash.addEventListener('click', () => deselectPart(c, id));
     updateRowTotal(id, cs);
   }
   updateSummary(c);
@@ -3249,7 +3255,7 @@ function printPDF() {
 
   /* ── ВНИМАНИЕ ── */
   .notice{background:#fffde7;border:1px solid #f0d060;padding:10px 14px;font-size:12px;color:#333;line-height:1.6;margin-bottom:8px;}
-  .notice b{font-size:13px;display:block;margin-bottom:4px;}
+  .notice b.notice-title{font-size:13px;display:block;margin-bottom:4px;}
 
   /* ── СНОСКА ── */
   .footer{color:#aaa;font-size:9px;border-top:1px solid #eee;padding-top:5px;margin-top:6px;line-height:1.5;}
@@ -3323,6 +3329,13 @@ function printPDF() {
     <span class="subtotal-val">${totalCosts.toLocaleString('ru')}\u202f₽</span>
   </div>` : ''}
 
+  <!-- ИТОГ БЕЗ ЗАПЧАСТЕЙ -->
+  ${spares.length > 0 ? `
+  <div class="subtotal" style="margin-top:4px;border-top:1px solid #ddd;padding-top:8px;">
+    <span class="subtotal-label" style="font-weight:600;color:#555;">Итог без запчастей:</span>
+    <span class="subtotal-val" style="color:#555;">${(grandServices + totalCosts).toLocaleString('ru')}\u202f₽</span>
+  </div>` : ''}
+
   <!-- ЗАПЧАСТИ -->
   ${spares.length > 0 ? `
   <div class="sec-title">Запчасти</div>
@@ -3346,14 +3359,12 @@ function printPDF() {
 
   <!-- ВНИМАНИЕ -->
   <div class="notice">
-    <b>ВНИМАНИЕ!</b>
+    <b class="notice-title">ВНИМАНИЕ!</b>
     *В стоимость включены ВСЕ работы и расходные материалы<br>
-    *Расчёт является предварительным и может быть скорректирован после осмотра автомобиля. Данный документ не является договором &nbsp;<b>"Под ключ"</b>
+    *Расчёт является предварительным и может быть скорректирован после осмотра автомобиля. Данный документ не является договором.&nbsp;<span style="white-space:nowrap;"><b>"Под ключ"</b></span>
   </div>
 
-  ${c.note ? `<div style="background:#fffde7;border:1px solid #ffe082;padding:6px 10px;font-size:11px;color:#555;margin-bottom:8px;"><b>Примечание:</b> ${escHtml(c.note)}</div>` : ''}
-
-  <div class="footer">about:blank &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1/1</div>
+  <div class="footer">about:blank \u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 1/1</div>
 </div>
 <script>window.onload=function(){window.print();};<\/script>
 </body></html>`;
