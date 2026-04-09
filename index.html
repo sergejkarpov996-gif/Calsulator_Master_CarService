@@ -1950,7 +1950,8 @@ function saveClients() {
 
 function getPrices(partId, tier, calcState, colorSurcharge) {
   let bp;
-  if (partId.startsWith('detail_')) {
+  const isCustomDetail = partId.startsWith('detail_');
+  if (isCustomDetail) {
     bp = (calcState && calcState._detailPrices && calcState._detailPrices[partId])
       ? calcState._detailPrices[partId]
       : DETAIL_BASE;
@@ -1958,11 +1959,14 @@ function getPrices(partId, tier, calcState, colorSurcharge) {
     bp = BASE_PRICES[partId];
   }
   if (!bp) return {s:0,rc:0,z:0,p1:0,p2:0,r2:0,r1:0};
-  const add = TIER_ADD[tier] || 0;
+  // Для кастомных деталей tier_add НЕ применяется:
+  // пользователь сам задаёт финальную цену в inline-инпуте,
+  // добавление надбавки сверху приводило бы к накоплению ошибки.
+  const add = isCustomDetail ? 0 : (TIER_ADD[tier] || 0);
   const cSurcharge = colorSurcharge || 0;
-  // Применяем пользовательские цены если они заданы
+  // Применяем пользовательские цены из настроек (только для стандартных деталей)
   const settings = loadSettings();
-  const overrides = (settings.prices && settings.prices[partId]) || {};
+  const overrides = (!isCustomDetail && settings.prices && settings.prices[partId]) ? settings.prices[partId] : {};
   const base = { ...bp, ...overrides };
   return {
     s:  base.s,
@@ -2676,17 +2680,7 @@ function selectPart(c, id, name) {
     t.classList.add('visible');
     t.innerHTML = buildPartTableHTML(id, name, cs);
     if (!cs.svcState[id]) cs.svcState[id] = {};
-    SVC_KEYS.forEach(k => {
-      const cb = document.getElementById('cb_' + id + '_' + k);
-      if (cb) cb.addEventListener('change', () => {
-        cs.svcState[id][k] = cb.checked;
-        updateRowTotal(id, cs);
-        updateSummary(c);
-        saveClients();
-      });
-    });
-    const trash = document.getElementById('trash_' + id);
-    if (trash) trash.addEventListener('click', () => deselectPart(c, id));
+    attachPartRowEvents(c, id);
     updateRowTotal(id, cs);
   }
   updateSummary(c);
